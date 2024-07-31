@@ -11,6 +11,7 @@ kotlin = "2.0.0"
 hiltAndroid = "2.51.1"
 hiltAndroidCompiler = "2.48"
 
+navigationCompose = "2.7.7"
 roomCommon = "2.6.1"
 roomKtx = "2.6.1"
 org-jetbrains-kotlin-android = "1.9.23"
@@ -38,9 +39,11 @@ androidx-room-common = { group = "androidx.room", name = "room-common", version.
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 
 # HILT
-
 hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
+
+# Navigation
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
