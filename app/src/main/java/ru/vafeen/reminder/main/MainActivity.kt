@@ -1,4 +1,4 @@
-package ru.vafeen.reminder
+package ru.vafeen.reminder.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,6 +10,7 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
 import ru.vafeen.reminder.ui.common.screen.MainScreen
+import ru.vafeen.reminder.ui.common.screen.RemindersScreen
 import ru.vafeen.reminder.ui.theme.ReminderTheme
 
 @AndroidEntryPoint
@@ -23,6 +24,9 @@ class MainActivity : ComponentActivity() {
                 NavHost(navController = navController, startDestination = ScreenRoute.Main.route) {
                     composable(route = ScreenRoute.Main.route) {
                         MainScreen()
+                    }
+                    composable(route = ScreenRoute.Reminders.route) {
+                        RemindersScreen()
                     }
                 }
             }
