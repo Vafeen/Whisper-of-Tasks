@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import ru.vafeen.reminder.ui.common.viewmodel.MainScreenViewModel
+import ru.vafeen.reminder.noui.viewmodel.MainScreenViewModel
 
 @Composable
 fun MainScreen(

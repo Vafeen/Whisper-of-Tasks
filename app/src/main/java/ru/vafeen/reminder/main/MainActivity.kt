@@ -12,9 +12,9 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
 import ru.vafeen.reminder.ui.common.screen.MainScreen
 import ru.vafeen.reminder.ui.common.screen.RemindersScreen
-import ru.vafeen.reminder.ui.common.viewmodel.factory.MainScreenViewModelFactory
-import ru.vafeen.reminder.ui.common.viewmodel.factory.ReminderScreenViewModelFactory
-import ru.vafeen.reminder.ui.common.viewmodel.factory.provider.ViewModelsFactoryProvider
+import ru.vafeen.reminder.noui.viewmodel.factory.MainScreenViewModelFactory
+import ru.vafeen.reminder.noui.viewmodel.factory.ReminderScreenViewModelFactory
+import ru.vafeen.reminder.noui.viewmodel.factory.provider.ViewModelsFactoryProvider
 import ru.vafeen.reminder.ui.theme.ReminderTheme
 import javax.inject.Inject
 

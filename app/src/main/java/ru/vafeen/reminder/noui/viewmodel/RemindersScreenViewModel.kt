@@ -1,4 +1,4 @@
-package ru.vafeen.reminder.ui.common.viewmodel
+package ru.vafeen.reminder.noui.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
