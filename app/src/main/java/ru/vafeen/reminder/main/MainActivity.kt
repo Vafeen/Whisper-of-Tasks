@@ -31,10 +31,16 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = ScreenRoute.Main.route) {
                     composable(route = ScreenRoute.Main.route) {
-                        MainScreen(viewModel = viewModel(factory = viewModelsFactoryProvider.mainScreenViewModelFactory))
+                        MainScreen(
+                            viewModel = viewModel(factory = viewModelsFactoryProvider.mainScreenViewModelFactory),
+                            navController = navController
+                        )
                     }
                     composable(route = ScreenRoute.Reminders.route) {
-                        RemindersScreen(viewModel = viewModel(factory = viewModelsFactoryProvider.reminderScreenViewModelFactory))
+                        RemindersScreen(
+                            viewModel = viewModel(factory = viewModelsFactoryProvider.reminderScreenViewModelFactory),
+                            navController = navController
+                        )
                     }
                 }
             }

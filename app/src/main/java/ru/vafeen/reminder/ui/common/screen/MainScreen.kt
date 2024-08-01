@@ -7,14 +7,18 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
 import ru.vafeen.reminder.ui.common.viewmodel.MainScreenViewModel
 
 @Composable
-fun MainScreen(viewModel: MainScreenViewModel) {
+fun MainScreen(
+    viewModel: MainScreenViewModel,
+    navController: NavController
+) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center, horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text (text = "ads")
+        Text(text = "ads")
     }
 }
