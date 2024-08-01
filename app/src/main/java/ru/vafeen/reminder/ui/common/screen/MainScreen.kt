@@ -1,4 +1,4 @@
-package ru.vafeen.reminder.ui.screen
+package ru.vafeen.reminder.ui.common.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column

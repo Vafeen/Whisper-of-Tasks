@@ -8,8 +8,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import ru.vafeen.reminder.ui.navigation.Screen
-import ru.vafeen.reminder.ui.screen.MainScreen
+import ru.vafeen.reminder.ui.common.navigation.Screen
+import ru.vafeen.reminder.ui.common.screen.MainScreen
 import ru.vafeen.reminder.ui.theme.ReminderTheme
 
 @AndroidEntryPoint
