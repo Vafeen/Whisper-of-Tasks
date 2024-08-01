@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import ru.vafeen.reminder.ui.common.navigation.Screen
+import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
 import ru.vafeen.reminder.ui.common.screen.MainScreen
 import ru.vafeen.reminder.ui.theme.ReminderTheme
 
@@ -20,8 +20,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             ReminderTheme {
                 val navController = rememberNavController()
-                NavHost(navController = navController, startDestination = Screen.Main.route) {
-                    composable(route = Screen.Main.route) {
+                NavHost(navController = navController, startDestination = ScreenRoute.Main.route) {
+                    composable(route = ScreenRoute.Main.route) {
                         MainScreen()
                     }
                 }
