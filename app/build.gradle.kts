@@ -70,8 +70,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     // room
-    implementation (libs.androidx.room.runtime)
-    kapt (libs.androidx.room.compiler)
+    implementation(libs.androidx.room.runtime)
+    kapt(libs.androidx.room.compiler)
     implementation(libs.androidx.room.common)
     implementation(libs.androidx.room.ktx)
     // Hilt
@@ -79,4 +79,6 @@ dependencies {
     kapt(libs.hilt.android.compiler)
     //Navigation
     implementation(libs.androidx.navigation.compose)
+    // Notifications
+    implementation(libs.accompanist.permissions)
 }
