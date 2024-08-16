@@ -10,7 +10,9 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.compose.foundation.background
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -23,7 +25,9 @@ import ru.vafeen.reminder.noui.viewmodel.factory.MainActivityViewModelFactory
 import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
 import ru.vafeen.reminder.ui.common.screen.MainScreen
 import ru.vafeen.reminder.ui.common.screen.RemindersScreen
+import ru.vafeen.reminder.ui.common.screen.SettingsScreen
 import ru.vafeen.reminder.ui.theme.MainTheme
+import ru.vafeen.reminder.ui.theme.ReminderTheme
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -62,6 +66,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController, startDestination = ScreenRoute.Main.route,
+                    modifier = Modifier.background(ReminderTheme.colors.singleTheme)
                 ) {
                     composable(route = ScreenRoute.Main.route) {
                         MainScreen(
@@ -72,6 +77,12 @@ class MainActivity : ComponentActivity() {
                     composable(route = ScreenRoute.Reminders.route) {
                         RemindersScreen(
                             viewModel = viewModel(factory = viewModel.reminderScreenViewModelFactory),
+                            navController = navController
+                        )
+                    }
+                    composable(route = ScreenRoute.Settings.route) {
+                        SettingsScreen(
+                            viewModel = viewModel(factory = viewModel.settingsScreenViewModelFactory),
                             navController = navController
                         )
                     }

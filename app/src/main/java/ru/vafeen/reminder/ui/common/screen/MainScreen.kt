@@ -28,7 +28,8 @@ fun MainScreen(
             BottomBar(
                 containerColor = ReminderTheme.colors.mainColor,
                 selectedMainScreen = true,
-                navigateToRemindersScreen = { navController.navigate(ScreenRoute.Reminders.route) })
+                navigateToRemindersScreen = { navController.navigate(ScreenRoute.Reminders.route) },
+                navigateToSettingsScreen = { navController.navigate(ScreenRoute.Settings.route) })
         }
     ) { innerPadding ->
         Column(
@@ -39,7 +40,10 @@ fun MainScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "main")
+            Text(
+                text = "main",
+                color = ReminderTheme.colors.oppositeTheme
+            )
         }
     }
 
