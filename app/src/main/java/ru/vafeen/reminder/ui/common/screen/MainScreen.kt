@@ -11,9 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import ru.vafeen.reminder.noui.viewmodel.MainScreenViewModel
 import ru.vafeen.reminder.ui.common.components.BottomBar
 import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
+import ru.vafeen.reminder.ui.common.viewmodel.MainScreenViewModel
 import ru.vafeen.reminder.ui.theme.Theme
 
 @Composable

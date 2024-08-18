@@ -20,12 +20,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
-import ru.vafeen.reminder.noui.viewmodel.MainActivityViewModel
-import ru.vafeen.reminder.noui.viewmodel.factory.MainActivityViewModelFactory
 import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
 import ru.vafeen.reminder.ui.common.screen.MainScreen
 import ru.vafeen.reminder.ui.common.screen.RemindersScreen
 import ru.vafeen.reminder.ui.common.screen.SettingsScreen
+import ru.vafeen.reminder.ui.common.viewmodel.MainActivityViewModel
+import ru.vafeen.reminder.ui.common.viewmodel.factory.MainActivityViewModelFactory
 import ru.vafeen.reminder.ui.theme.MainTheme
 import ru.vafeen.reminder.ui.theme.Theme
 import javax.inject.Inject

@@ -1,9 +1,9 @@
-package ru.vafeen.reminder.noui.viewmodel
+package ru.vafeen.reminder.ui.common.viewmodel
 
 import androidx.lifecycle.ViewModel
-import ru.vafeen.reminder.noui.viewmodel.factory.MainScreenViewModelFactory
-import ru.vafeen.reminder.noui.viewmodel.factory.ReminderScreenViewModelFactory
-import ru.vafeen.reminder.noui.viewmodel.factory.SettingsScreenViewModelFactory
+import ru.vafeen.reminder.ui.common.viewmodel.factory.MainScreenViewModelFactory
+import ru.vafeen.reminder.ui.common.viewmodel.factory.ReminderScreenViewModelFactory
+import ru.vafeen.reminder.ui.common.viewmodel.factory.SettingsScreenViewModelFactory
 import javax.inject.Inject
 
 class MainActivityViewModel @Inject constructor(
