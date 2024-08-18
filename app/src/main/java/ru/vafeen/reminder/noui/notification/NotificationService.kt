@@ -9,9 +9,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.vafeen.reminder.R
 import ru.vafeen.reminder.main.MainActivity
 import javax.inject.Inject
-
-
-private var NOTIFICATION_ID = 0
+import kotlin.random.Random
 
 
 class NotificationService @Inject constructor(
@@ -26,16 +24,18 @@ class NotificationService @Inject constructor(
         PendingIntent.FLAG_IMMUTABLE
     )
 
-    fun showNotification() {
+    fun showNotification(
+        title: String = "title",
+        text: String = "Hello world!"
+    ) {
         val notification =
             NotificationCompat.Builder(context, NotificationChannelInfo.NOTIFICATION_CHANNEL_ID)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("title")
-                .setContentText("Hello world!")
+                .setContentTitle(title)
+                .setContentText(text)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setContentIntent(pendingIntent)
                 .build()
-        notificationManager.notify(NOTIFICATION_ID, notification)
-        NOTIFICATION_ID += 1
+        notificationManager.notify(Random.nextInt(), notification)
     }
 }
