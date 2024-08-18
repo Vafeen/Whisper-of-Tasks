@@ -27,7 +27,7 @@ fun SettingsScreen(
         bottomBar = {
             BottomBar(
                 containerColor = ReminderTheme.colors.mainColor,
-                selectedMainScreen = true,
+                selectedSettingsScreen = true,
                 navigateToRemindersScreen = {
                     navController.popBackStack()
                     navController.navigate(ScreenRoute.Reminders.route)
