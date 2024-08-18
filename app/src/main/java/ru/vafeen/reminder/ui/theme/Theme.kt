@@ -43,7 +43,7 @@ fun MainTheme(
     )
 }
 
-object ReminderTheme {
+object Theme {
     val colors: ReminderColors
         @ReadOnlyComposable @Composable
         get() = LocalColors.current

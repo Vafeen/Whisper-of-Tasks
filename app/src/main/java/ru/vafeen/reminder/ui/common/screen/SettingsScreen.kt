@@ -14,7 +14,7 @@ import androidx.navigation.NavController
 import ru.vafeen.reminder.noui.viewmodel.SettingsScreenViewModel
 import ru.vafeen.reminder.ui.common.components.BottomBar
 import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
-import ru.vafeen.reminder.ui.theme.ReminderTheme
+import ru.vafeen.reminder.ui.theme.Theme
 
 @Composable
 fun SettingsScreen(
@@ -26,7 +26,7 @@ fun SettingsScreen(
             .fillMaxSize(),
         bottomBar = {
             BottomBar(
-                containerColor = ReminderTheme.colors.mainColor,
+                containerColor = Theme.colors.mainColor,
                 selectedSettingsScreen = true,
                 navigateToRemindersScreen = {
                     navController.popBackStack()
@@ -42,14 +42,14 @@ fun SettingsScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(ReminderTheme.colors.singleTheme)
+                .background(Theme.colors.singleTheme)
                 .padding(innerPadding),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "settings",
-                color = ReminderTheme.colors.oppositeTheme
+                color = Theme.colors.oppositeTheme
             )
         }
     }

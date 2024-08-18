@@ -27,7 +27,7 @@ import ru.vafeen.reminder.ui.common.screen.MainScreen
 import ru.vafeen.reminder.ui.common.screen.RemindersScreen
 import ru.vafeen.reminder.ui.common.screen.SettingsScreen
 import ru.vafeen.reminder.ui.theme.MainTheme
-import ru.vafeen.reminder.ui.theme.ReminderTheme
+import ru.vafeen.reminder.ui.theme.Theme
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -66,7 +66,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController, startDestination = ScreenRoute.Main.route,
-                    modifier = Modifier.background(ReminderTheme.colors.singleTheme)
+                    modifier = Modifier.background(Theme.colors.singleTheme)
                 ) {
                     composable(route = ScreenRoute.Main.route) {
                         MainScreen(

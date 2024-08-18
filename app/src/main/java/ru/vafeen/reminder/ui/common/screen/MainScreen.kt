@@ -14,7 +14,7 @@ import androidx.navigation.NavController
 import ru.vafeen.reminder.noui.viewmodel.MainScreenViewModel
 import ru.vafeen.reminder.ui.common.components.BottomBar
 import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
-import ru.vafeen.reminder.ui.theme.ReminderTheme
+import ru.vafeen.reminder.ui.theme.Theme
 
 @Composable
 fun MainScreen(
@@ -26,7 +26,7 @@ fun MainScreen(
             .fillMaxSize(),
         bottomBar = {
             BottomBar(
-                containerColor = ReminderTheme.colors.mainColor,
+                containerColor = Theme.colors.mainColor,
                 selectedMainScreen = true,
                 navigateToRemindersScreen = { navController.navigate(ScreenRoute.Reminders.route) },
                 navigateToSettingsScreen = { navController.navigate(ScreenRoute.Settings.route) })
@@ -35,14 +35,14 @@ fun MainScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(ReminderTheme.colors.singleTheme)
+                .background(Theme.colors.singleTheme)
                 .padding(innerPadding),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
                 text = "main",
-                color = ReminderTheme.colors.oppositeTheme
+                color = Theme.colors.oppositeTheme
             )
         }
     }
