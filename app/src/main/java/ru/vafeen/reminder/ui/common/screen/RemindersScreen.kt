@@ -17,6 +17,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,6 +29,7 @@ import androidx.navigation.NavController
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
+import ru.vafeen.reminder.ui.common.components.AddReminderDialog
 import ru.vafeen.reminder.ui.common.components.BottomBar
 import ru.vafeen.reminder.ui.common.components.ReminderDataString
 import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
@@ -44,7 +46,10 @@ fun RemindersScreen(
     var reminders by remember {
         mutableStateOf(listOf<Reminder>())
     }
-    cor.launch(Dispatchers.Main) {
+    var isAddingReminder by remember {
+        mutableStateOf(false)
+    }
+    LaunchedEffect(null) {
         Log.d("cor", "launch")
         viewModel.databaseRepository.getAllReminders().collect {
             reminders = it
@@ -69,7 +74,7 @@ fun RemindersScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /*TODO*/ },
+                onClick = { isAddingReminder = true },
                 containerColor = Theme.colors.mainColor
             ) {
                 Icon(
@@ -81,6 +86,12 @@ fun RemindersScreen(
         },
         floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
+        if (isAddingReminder)
+            AddReminderDialog(addReminder = {
+                cor.launch(Dispatchers.IO) {
+                    viewModel.databaseRepository.insertAllReminders(it)
+                }
+            }, onDismissRequest = { isAddingReminder = false })
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -94,7 +105,7 @@ fun RemindersScreen(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                items(reminders) { it.ReminderDataString() }
+                items(reminders) { it.ReminderDataString(viewModel = viewModel) }
             }
         }
     }
