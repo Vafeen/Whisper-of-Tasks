@@ -81,4 +81,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     // Notifications
     implementation(libs.accompanist.permissions)
+    //WorkManager
+    implementation(libs.androidx.work.runtime.ktx)
 }
