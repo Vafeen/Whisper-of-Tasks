@@ -23,8 +23,12 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
+import ru.vafeen.reminder.ui.theme.FontSize
 import ru.vafeen.reminder.ui.theme.Theme
+import ru.vafeen.reminder.utils.getDateString
+import ru.vafeen.reminder.utils.getTimeDefaultStr
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @Composable
 fun AddReminderDialog(onDismissRequest: () -> Unit, addReminder: (Reminder) -> Unit) {
@@ -32,6 +36,9 @@ fun AddReminderDialog(onDismissRequest: () -> Unit, addReminder: (Reminder) -> U
     val focusRequester2 = remember { FocusRequester() }
     var newReminder by remember {
         mutableStateOf(Reminder(title = "", text = "", dt = LocalDateTime.now().plusMinutes(5)))
+    }
+    var mainButtonText by remember {
+        mutableStateOf("")
     }
     LaunchedEffect(null) {
         focusRequester1.requestFocus()
@@ -61,11 +68,17 @@ fun AddReminderDialog(onDismissRequest: () -> Unit, addReminder: (Reminder) -> U
             )
             Spacer(modifier = Modifier.height(20.dp))
 
+            MyTimePicker(initialTime = LocalTime.now().plusMinutes(5)) { dt ->
+                mainButtonText =
+                    "Отправить ${dt.getDateString()} в ${dt.hour.getTimeDefaultStr()}:${dt.minute.getTimeDefaultStr()}"
+                newReminder = newReminder.copy(dt = dt)
+            }
+
             Button(onClick = {
                 addReminder(newReminder)
                 onDismissRequest()
             }, enabled = newReminder.let { it.text.isNotEmpty() && it.title.isNotEmpty() }) {
-                TextForThisTheme(text = "Add")
+                TextForThisTheme(text = mainButtonText, fontSize = FontSize.medium)
             }
         }
     }

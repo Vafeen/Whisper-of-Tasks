@@ -89,7 +89,7 @@ fun RemindersScreen(
         if (isAddingReminder)
             AddReminderDialog(addReminder = {
                 cor.launch(Dispatchers.IO) {
-                    viewModel.databaseRepository.insertAllReminders(it)
+                    viewModel.databaseRepository.insertReminder(it)
                 }
             }, onDismissRequest = { isAddingReminder = false })
         Column(
