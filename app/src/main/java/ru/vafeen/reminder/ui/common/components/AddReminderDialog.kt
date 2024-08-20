@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
 import ru.vafeen.reminder.ui.theme.FontSize
 import ru.vafeen.reminder.ui.theme.Theme
+import ru.vafeen.reminder.utils.generateUUID
 import ru.vafeen.reminder.utils.getDateString
 import ru.vafeen.reminder.utils.getTimeDefaultStr
 import java.time.LocalDateTime
@@ -35,7 +36,12 @@ fun AddReminderDialog(onDismissRequest: () -> Unit, addReminder: (Reminder) -> U
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
     var newReminder by remember {
-        mutableStateOf(Reminder(title = "", text = "", dt = LocalDateTime.now().plusMinutes(5)))
+        mutableStateOf(
+            Reminder(
+                title = "", text = "", dt = LocalDateTime.now().plusMinutes(5),
+                UUID = generateUUID()
+            )
+        )
     }
     var mainButtonText by remember {
         mutableStateOf("")

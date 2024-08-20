@@ -32,13 +32,12 @@ fun Reminder.ReminderDataString(viewModel: RemindersScreenViewModel) {
         mutableStateOf(false)
     }
     val onDismissRequest = { isDialogDeleteShows = false }
-    if (isDialogDeleteShows)
-        RemoveReminderDialog {
-            onDismissRequest()
-            cor.launch(Dispatchers.IO) {
-                viewModel.databaseRepository.removeReminder(this@ReminderDataString)
-            }
+    if (isDialogDeleteShows) RemoveReminderDialog {
+        cor.launch(Dispatchers.IO) {
+            viewModel.eventCreator.removeEvent(reminder = this@ReminderDataString)
         }
+        onDismissRequest()
+    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -51,8 +50,7 @@ fun Reminder.ReminderDataString(viewModel: RemindersScreenViewModel) {
                 .padding(10.dp)
         ) {
             Column(
-                modifier = Modifier
-                    .weight(1f)
+                modifier = Modifier.weight(1f)
             ) {
                 TextForThisTheme(text = this@ReminderDataString.title, fontSize = FontSize.big)
                 TextForThisTheme(text = this@ReminderDataString.text, fontSize = FontSize.big)

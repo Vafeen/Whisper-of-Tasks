@@ -5,9 +5,11 @@ import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -32,8 +34,10 @@ import ru.vafeen.reminder.noui.local_database.entity.Reminder
 import ru.vafeen.reminder.ui.common.components.AddReminderDialog
 import ru.vafeen.reminder.ui.common.components.BottomBar
 import ru.vafeen.reminder.ui.common.components.ReminderDataString
+import ru.vafeen.reminder.ui.common.components.TextForThisTheme
 import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
 import ru.vafeen.reminder.ui.common.viewmodel.RemindersScreenViewModel
+import ru.vafeen.reminder.ui.theme.FontSize
 import ru.vafeen.reminder.ui.theme.Theme
 
 @SuppressLint("CoroutineCreationDuringComposition")
@@ -58,6 +62,16 @@ fun RemindersScreen(
     Scaffold(
         modifier = Modifier
             .fillMaxSize(),
+        topBar = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding(),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                TextForThisTheme(text = "Reminders", fontSize = FontSize.huge)
+            }
+        },
         bottomBar = {
             BottomBar(
                 containerColor = Theme.colors.mainColor,
@@ -89,7 +103,7 @@ fun RemindersScreen(
         if (isAddingReminder)
             AddReminderDialog(addReminder = {
                 cor.launch(Dispatchers.IO) {
-                    viewModel.databaseRepository.insertReminder(it)
+                    viewModel.eventCreator.addEvent(it)
                 }
             }, onDismissRequest = { isAddingReminder = false })
         Column(
