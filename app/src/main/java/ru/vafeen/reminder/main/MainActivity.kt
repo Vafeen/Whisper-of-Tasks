@@ -1,20 +1,12 @@
 package ru.vafeen.reminder.main
 
-import android.Manifest
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -38,34 +30,16 @@ class MainActivity : ComponentActivity() {
         factoryProducer = { viewModelFactory }
     )
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override
+    fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-
-            val context = LocalContext.current
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                val launcher = rememberLauncherForActivityResult(
-                    contract = ActivityResultContracts.RequestPermission()
-                ) {}
-                LaunchedEffect(key1 = null) {
-                    if (ContextCompat.checkSelfPermission(
-                            context,
-                            Manifest.permission.POST_NOTIFICATIONS
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                    // goto settings to switch off notifications
-//                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-//                        data = Uri.fromParts("package", context.packageName, null)
-//                    }
-//                    context.startActivity(intent)
-                }
-            }
             MainTheme {
                 val navController = rememberNavController()
                 NavHost(
-                    navController = navController, startDestination = ScreenRoute.Main.route,
+                    navController = navController,
+                    startDestination = ScreenRoute.Main.route,
                     modifier = Modifier.background(Theme.colors.singleTheme)
                 ) {
                     composable(route = ScreenRoute.Main.route) {

@@ -6,32 +6,68 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
+import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
+import kotlinx.coroutines.delay
+import ru.vafeen.reminder.ui.common.components.DefaultDialog
+import ru.vafeen.reminder.ui.common.components.TextForThisTheme
+import ru.vafeen.reminder.ui.theme.Theme
 
 @Composable
 fun RequestNotificationPermission(context: Context) {
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-
+    var ok by remember {
+        mutableStateOf(true)
     }
-    LaunchedEffect(Unit) {
-        launcher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        if (ContextCompat.checkSelfPermission(
-                context,
-                Manifest.permission.POST_NOTIFICATIONS
-            ) != PackageManager.PERMISSION_GRANTED
-        )
-        else {
-            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
-                data = Uri.fromParts("package", context.packageName, null)
+    LaunchedEffect(key1 = null) {
+        while (true) {
+            ok = ContextCompat.checkSelfPermission(
+                context, Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+            if (ok) break
+            delay(500)
+        }
+    }
+    if (!ok) {
+        DefaultDialog(onDismissRequest = {
+            Toast.makeText(context, "ok $ok", Toast.LENGTH_SHORT).show()
+            ok = ContextCompat.checkSelfPermission(
+                context, Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
+        }) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Theme.colors.singleTheme)
+                    .padding(it)
+            ) {
+                TextForThisTheme(text = "Уведомления выключены, включите!")
+                Button(onClick = {
+                    if (ContextCompat.checkSelfPermission(
+                            context, Manifest.permission.POST_NOTIFICATIONS
+                        ) != PackageManager.PERMISSION_GRANTED
+                    )
+                        context.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).apply {
+                            data = Uri.fromParts("package", context.packageName, null)
+                        })
+                    else ok = ContextCompat.checkSelfPermission(
+                        context, Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+                }) {
+                    TextForThisTheme(text = "Ok")
+                }
             }
-            context.startActivity(intent)
-            // Обработка случая, когда разрешение не предоставлено
         }
     }
 }
