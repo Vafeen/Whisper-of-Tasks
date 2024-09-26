@@ -1,6 +1,5 @@
 package ru.vafeen.reminder.ui.common.screen
 
-import android.annotation.SuppressLint
 import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -40,7 +39,7 @@ import ru.vafeen.reminder.ui.common.viewmodel.RemindersScreenViewModel
 import ru.vafeen.reminder.ui.theme.FontSize
 import ru.vafeen.reminder.ui.theme.Theme
 
-@SuppressLint("CoroutineCreationDuringComposition")
+
 @Composable
 fun RemindersScreen(
     viewModel: RemindersScreenViewModel,
