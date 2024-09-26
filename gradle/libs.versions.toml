@@ -2,8 +2,6 @@
 accompanistPermissions = "0.31.1-alpha"
 agp = "8.5.2"
 coreKtx = "1.13.1"
-hiltCompiler = "1.2.0"
-hiltLifecycleViewmodel = "1.0.0-alpha03"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
@@ -11,8 +9,6 @@ lifecycleRuntimeKtx = "2.8.6"
 activityCompose = "1.9.2"
 composeBom = "2024.09.02"
 kotlin = "2.0.20"
-hiltAndroid = "2.51.1"
-hiltAndroidCompiler = "2.48"
 
 navigationCompose = "2.8.1"
 roomCommon = "2.6.1"
@@ -41,13 +37,11 @@ androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "
 androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
 
-# HILT
-hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
-hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroidCompiler" }
-androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
-androidx-hilt-lifecycle-viewmodel = { module = "androidx.hilt:hilt-lifecycle-viewmodel", version.ref = "hiltLifecycleViewmodel" }
 # Navigation
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+
+# Koin
+
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

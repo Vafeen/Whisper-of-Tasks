@@ -5,12 +5,10 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
-import javax.inject.Inject
 
-@SuppressLint("RestrictedApi")
-class Scheduler @Inject constructor(@ApplicationContext private val context: Context) {
+
+class Scheduler(private val context: Context) {
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     private val intent = Intent(context, AlarmReceiver::class.java)
 

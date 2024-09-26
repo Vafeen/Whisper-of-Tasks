@@ -5,15 +5,13 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationCompat
-import dagger.hilt.android.qualifiers.ApplicationContext
 import ru.vafeen.reminder.R
 import ru.vafeen.reminder.main.MainActivity
-import javax.inject.Inject
 import kotlin.random.Random
 
 
-class NotificationService @Inject constructor(
-    @ApplicationContext private val context: Context,
+class NotificationService(
+    private val context: Context,
 ) {
     private val notificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

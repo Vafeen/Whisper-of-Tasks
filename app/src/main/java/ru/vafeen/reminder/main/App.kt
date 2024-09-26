@@ -4,14 +4,22 @@ import android.app.Application
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
-import dagger.hilt.android.HiltAndroidApp
+import org.koin.android.ext.koin.androidContext
+import org.koin.core.context.startKoin
+import ru.vafeen.reminder.noui.di.koinDIModule
+import ru.vafeen.reminder.noui.di.koinDIViewModelModule
 import ru.vafeen.reminder.noui.notification.NotificationChannelInfo
 
-@HiltAndroidApp
 class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        startKoin {
+            androidContext(this@App)
+            modules(koinDIModule, koinDIViewModelModule)
+        }
+
         val notificationManager =
             applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationChannel = NotificationChannel(

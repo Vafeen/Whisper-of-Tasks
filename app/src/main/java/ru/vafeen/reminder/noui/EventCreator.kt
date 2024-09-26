@@ -3,9 +3,8 @@ package ru.vafeen.reminder.noui
 import ru.vafeen.reminder.noui.local_database.DatabaseRepository
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
 import ru.vafeen.reminder.noui.time_mananger.Scheduler
-import javax.inject.Inject
 
-class EventCreator @Inject constructor(
+class EventCreator(
     private val scheduler: Scheduler,
     private val databaseRepository: DatabaseRepository
 ) {
