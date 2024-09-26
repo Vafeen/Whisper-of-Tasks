@@ -1,0 +1,39 @@
+package ru.vafeen.reminder.noui.time_mananger
+
+import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import dagger.hilt.android.qualifiers.ApplicationContext
+import ru.vafeen.reminder.noui.local_database.entity.Reminder
+import javax.inject.Inject
+
+@SuppressLint("RestrictedApi")
+class Scheduler @Inject constructor(@ApplicationContext private val context: Context) {
+    private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+    private val intent = Intent(context, AlarmReceiver::class.java)
+
+    @SuppressLint("ScheduleExactAlarm")
+    fun planOneTimeWork(reminder: Reminder) {
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            reminder.hashCode(),
+            intent,
+            PendingIntent.FLAG_IMMUTABLE
+        )
+        // Установите время срабатывания будильника
+        val triggerTime = System.currentTimeMillis() + 60000 // Через 1 минуту
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, triggerTime, pendingIntent)
+    }
+
+    fun planRepeatWork(reminder: Reminder) {
+
+    }
+
+    fun cancelWork(reminder: Reminder) {
+
+    }
+
+}
