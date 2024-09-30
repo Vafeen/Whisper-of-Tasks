@@ -15,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,10 +23,16 @@ import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.inject
+import ru.vafeen.reminder.noui.duration.RepeatDuration
+import ru.vafeen.reminder.noui.local_database.DatabaseRepository
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
 import ru.vafeen.reminder.ui.theme.FontSize
 import ru.vafeen.reminder.ui.theme.Theme
-import ru.vafeen.reminder.utils.generateUUID
+import ru.vafeen.reminder.utils.generateID
 import ru.vafeen.reminder.utils.getDateString
 import ru.vafeen.reminder.utils.getTimeDefaultStr
 import java.time.LocalDateTime
@@ -33,13 +40,18 @@ import java.time.LocalTime
 
 @Composable
 fun AddReminderDialog(onDismissRequest: () -> Unit, addReminder: (Reminder) -> Unit) {
+    val cor = rememberCoroutineScope()
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
+    val databaseRepository: DatabaseRepository by inject(
+        clazz = DatabaseRepository::class.java
+    )
     var newReminder by remember {
         mutableStateOf(
             Reminder(
                 title = "", text = "", dt = LocalDateTime.now().plusMinutes(5),
-                UUID = generateUUID()
+                idOfReminder = 0,
+                repeatDuration = RepeatDuration.NoRepeat
             )
         )
     }
@@ -49,12 +61,12 @@ fun AddReminderDialog(onDismissRequest: () -> Unit, addReminder: (Reminder) -> U
     LaunchedEffect(null) {
         focusRequester1.requestFocus()
     }
-    DefaultDialog(onDismissRequest = onDismissRequest) {
+    DefaultDialog(onDismissRequest = onDismissRequest) { dp ->
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Theme.colors.singleTheme)
-                .padding(it),
+                .padding(dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             OutlinedTextField(
@@ -81,8 +93,14 @@ fun AddReminderDialog(onDismissRequest: () -> Unit, addReminder: (Reminder) -> U
             }
 
             Button(onClick = {
-                addReminder(newReminder)
-                onDismissRequest()
+                cor.launch(Dispatchers.IO) {
+                    newReminder = newReminder.copy(
+                        idOfReminder = databaseRepository.getAllRemindersAsFlow().first()
+                            .map { it.idOfReminder }.generateID()
+                    )
+                    addReminder(newReminder)
+                    onDismissRequest()
+                }
             }, enabled = newReminder.let { it.text.isNotEmpty() && it.title.isNotEmpty() }) {
                 TextForThisTheme(text = mainButtonText, fontSize = FontSize.medium)
             }

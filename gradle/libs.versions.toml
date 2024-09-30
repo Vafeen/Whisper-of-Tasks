@@ -13,6 +13,7 @@ kotlin = "2.0.20"
 navigationCompose = "2.8.1"
 roomCommon = "2.6.1"
 roomKtx = "2.6.1"
+startupRuntime = "1.2.0"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -39,6 +40,7 @@ androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = 
 
 # Navigation
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startupRuntime" }
 
 # Koin
 

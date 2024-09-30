@@ -54,7 +54,7 @@ fun RemindersScreen(
     }
     LaunchedEffect(null) {
         Log.d("cor", "launch")
-        viewModel.databaseRepository.getAllReminders().collect {
+        viewModel.databaseRepository.getAllRemindersAsFlow().collect {
             reminders = it
         }
     }

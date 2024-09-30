@@ -33,7 +33,18 @@
             android:name="androidx.startup.InitializationProvider"
             android:authorities="${applicationId}.androidx-startup"
             tools:node="remove" />
-        <receiver android:name=".noui.time_mananger.AlarmReceiver" />
+
+        <receiver
+            android:name=".noui.planner.NotificationAboutLessonReceiver"
+            android:exported="false" />
+        <receiver
+            android:name=".noui.planner.ReminderRecoveryReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

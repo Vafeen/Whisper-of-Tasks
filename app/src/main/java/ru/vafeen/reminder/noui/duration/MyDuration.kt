@@ -1,19 +1,20 @@
 package ru.vafeen.reminder.noui.duration
 
-class MyDuration(val seconds: Long) {
+class MyDuration(val milliSeconds: Long) {
     companion object {
         fun ofTime(
             seconds: Long = 0,
             minutes: Long = 0,
             hours: Long = 0,
             days: Long = 0
-        ): MyDuration = MyDuration(seconds = seconds + minutes * 60 + hours * 3600 + days * 86400)
+        ): MyDuration =
+            MyDuration(milliSeconds = (seconds + minutes * 60 + hours * 60 * 60 + days * 86400) * 1000)
 
     }
 
     operator fun plus(myDuration: MyDuration): MyDuration =
-        MyDuration(seconds = seconds + myDuration.seconds)
+        MyDuration(milliSeconds = milliSeconds + myDuration.milliSeconds)
 
     operator fun minus(myDuration: MyDuration): MyDuration =
-        MyDuration(seconds = if (seconds > myDuration.seconds) seconds - myDuration.seconds else 0)
+        MyDuration(milliSeconds = if (milliSeconds > myDuration.milliSeconds) milliSeconds - myDuration.milliSeconds else 0)
 }
