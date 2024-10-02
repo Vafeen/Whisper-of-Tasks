@@ -31,11 +31,8 @@ class NotificationAboutLessonReceiver : BroadcastReceiver() {
                     title = it.title,
                     text = it.text
                 )
-                databaseRepository.deleteAllReminders(it)
+//                databaseRepository.deleteAllReminders(it)
             }
-//            databaseRepository.getLessonByIdOfReminder(idOfReminder = idOfReminder)?.let {
-//                databaseRepository.insertAllLessons(it.copy(idOfReminder = null))
-//            }
         }
     }
 }

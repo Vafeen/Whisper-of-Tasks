@@ -26,7 +26,10 @@ import ru.vafeen.reminder.ui.theme.FontSize
 import ru.vafeen.reminder.ui.theme.Theme
 
 @Composable
-fun Reminder.ReminderDataString(viewModel: RemindersScreenViewModel) {
+fun Reminder.ReminderDataString(
+    modifier: Modifier = Modifier,
+    viewModel: RemindersScreenViewModel
+) {
     val cor = rememberCoroutineScope()
     var isDialogDeleteShows by remember {
         mutableStateOf(false)
@@ -39,7 +42,7 @@ fun Reminder.ReminderDataString(viewModel: RemindersScreenViewModel) {
         onDismissRequest()
     }
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .padding(10.dp),
         colors = CardDefaults.cardColors(containerColor = Theme.colors.buttonColor)

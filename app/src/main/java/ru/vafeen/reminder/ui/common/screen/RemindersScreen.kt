@@ -2,6 +2,7 @@ package ru.vafeen.reminder.ui.common.screen
 
 import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,12 +29,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
-import ru.vafeen.reminder.ui.common.components.AddReminderDialog
 import ru.vafeen.reminder.ui.common.components.BottomBar
 import ru.vafeen.reminder.ui.common.components.ReminderDataString
+import ru.vafeen.reminder.ui.common.components.ReminderDialog
 import ru.vafeen.reminder.ui.common.components.TextForThisTheme
 import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
 import ru.vafeen.reminder.ui.common.viewmodel.RemindersScreenViewModel
@@ -51,6 +51,9 @@ fun RemindersScreen(
     }
     var isAddingReminder by remember {
         mutableStateOf(false)
+    }
+    val lastReminder: MutableState<Reminder?> = remember {
+        mutableStateOf(null)
     }
     LaunchedEffect(null) {
         Log.d("cor", "launch")
@@ -87,7 +90,10 @@ fun RemindersScreen(
         },
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { isAddingReminder = true },
+                onClick = {
+                    lastReminder.value = null
+                    isAddingReminder = true
+                },
                 containerColor = Theme.colors.mainColor
             ) {
                 Icon(
@@ -100,11 +106,8 @@ fun RemindersScreen(
         floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
         if (isAddingReminder)
-            AddReminderDialog(addReminder = {
-                cor.launch(Dispatchers.IO) {
-                    viewModel.eventCreator.addEvent(it)
-                }
-            }, onDismissRequest = { isAddingReminder = false })
+            ReminderDialog(newReminder = lastReminder,
+                onDismissRequest = { isAddingReminder = false })
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -118,7 +121,15 @@ fun RemindersScreen(
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                items(reminders) { it.ReminderDataString(viewModel = viewModel) }
+                items(reminders) {
+                    it.ReminderDataString(
+                        modifier = Modifier.clickable {
+                            lastReminder.value = it
+                            isAddingReminder = true
+                        },
+                        viewModel = viewModel
+                    )
+                }
             }
         }
     }

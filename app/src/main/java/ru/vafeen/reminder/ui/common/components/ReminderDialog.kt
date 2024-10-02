@@ -12,6 +12,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
+import ru.vafeen.reminder.noui.EventCreator
 import ru.vafeen.reminder.noui.duration.RepeatDuration
 import ru.vafeen.reminder.noui.local_database.DatabaseRepository
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
@@ -39,22 +41,27 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 
 @Composable
-fun AddReminderDialog(onDismissRequest: () -> Unit, addReminder: (Reminder) -> Unit) {
+fun ReminderDialog(
+    newReminder: MutableState<Reminder?>,
+    onDismissRequest: () -> Unit
+) {
+    val untitled = "untitled"
     val cor = rememberCoroutineScope()
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
     val databaseRepository: DatabaseRepository by inject(
         clazz = DatabaseRepository::class.java
     )
-    var newReminder by remember {
-        mutableStateOf(
-            Reminder(
-                title = "", text = "", dt = LocalDateTime.now().plusMinutes(5),
-                idOfReminder = 0,
-                repeatDuration = RepeatDuration.NoRepeat
-            )
+    val eventCreator: EventCreator by inject(
+        clazz = EventCreator::class.java
+    )
+    if (newReminder.value == null)
+        newReminder.value = Reminder(
+            title = "", text = "", dt = LocalDateTime.now().plusMinutes(5),
+            idOfReminder = 0,
+            repeatDuration = RepeatDuration.NoRepeat
         )
-    }
+
     var mainButtonText by remember {
         mutableStateOf("")
     }
@@ -71,16 +78,16 @@ fun AddReminderDialog(onDismissRequest: () -> Unit, addReminder: (Reminder) -> U
         ) {
             OutlinedTextField(
                 modifier = Modifier.focusRequester(focusRequester1),
-                value = newReminder.title,
-                onValueChange = { newReminder = newReminder.copy(title = it) },
+                value = newReminder.value?.title ?: untitled,
+                onValueChange = { newReminder.value = newReminder.value!!.copy(title = it) },
                 label = { Text(text = "title") },
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
             )
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
                 modifier = Modifier.focusRequester(focusRequester2),
-                value = newReminder.text,
-                onValueChange = { newReminder = newReminder.copy(text = it) },
+                value = newReminder.value?.text ?: untitled,
+                onValueChange = { newReminder.value = newReminder.value?.copy(text = it) },
                 label = { Text(text = "text") },
                 keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
             )
@@ -89,19 +96,24 @@ fun AddReminderDialog(onDismissRequest: () -> Unit, addReminder: (Reminder) -> U
             MyTimePicker(initialTime = LocalTime.now().plusMinutes(5)) { dt ->
                 mainButtonText =
                     "Отправить ${dt.getDateString()} в ${dt.hour.getTimeDefaultStr()}:${dt.minute.getTimeDefaultStr()}"
-                newReminder = newReminder.copy(dt = dt)
+                newReminder.value = newReminder.value?.copy(dt = dt)
             }
 
-            Button(onClick = {
-                cor.launch(Dispatchers.IO) {
-                    newReminder = newReminder.copy(
-                        idOfReminder = databaseRepository.getAllRemindersAsFlow().first()
-                            .map { it.idOfReminder }.generateID()
-                    )
-                    addReminder(newReminder)
-                    onDismissRequest()
-                }
-            }, enabled = newReminder.let { it.text.isNotEmpty() && it.title.isNotEmpty() }) {
+            Button(
+                onClick = {
+                    cor.launch(Dispatchers.IO) {
+                        newReminder.value = newReminder.value?.copy(
+                            idOfReminder = databaseRepository.getAllRemindersAsFlow().first()
+                                .map { it.idOfReminder }.generateID()
+                        )
+                        newReminder.value?.let {
+                            eventCreator.addEvent(it)
+                        }
+                        onDismissRequest()
+                    }
+                },
+                enabled = newReminder.value?.let { it.text.isNotEmpty() && it.title.isNotEmpty() }
+                    ?: false) {
                 TextForThisTheme(text = mainButtonText, fontSize = FontSize.medium19)
             }
         }

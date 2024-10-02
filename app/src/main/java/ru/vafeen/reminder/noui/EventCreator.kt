@@ -9,6 +9,7 @@ class EventCreator(
     private val databaseRepository: DatabaseRepository
 ) {
     suspend fun addEvent(reminder: Reminder) {
+        scheduler.cancelWork(reminder)
         if (reminder.repeatDuration.duration.milliSeconds != 0L)
             scheduler.planRepeatWork(reminder)
         else scheduler.planOneTimeWork(reminder)
@@ -19,11 +20,4 @@ class EventCreator(
         scheduler.cancelWork(reminder)
         databaseRepository.deleteAllReminders(reminder)
     }
-
-    suspend fun updateEvent(reminder: Reminder) {
-        scheduler.cancelWork(reminder)
-        addEvent(reminder)
-        databaseRepository.insertAllReminders(reminder)
-    }
-
 }
