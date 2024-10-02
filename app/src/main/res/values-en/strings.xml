@@ -4,4 +4,11 @@
     <string name="update_need">The app is out of date, time to update!</string>
     <string name="view_releases">Updating by click on QR below</string>
     <string name="updating">Updating . . .</string>
+    <string name="monday">Mon</string>
+    <string name="tuesday">Tue</string>
+    <string name="wednesday">Wed</string>
+    <string name="thursday">Thu</string>
+    <string name="friday">Fri</string>
+    <string name="satudray">Sat</string>
+    <string name="sunday">Sun</string>
 </resources>

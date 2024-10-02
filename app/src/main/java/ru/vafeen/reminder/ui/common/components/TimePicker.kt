@@ -47,20 +47,17 @@ fun Border(itemHeight: Dp) {
 
 
 @Composable
-fun MyTimePicker(
+fun MyDateTimePicker(
+    initialDate: LocalDate,
     initialTime: LocalTime,
     onDateTimeSelected: (LocalDateTime) -> Unit,
 ) {
     val dAndTToDt = { d: LocalDate, t: LocalTime -> LocalDateTime.of(d, t) }
     var pickedTime by remember {
-        mutableStateOf(
-            LocalTime.of(
-                initialTime.hour, initialTime.minute
-            )
-        )
+        mutableStateOf(initialTime)
     }
     var pickedDate by remember {
-        mutableStateOf(LocalDate.now())
+        mutableStateOf(initialDate)
     }
     Row(
         modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly

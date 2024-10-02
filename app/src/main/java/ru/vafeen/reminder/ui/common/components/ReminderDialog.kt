@@ -37,6 +37,7 @@ import ru.vafeen.reminder.ui.theme.Theme
 import ru.vafeen.reminder.utils.generateID
 import ru.vafeen.reminder.utils.getDateString
 import ru.vafeen.reminder.utils.getTimeDefaultStr
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
@@ -93,7 +94,11 @@ fun ReminderDialog(
             )
             Spacer(modifier = Modifier.height(20.dp))
 
-            MyTimePicker(initialTime = LocalTime.now().plusMinutes(5)) { dt ->
+            MyDateTimePicker(
+                initialTime = newReminder.value?.dt?.toLocalTime() ?: LocalTime.now()
+                    .plusMinutes(5),
+                initialDate = newReminder.value?.dt?.toLocalDate() ?: LocalDate.now()
+            ) { dt ->
                 mainButtonText =
                     "Отправить ${dt.getDateString()} в ${dt.hour.getTimeDefaultStr()}:${dt.minute.getTimeDefaultStr()}"
                 newReminder.value = newReminder.value?.copy(dt = dt)
