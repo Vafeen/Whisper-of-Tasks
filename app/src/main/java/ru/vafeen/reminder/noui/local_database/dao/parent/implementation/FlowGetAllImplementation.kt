@@ -3,7 +3,7 @@ package ru.vafeen.reminder.noui.local_database.dao.parent.implementation
 import kotlinx.coroutines.flow.Flow
 
 /**
- * Interface of additions for basic [DataAccessObject][ru.vafeen.universityschedule.database.dao.parent.DataAccessObject]
+ * Interface of additions for basic [DataAccessObject][ru.vafeen.reminder.noui.local_database.dao.parent.DataAccessObject]
  *
  * Addition: getting all entities T as Flow
  */

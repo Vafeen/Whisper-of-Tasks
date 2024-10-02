@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -110,6 +111,7 @@ private fun DateColumnPicker(
     for (i in 0..365) {
         list.add(dateToday.plusDays((i).toLong()).getDateString())
     }
+    val firstIndex = remember { derivedStateOf { listState.firstVisibleItemIndex } }
     list.add("")
     LaunchedEffect(listState.isScrollInProgress) {
         if (!listState.isScrollInProgress) {
@@ -130,7 +132,7 @@ private fun DateColumnPicker(
             verticalArrangement = Arrangement.spacedBy(space)
         ) {
             itemsIndexed(list) { index, it ->
-                val isSelected = listState.firstVisibleItemIndex == index - 1
+                val isSelected = firstIndex.value == index - 1
                 val newDT = dateToday.plusDays(index.toLong() - 1)
                 if (isSelected) onValueChange(newDT)
                 Column(
@@ -142,7 +144,7 @@ private fun DateColumnPicker(
                 ) {
                     TextForThisTheme(
                         text = it,
-                        fontSize = FontSize.medium,
+                        fontSize = FontSize.medium19,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -164,7 +166,7 @@ private fun TimeColumnPicker(
     // Высота списка (должна вмещать ровно три элемента)
     val listHeight = itemHeight * size + space * 2
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = value)
-
+    val firstIndex = remember { derivedStateOf { listState.firstVisibleItemIndex } }
     val list = mutableListOf("")
     for (i in range) list.add(i.getTimeDefaultStr())
     list.add("")
@@ -188,8 +190,8 @@ private fun TimeColumnPicker(
             verticalArrangement = Arrangement.spacedBy(space)
         ) {
             itemsIndexed(list) { index, it ->
-                val isSelected = listState.firstVisibleItemIndex == index - 1
-                if (isSelected) onValueChange(list[listState.firstVisibleItemIndex + 1].toIntOrNull())
+                val isSelected = firstIndex.value == index - 1
+                if (isSelected) onValueChange(list[firstIndex.value + 1].toIntOrNull())
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -197,7 +199,7 @@ private fun TimeColumnPicker(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    TextForThisTheme(text = it, fontSize = FontSize.medium)
+                    TextForThisTheme(text = it, fontSize = FontSize.medium19)
                 }
             }
         }

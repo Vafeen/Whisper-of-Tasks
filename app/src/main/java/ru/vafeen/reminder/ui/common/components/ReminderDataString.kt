@@ -52,8 +52,12 @@ fun Reminder.ReminderDataString(viewModel: RemindersScreenViewModel) {
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                TextForThisTheme(text = this@ReminderDataString.title, fontSize = FontSize.big)
-                TextForThisTheme(text = this@ReminderDataString.text, fontSize = FontSize.big)
+                TextForThisTheme(text = this@ReminderDataString.title, fontSize = FontSize.big22)
+                TextForThisTheme(text = this@ReminderDataString.text, fontSize = FontSize.big22)
+                TextForThisTheme(
+                    text = this@ReminderDataString.dt.toString(),
+                    fontSize = FontSize.big22
+                )
             }
             IconButton(onClick = { isDialogDeleteShows = true }) {
                 Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete reminder ")

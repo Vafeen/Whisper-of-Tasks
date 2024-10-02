@@ -80,5 +80,8 @@ dependencies {
     // Notifications
     implementation(libs.accompanist.permissions)
     //koin
-    implementation("io.insert-koin:koin-android:4.0.0")
+    implementation(libs.koin.android)
+    //Retrofit
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
 }

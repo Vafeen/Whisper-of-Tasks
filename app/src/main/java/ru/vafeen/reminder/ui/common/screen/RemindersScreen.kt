@@ -68,7 +68,7 @@ fun RemindersScreen(
                     .statusBarsPadding(),
                 horizontalArrangement = Arrangement.Center
             ) {
-                TextForThisTheme(text = "Reminders", fontSize = FontSize.huge)
+                TextForThisTheme(text = "Reminders", fontSize = FontSize.huge27)
             }
         },
         bottomBar = {

@@ -6,10 +6,13 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.background
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import ru.vafeen.reminder.noui.permission.RequestNotificationPermission
+import ru.vafeen.reminder.ui.common.components.ui_utils.CheckUpdateAndOpenBottomSheetIfNeed
 import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
 import ru.vafeen.reminder.ui.common.screen.MainScreen
 import ru.vafeen.reminder.ui.common.screen.RemindersScreen
@@ -34,7 +37,16 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            RequestNotificationPermission(context = LocalContext.current)
             MainTheme {
+                if (!viewModel.updateIsShowed) {
+                    CheckUpdateAndOpenBottomSheetIfNeed(
+                        networkRepository = viewModel.networkRepository
+                    ) {
+                        viewModel.updateIsShowed = true
+                    }
+                }
+
                 val navController = rememberNavController()
                 NavHost(
                     navController = navController,

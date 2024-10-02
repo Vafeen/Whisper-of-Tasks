@@ -8,6 +8,8 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import ru.vafeen.reminder.noui.di.koinDIModule
 import ru.vafeen.reminder.noui.di.koinDIViewModelModule
+import ru.vafeen.reminder.noui.di.koinNetworkDIModule
+import ru.vafeen.reminder.noui.di.koinServicesDIModule
 import ru.vafeen.reminder.noui.notification.NotificationChannelInfo
 
 class App : Application() {
@@ -17,7 +19,7 @@ class App : Application() {
 
         startKoin {
             androidContext(this@App)
-            modules(koinDIModule, koinDIViewModelModule)
+            modules(koinDIModule, koinDIViewModelModule, koinNetworkDIModule, koinServicesDIModule)
         }
 
         val notificationManager =

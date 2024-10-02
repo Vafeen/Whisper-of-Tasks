@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Reminder</string>
+    <string name="update_need">Приложение устарело, пора обновить!</string>
+    <string name="view_releases">Обновление по клику на QR ниже</string>
+    <string name="updating">Обновление . . .</string>
 </resources>

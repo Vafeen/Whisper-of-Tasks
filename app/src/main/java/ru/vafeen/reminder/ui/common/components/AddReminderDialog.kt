@@ -102,7 +102,7 @@ fun AddReminderDialog(onDismissRequest: () -> Unit, addReminder: (Reminder) -> U
                     onDismissRequest()
                 }
             }, enabled = newReminder.let { it.text.isNotEmpty() && it.title.isNotEmpty() }) {
-                TextForThisTheme(text = mainButtonText, fontSize = FontSize.medium)
+                TextForThisTheme(text = mainButtonText, fontSize = FontSize.medium19)
             }
         }
     }

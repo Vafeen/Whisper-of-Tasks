@@ -3,9 +3,9 @@ package ru.vafeen.reminder.ui.theme
 import androidx.compose.ui.unit.sp
 
 object FontSize {
-    val small = 12.sp
-    val medium = 18.sp
-    val big = 22.sp
-    val huge = 25.sp
-    val mega = 28.sp
+    val small17 = 17.sp
+    val medium19 = 19.sp
+    val big22 = 22.sp
+    val huge27 = 27.sp
+    val gigant = 200.sp
 }
