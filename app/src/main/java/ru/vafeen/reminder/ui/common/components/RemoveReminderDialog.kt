@@ -12,7 +12,10 @@ import androidx.compose.ui.Modifier
 import ru.vafeen.reminder.ui.theme.Theme
 
 @Composable
-fun RemoveReminderDialog(onDismissRequest: () -> Unit) {
+fun RemoveReminderDialog(
+    onDismissRequest: () -> Unit,
+    deleteReminder: () -> Unit
+) {
     DefaultDialog(onDismissRequest = onDismissRequest) {
         Column(
             modifier = Modifier
@@ -28,7 +31,10 @@ fun RemoveReminderDialog(onDismissRequest: () -> Unit) {
                 Button(onClick = { onDismissRequest() }) {
                     TextForThisTheme(text = "no")
                 }
-                Button(onClick = { onDismissRequest() }) {
+                Button(onClick = {
+                    deleteReminder()
+                    onDismissRequest()
+                }) {
                     TextForThisTheme(text = "ok")
                 }
             }

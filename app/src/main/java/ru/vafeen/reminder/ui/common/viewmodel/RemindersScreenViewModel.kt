@@ -7,5 +7,5 @@ import ru.vafeen.reminder.noui.local_database.DatabaseRepository
 
 class RemindersScreenViewModel(
     val databaseRepository: DatabaseRepository,
-    val eventCreator: EventCreator,
-) : ViewModel()
+    override val eventCreator: EventCreator,
+) : ViewModel(), EventCreatorViewModel

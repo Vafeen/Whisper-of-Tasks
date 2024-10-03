@@ -21,25 +21,25 @@ import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
-import ru.vafeen.reminder.ui.common.viewmodel.RemindersScreenViewModel
+import ru.vafeen.reminder.ui.common.viewmodel.EventCreatorViewModel
 import ru.vafeen.reminder.ui.theme.FontSize
 import ru.vafeen.reminder.ui.theme.Theme
 
 @Composable
 fun Reminder.ReminderDataString(
     modifier: Modifier = Modifier,
-    viewModel: RemindersScreenViewModel
+    viewModel: EventCreatorViewModel
 ) {
     val cor = rememberCoroutineScope()
     var isDialogDeleteShows by remember {
         mutableStateOf(false)
     }
-    val onDismissRequest = { isDialogDeleteShows = false }
-    if (isDialogDeleteShows) RemoveReminderDialog {
+    if (isDialogDeleteShows) RemoveReminderDialog(onDismissRequest = {
+        isDialogDeleteShows = false
+    }) {
         cor.launch(Dispatchers.IO) {
             viewModel.eventCreator.removeEvent(reminder = this@ReminderDataString)
         }
-        onDismissRequest()
     }
     Card(
         modifier = modifier

@@ -3,8 +3,8 @@ package ru.vafeen.reminder.ui.common.viewmodel
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import ru.vafeen.reminder.R
+import ru.vafeen.reminder.noui.EventCreator
 import ru.vafeen.reminder.noui.local_database.DatabaseRepository
-import ru.vafeen.reminder.noui.planner.Scheduler
 import ru.vafeen.reminder.noui.shared_preferences.SharedPreferences
 import ru.vafeen.reminder.utils.getSettingsOrCreateIfNull
 import java.time.LocalDate
@@ -13,9 +13,9 @@ import java.time.LocalDate
 class MainScreenViewModel(
     val databaseRepository: DatabaseRepository,
     private val sharedPreferences: SharedPreferences,
-    private val scheduler: Scheduler,
+    override val eventCreator: EventCreator,
     context: Context
-) : ViewModel() {
+) : ViewModel(), EventCreatorViewModel {
     val ruDaysOfWeek =
         context.let {
             listOf(
