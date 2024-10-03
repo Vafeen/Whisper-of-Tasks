@@ -112,7 +112,7 @@ fun ReminderDialog(
                                 .map { it.idOfReminder }.generateID()
                         )
                         newReminder.value?.let {
-                            eventCreator.addEvent(it)
+                            eventCreator.planeEvent(it)
                         }
                         onDismissRequest()
                     }

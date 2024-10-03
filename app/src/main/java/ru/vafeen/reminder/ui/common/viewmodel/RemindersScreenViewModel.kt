@@ -12,11 +12,17 @@ import ru.vafeen.reminder.noui.local_database.entity.Reminder
 class RemindersScreenViewModel(
     val databaseRepository: DatabaseRepository,
     override val eventCreator: EventCreator,
-) : ViewModel(), EventCreatorViewModel {
+) : ViewModel(), EventCreation {
 
     override fun removeEvent(reminder: Reminder) {
         viewModelScope.launch(Dispatchers.IO) {
             eventCreator.removeEvent(reminder = reminder)
+        }
+    }
+
+    override fun updateEvent(reminder: Reminder) {
+        viewModelScope.launch(Dispatchers.IO) {
+            eventCreator.planeEvent(reminder = reminder)
         }
     }
 }

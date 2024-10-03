@@ -12,7 +12,8 @@ data class Reminder(
     val title: String,
     val text: String,
     val dt: LocalDateTime,
-    val repeatDuration: RepeatDuration
+    val repeatDuration: RepeatDuration,
+    val isDone: Boolean = false
 ) {
 
 

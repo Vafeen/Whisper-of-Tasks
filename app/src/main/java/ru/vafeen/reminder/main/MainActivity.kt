@@ -37,8 +37,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            RequestNotificationPermission(context = LocalContext.current)
             MainTheme {
+                RequestNotificationPermission(context = LocalContext.current)
                 if (!viewModel.updateIsShowed) {
                     CheckUpdateAndOpenBottomSheetIfNeed(
                         networkRepository = viewModel.networkRepository

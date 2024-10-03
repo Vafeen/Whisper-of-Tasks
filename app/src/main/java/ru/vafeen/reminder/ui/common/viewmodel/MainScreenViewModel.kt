@@ -19,7 +19,7 @@ class MainScreenViewModel(
     private val sharedPreferences: SharedPreferences,
     override val eventCreator: EventCreator,
     context: Context
-) : ViewModel(), EventCreatorViewModel {
+) : ViewModel(), EventCreation {
     val ruDaysOfWeek =
         context.let {
             listOf(
@@ -39,6 +39,12 @@ class MainScreenViewModel(
     override fun removeEvent(reminder: Reminder) {
         viewModelScope.launch(Dispatchers.IO) {
             eventCreator.removeEvent(reminder = reminder)
+        }
+    }
+
+    override fun updateEvent(reminder: Reminder) {
+        viewModelScope.launch(Dispatchers.IO) {
+            eventCreator.planeEvent(reminder = reminder)
         }
     }
 }
