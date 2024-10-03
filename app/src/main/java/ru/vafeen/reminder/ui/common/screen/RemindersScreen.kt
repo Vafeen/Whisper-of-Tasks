@@ -116,21 +116,21 @@ fun RemindersScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                items(reminders) {
-                    it.ReminderDataString(
-                        modifier = Modifier.clickable {
-                            lastReminder.value = it
-                            isAddingReminder = true
-                        },
-                        viewModel = viewModel
-                    )
+            if (reminders.isNotEmpty())
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(reminders) {
+                        it.ReminderDataString(
+                            modifier = Modifier.clickable {
+                                lastReminder.value = it
+                                isAddingReminder = true
+                            },
+                            viewModel = viewModel
+                        )
+                    }
                 }
-            }
+            else TextForThisTheme(
+                text = "Вы еще не добавили\nни одного напоминания"
+            )
         }
     }
 }
