@@ -1,12 +1,13 @@
 package ru.vafeen.reminder.main
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -24,7 +25,7 @@ import ru.vafeen.reminder.ui.common.viewmodel.SettingsScreenViewModel
 import ru.vafeen.reminder.ui.theme.MainTheme
 import ru.vafeen.reminder.ui.theme.Theme
 
-
+@RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainActivityViewModel by viewModel()
@@ -32,13 +33,14 @@ class MainActivity : ComponentActivity() {
     private val remindersScreenViewModel: RemindersScreenViewModel by viewModel()
     private val settingsScreenViewModel: SettingsScreenViewModel by viewModel()
 
+
     override
     fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             MainTheme {
-                RequestNotificationPermission(context = LocalContext.current)
+                RequestNotificationPermission()
                 if (!viewModel.updateIsShowed) {
                     CheckUpdateAndOpenBottomSheetIfNeed(
                         networkRepository = viewModel.networkRepository
