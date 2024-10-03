@@ -27,6 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import kotlinx.coroutines.Dispatchers
@@ -35,8 +36,10 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.vafeen.reminder.network.downloader.Downloader
 import ru.vafeen.reminder.network.downloader.Progress
+import ru.vafeen.reminder.noui.duration.RepeatDuration
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
 import ru.vafeen.reminder.ui.common.components.BottomBar
+import ru.vafeen.reminder.ui.common.components.ReminderDataString
 import ru.vafeen.reminder.ui.common.components.TextForThisTheme
 import ru.vafeen.reminder.ui.common.components.ui_utils.UpdateProgress
 import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
@@ -125,6 +128,7 @@ fun MainScreen(
             }
         }
     }
+
     LaunchedEffect(key1 = null) {
         withContext(Dispatchers.Main) {
             while (true) {
@@ -181,21 +185,45 @@ fun MainScreen(
                     }
                 }
             }
-
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                HorizontalPager(
-                    state = pagerState, modifier = Modifier.weight(10f)
-                ) { page ->
+            HorizontalPager(
+                state = pagerState, modifier = Modifier.weight(10f)
+            ) { page ->
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                ) {
                     val thisDate = viewModel.todayDate.plusDays(page.toLong())
                     localDate = viewModel.todayDate.plusDays(pagerState.currentPage.toLong())
                     if (!pagerState.isScrollInProgress) LaunchedEffect(key1 = null) {
                         cardsWithDateState.animateScrollToItem(pagerState.currentPage)
                     }
-                    TextForThisTheme(text = "page $page")
+                    val remindersForThisDay = reminders.filter {
+                        it.dt.toLocalDate() == thisDate ||
+                                it.repeatDuration == RepeatDuration.EveryDay ||
+                                it.repeatDuration == RepeatDuration.EveryWeek && it.dt.dayOfWeek == thisDate.dayOfWeek
+                    }
+                    val lostReminders = reminders.filter {
+                        it.dt.toLocalDate() < thisDate
+                    }
+                    TextForThisTheme(
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        text = "События в этот день\\"
+                    )
+                    for (reminder in remindersForThisDay) {
+                        reminder.ReminderDataString(viewModel = viewModel)
+                    }
+                    TextForThisTheme(
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Center,
+                        text = "Прошедшие события\\"
+                    )
+                    if (lostReminders.isNotEmpty()) {
+
+                        for (reminder in lostReminders) {
+                            reminder.ReminderDataString(viewModel = viewModel)
+                        }
+                    }
                 }
             }
             if (isUpdateInProcess) UpdateProgress(percentage = progress)
