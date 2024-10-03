@@ -14,7 +14,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.vafeen.reminder.R
 import ru.vafeen.reminder.network.downloader.Progress
-import ru.vafeen.reminder.ui.common.components.TextForThisTheme
 import ru.vafeen.reminder.ui.theme.FontSize
 import ru.vafeen.reminder.ui.theme.Theme
 

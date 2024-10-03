@@ -1,4 +1,4 @@
-package ru.vafeen.reminder.ui.common.components
+package ru.vafeen.reminder.ui.common.components.ui_utils
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier

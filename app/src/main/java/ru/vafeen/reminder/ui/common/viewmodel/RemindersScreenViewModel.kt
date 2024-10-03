@@ -7,6 +7,7 @@ import kotlinx.coroutines.launch
 import ru.vafeen.reminder.noui.EventCreator
 import ru.vafeen.reminder.noui.local_database.DatabaseRepository
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
+import ru.vafeen.reminder.ui.common.components.EventCreation
 
 
 class RemindersScreenViewModel(

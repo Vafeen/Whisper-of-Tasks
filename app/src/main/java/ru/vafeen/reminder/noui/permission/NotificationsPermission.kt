@@ -21,8 +21,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.content.ContextCompat
 import kotlinx.coroutines.delay
-import ru.vafeen.reminder.ui.common.components.DefaultDialog
-import ru.vafeen.reminder.ui.common.components.TextForThisTheme
+import ru.vafeen.reminder.ui.common.components.ui_utils.DefaultDialog
+import ru.vafeen.reminder.ui.common.components.ui_utils.TextForThisTheme
 import ru.vafeen.reminder.ui.theme.Theme
 
 @Composable

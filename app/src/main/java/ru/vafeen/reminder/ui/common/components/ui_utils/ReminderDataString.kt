@@ -1,4 +1,4 @@
-package ru.vafeen.reminder.ui.common.components
+package ru.vafeen.reminder.ui.common.components.ui_utils
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -20,7 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
-import ru.vafeen.reminder.ui.common.viewmodel.EventCreation
+import ru.vafeen.reminder.ui.common.components.EventCreation
 import ru.vafeen.reminder.ui.theme.FontSize
 import ru.vafeen.reminder.ui.theme.Theme
 

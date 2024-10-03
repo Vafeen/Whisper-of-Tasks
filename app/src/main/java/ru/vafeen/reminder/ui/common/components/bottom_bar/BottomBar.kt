@@ -1,4 +1,4 @@
-package ru.vafeen.reminder.ui.common.components
+package ru.vafeen.reminder.ui.common.components.bottom_bar
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height

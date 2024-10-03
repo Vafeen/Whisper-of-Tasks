@@ -1,4 +1,4 @@
-package ru.vafeen.reminder.ui.common.viewmodel
+package ru.vafeen.reminder.ui.common.components
 
 import ru.vafeen.reminder.noui.EventCreator
 import ru.vafeen.reminder.noui.local_database.entity.Reminder

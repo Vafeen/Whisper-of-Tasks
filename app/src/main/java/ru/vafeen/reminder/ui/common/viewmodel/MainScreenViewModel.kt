@@ -10,6 +10,7 @@ import ru.vafeen.reminder.noui.EventCreator
 import ru.vafeen.reminder.noui.local_database.DatabaseRepository
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
 import ru.vafeen.reminder.noui.shared_preferences.SharedPreferences
+import ru.vafeen.reminder.ui.common.components.EventCreation
 import ru.vafeen.reminder.utils.getSettingsOrCreateIfNull
 import java.time.LocalDate
 

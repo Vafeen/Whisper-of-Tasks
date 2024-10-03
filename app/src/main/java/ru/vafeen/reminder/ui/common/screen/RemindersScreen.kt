@@ -30,10 +30,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
-import ru.vafeen.reminder.ui.common.components.BottomBar
-import ru.vafeen.reminder.ui.common.components.ReminderDataString
-import ru.vafeen.reminder.ui.common.components.ReminderDialog
-import ru.vafeen.reminder.ui.common.components.TextForThisTheme
+import ru.vafeen.reminder.ui.common.components.bottom_bar.BottomBar
+import ru.vafeen.reminder.ui.common.components.ui_utils.ReminderDataString
+import ru.vafeen.reminder.ui.common.components.ui_utils.ReminderDialog
+import ru.vafeen.reminder.ui.common.components.ui_utils.TextForThisTheme
 import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
 import ru.vafeen.reminder.ui.common.viewmodel.RemindersScreenViewModel
 import ru.vafeen.reminder.ui.theme.FontSize
