@@ -2,9 +2,13 @@ package ru.vafeen.reminder.ui.common.viewmodel
 
 import android.content.Context
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import ru.vafeen.reminder.R
 import ru.vafeen.reminder.noui.EventCreator
 import ru.vafeen.reminder.noui.local_database.DatabaseRepository
+import ru.vafeen.reminder.noui.local_database.entity.Reminder
 import ru.vafeen.reminder.noui.shared_preferences.SharedPreferences
 import ru.vafeen.reminder.utils.getSettingsOrCreateIfNull
 import java.time.LocalDate
@@ -32,4 +36,9 @@ class MainScreenViewModel(
     val todayDate: LocalDate = LocalDate.now()
     val pageNumber = 365
 
+    override fun removeEvent(reminder: Reminder) {
+        viewModelScope.launch(Dispatchers.IO) {
+            eventCreator.removeEvent(reminder = reminder)
+        }
+    }
 }
