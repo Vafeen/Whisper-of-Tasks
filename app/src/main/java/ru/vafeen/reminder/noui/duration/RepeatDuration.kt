@@ -1,9 +1,11 @@
 package ru.vafeen.reminder.noui.duration
 
-enum class RepeatDuration(val duration: MyDuration) {
-    NoRepeat(duration = MyDuration(0)),
-    EveryDay(duration = MyDuration.ofTime(days = 1)),
-    EveryWeek(duration = MyDuration.ofTime(days = 7));
+import ru.vafeen.reminder.R
+
+enum class RepeatDuration(val duration: MyDuration, val resourceName: Int) {
+    NoRepeat(duration = MyDuration(0), resourceName = R.string.no_repeat),
+    EveryDay(duration = MyDuration.ofTime(days = 1), resourceName = R.string.every_day),
+    EveryWeek(duration = MyDuration.ofTime(days = 7), resourceName = R.string.every_week);
 
     companion object {
         val all = listOf(

@@ -1,6 +1,8 @@
 package ru.vafeen.reminder.ui.common.components.ui_utils
 
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,7 +31,6 @@ import ru.vafeen.reminder.ui.theme.Theme
 import ru.vafeen.reminder.utils.getDateString
 import ru.vafeen.reminder.utils.getTimeDefaultStr
 import java.time.LocalDate
-import java.time.LocalDateTime
 import java.time.LocalTime
 
 
@@ -45,14 +46,14 @@ fun Border(itemHeight: Dp) {
     ) {}
 }
 
-
 @Composable
 fun MyDateTimePicker(
-    initialDate: LocalDate,
-    initialTime: LocalTime,
-    onDateTimeSelected: (LocalDateTime) -> Unit,
+    isTimeNeeded: Boolean,
+    initialDate: LocalDate?,
+    onDateSelected: (LocalDate) -> Unit,
+    initialTime: LocalTime?,
+    onTimeSelected: (LocalTime) -> Unit,
 ) {
-    val dAndTToDt = { d: LocalDate, t: LocalTime -> LocalDateTime.of(d, t) }
     var pickedTime by remember {
         mutableStateOf(initialTime)
     }
@@ -60,39 +61,45 @@ fun MyDateTimePicker(
         mutableStateOf(initialDate)
     }
     Row(
-        modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly
+        modifier = Modifier
+            .fillMaxWidth()
+            .border(border = BorderStroke(width = 2.dp, color = Theme.colors.oppositeTheme)),
+        horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        DateColumnPicker(modifier = Modifier.weight(1f), onValueChange = {
-            if (it != null) {
-                pickedDate = it
-                onDateTimeSelected(dAndTToDt(pickedDate, pickedTime))
-            }
-        })
-        TimeColumnPicker(
-            modifier = Modifier.weight(2f),
-            value = pickedTime.hour,
-            onValueChange = {
+        if (initialDate != null && pickedDate != null)
+            DateColumnPicker(modifier = Modifier.weight(1f), onValueChange = {
                 if (it != null) {
-                    pickedTime = LocalTime.of(it, pickedTime.minute)
-                    onDateTimeSelected(dAndTToDt(pickedDate, pickedTime))
+                    pickedDate = it
+                    onDateSelected(it)
                 }
-            },
-            range = 0..23,
-        )
-        TimeColumnPicker(
-            value = pickedTime.minute, onValueChange = {
-                if (it != null) {
-                    pickedTime = LocalTime.of(pickedTime.hour, it)
-                    onDateTimeSelected(dAndTToDt(pickedDate, pickedTime))
-                }
-            }, range = 0..59, modifier = Modifier.weight(1f)
-        )
+            })
+        if (isTimeNeeded && initialTime != null && pickedTime != null) {
+            TimeColumnPicker(
+                modifier = Modifier.weight(2f),
+                value = pickedTime?.hour ?: 0,
+                onValueChange = { hour ->
+                    if (hour != null) {
+                        pickedTime = LocalTime.of(hour, pickedTime?.minute ?: 0)
+                        pickedTime?.let { onTimeSelected(it) }
+                    }
+                },
+                range = 0..23,
+            )
+            TimeColumnPicker(
+                value = pickedTime?.minute ?: 0, onValueChange = { minute ->
+                    if (minute != null) {
+                        pickedTime = LocalTime.of(pickedTime?.hour ?: 0, minute)
+                        pickedTime?.let { onTimeSelected(it) }
+                    }
+                }, range = 0..59, modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
 
 @Composable
 private fun DateColumnPicker(
-    onValueChange: (LocalDate?) -> Unit, modifier: Modifier = Modifier
+    onValueChange: (LocalDate?) -> Unit, modifier: Modifier = Modifier,
 ) {
     // Высота одного элемента
     val itemHeight = 40.dp
@@ -152,7 +159,7 @@ private fun DateColumnPicker(
 
 @Composable
 private fun TimeColumnPicker(
-    value: Int, onValueChange: (Int?) -> Unit, range: IntRange, modifier: Modifier = Modifier
+    value: Int, onValueChange: (Int?) -> Unit, range: IntRange, modifier: Modifier = Modifier,
 ) {
     // Высота одного элемента
     val itemHeight = 40.dp

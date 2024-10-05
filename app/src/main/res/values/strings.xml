@@ -10,4 +10,7 @@
     <string name="friday">ПТ</string>
     <string name="satudray">СБ</string>
     <string name="sunday">ВС</string>
+    <string name="no_repeat">Без повторений</string>
+    <string name="every_day">Каждый день</string>
+    <string name="every_week">Каждую неделю</string>
 </resources>

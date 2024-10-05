@@ -19,7 +19,7 @@ class MainScreenViewModel(
     val databaseRepository: DatabaseRepository,
     private val sharedPreferences: SharedPreferences,
     override val eventCreator: EventCreator,
-    context: Context
+    context: Context,
 ) : ViewModel(), EventCreation {
     val ruDaysOfWeek =
         context.let {

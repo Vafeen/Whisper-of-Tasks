@@ -6,11 +6,11 @@ import ru.vafeen.reminder.noui.planner.Scheduler
 
 class EventCreator(
     private val scheduler: Scheduler,
-    private val databaseRepository: DatabaseRepository
+    private val databaseRepository: DatabaseRepository,
 ) {
     suspend fun planeEvent(reminder: Reminder) {
         scheduler.cancelWork(reminder)
-        if (!reminder.isDone)
+        if (reminder.isNotificationNeeded)
             if (reminder.repeatDuration.duration.milliSeconds != 0L)
                 scheduler.planRepeatWork(reminder)
             else scheduler.planOneTimeWork(reminder)

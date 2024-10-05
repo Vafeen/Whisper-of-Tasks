@@ -1,6 +1,5 @@
 package ru.vafeen.reminder.ui.common.screen
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,11 +23,12 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
+import ru.vafeen.reminder.noui.duration.RepeatDuration
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
 import ru.vafeen.reminder.ui.common.components.bottom_bar.BottomBar
 import ru.vafeen.reminder.ui.common.components.ui_utils.ReminderDataString
@@ -38,14 +38,16 @@ import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
 import ru.vafeen.reminder.ui.common.viewmodel.RemindersScreenViewModel
 import ru.vafeen.reminder.ui.theme.FontSize
 import ru.vafeen.reminder.ui.theme.Theme
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 
 @Composable
 fun RemindersScreen(
     viewModel: RemindersScreenViewModel,
-    navController: NavController
+    navController: NavController,
 ) {
-    val cor = rememberCoroutineScope()
+    val context = LocalContext.current
     var reminders by remember {
         mutableStateOf(listOf<Reminder>())
     }
@@ -56,7 +58,6 @@ fun RemindersScreen(
         mutableStateOf(null)
     }
     LaunchedEffect(null) {
-        Log.d("cor", "launch")
         viewModel.databaseRepository.getAllRemindersAsFlow().collect {
             reminders = it
         }
@@ -105,9 +106,20 @@ fun RemindersScreen(
         },
         floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
-        if (isAddingReminder)
-            ReminderDialog(newReminder = lastReminder,
+        if (isAddingReminder) {
+            if (lastReminder.value == null) {
+                lastReminder.value = Reminder(
+                    title = "", text = "", dt = LocalDateTime.now().plusMinutes(5),
+                    idOfReminder = 0,
+                    repeatDuration = RepeatDuration.NoRepeat
+                )
+            }
+
+            ReminderDialog(
+                newReminder = lastReminder as MutableState<Reminder>, // safety is above
                 onDismissRequest = { isAddingReminder = false })
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -116,6 +128,7 @@ fun RemindersScreen(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            val date by remember { mutableStateOf(LocalDate.now()) }
             if (reminders.isNotEmpty())
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(reminders) {
@@ -124,7 +137,7 @@ fun RemindersScreen(
                                 lastReminder.value = it
                                 isAddingReminder = true
                             },
-                            viewModel = viewModel
+                            viewModel = viewModel, dateOfThisPage = date, context = context
                         )
                     }
                 }

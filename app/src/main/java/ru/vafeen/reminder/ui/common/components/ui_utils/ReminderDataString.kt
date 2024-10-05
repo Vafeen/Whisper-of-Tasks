@@ -1,5 +1,7 @@
 package ru.vafeen.reminder.ui.common.components.ui_utils
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -23,11 +25,14 @@ import ru.vafeen.reminder.noui.local_database.entity.Reminder
 import ru.vafeen.reminder.ui.common.components.EventCreation
 import ru.vafeen.reminder.ui.theme.FontSize
 import ru.vafeen.reminder.ui.theme.Theme
+import java.time.LocalDate
 
 @Composable
 fun Reminder.ReminderDataString(
+    context: Context,
+    dateOfThisPage: LocalDate,
     modifier: Modifier = Modifier,
-    viewModel: EventCreation
+    viewModel: EventCreation,
 ) {
     var isDialogDeleteShows by remember {
         mutableStateOf(false)
@@ -49,10 +54,21 @@ fun Reminder.ReminderDataString(
                 .padding(10.dp)
         ) {
             Checkbox(
-                checked = this@ReminderDataString.isDone, onCheckedChange = {
-                    viewModel.updateEvent(this@ReminderDataString.copy(isDone = !this@ReminderDataString.isDone))
-                },
-                colors = CheckboxDefaults.colors(
+                checked = dateOfDone != null && dateOfDone >= dateOfThisPage, onCheckedChange = {
+                    viewModel.updateEvent(
+                        copy(
+                            dateOfDone = if (dateOfDone == dateOfThisPage) null else {
+                                if (dateOfDone != null)
+                                    Toast.makeText(
+                                        context,
+                                        "Помечено выполненным до сегодня",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                dateOfThisPage
+                            }
+                        )
+                    )
+                }, colors = CheckboxDefaults.colors(
                     checkedColor = Theme.colors.oppositeTheme,
                     uncheckedColor = Theme.colors.oppositeTheme,
                     checkmarkColor = Theme.colors.singleTheme,
@@ -61,11 +77,10 @@ fun Reminder.ReminderDataString(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                TextForThisTheme(text = this@ReminderDataString.title, fontSize = FontSize.big22)
-                TextForThisTheme(text = this@ReminderDataString.text, fontSize = FontSize.big22)
+                TextForThisTheme(text = title, fontSize = FontSize.big22)
+                TextForThisTheme(text = text, fontSize = FontSize.big22)
                 TextForThisTheme(
-                    text = this@ReminderDataString.dt.toString(),
-                    fontSize = FontSize.big22
+                    text = dt.toString(), fontSize = FontSize.big22
                 )
             }
             IconButton(onClick = { isDialogDeleteShows = true }) {

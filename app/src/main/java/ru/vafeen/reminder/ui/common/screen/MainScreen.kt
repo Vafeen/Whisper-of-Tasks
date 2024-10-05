@@ -19,6 +19,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,6 +41,7 @@ import ru.vafeen.reminder.noui.duration.RepeatDuration
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
 import ru.vafeen.reminder.ui.common.components.bottom_bar.BottomBar
 import ru.vafeen.reminder.ui.common.components.ui_utils.ReminderDataString
+import ru.vafeen.reminder.ui.common.components.ui_utils.ReminderDialog
 import ru.vafeen.reminder.ui.common.components.ui_utils.TextForThisTheme
 import ru.vafeen.reminder.ui.common.components.ui_utils.UpdateProgress
 import ru.vafeen.reminder.ui.common.navigation.ScreenRoute
@@ -55,7 +57,7 @@ import java.time.LocalTime
 
 @Composable
 fun MainScreen(
-    navController: NavController, viewModel: MainScreenViewModel
+    navController: NavController, viewModel: MainScreenViewModel,
 ) {
     val context = LocalContext.current
     val defaultColor = Theme.colors.mainColor
@@ -78,7 +80,12 @@ fun MainScreen(
     var localDate by remember {
         mutableStateOf(LocalDate.now())
     }
-
+    var isEditingReminder by remember {
+        mutableStateOf(false)
+    }
+    val lastReminder: MutableState<Reminder?> = remember {
+        mutableStateOf(null)
+    }
     LaunchedEffect(key1 = null) {
         Downloader.isUpdateInProcessFlow.collect {
             isUpdateInProcess = it
@@ -151,6 +158,11 @@ fun MainScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
+            if (isEditingReminder) {
+                ReminderDialog(
+                    newReminder = lastReminder as MutableState<Reminder>, // safety is above
+                    onDismissRequest = { isEditingReminder = false })
+            }
             LazyRow(
                 state = cardsWithDateState,
                 modifier = Modifier
@@ -192,26 +204,35 @@ fun MainScreen(
                     modifier = Modifier
                         .fillMaxSize()
                 ) {
-                    val thisDate = viewModel.todayDate.plusDays(page.toLong())
+                    val dateOfThisPage = viewModel.todayDate.plusDays(page.toLong())
                     localDate = viewModel.todayDate.plusDays(pagerState.currentPage.toLong())
                     if (!pagerState.isScrollInProgress) LaunchedEffect(key1 = null) {
                         cardsWithDateState.animateScrollToItem(pagerState.currentPage)
                     }
                     val remindersForThisDay = reminders.filter {
-                        it.dt.toLocalDate() == thisDate ||
+                        it.dt?.toLocalDate() == dateOfThisPage ||
                                 it.repeatDuration == RepeatDuration.EveryDay ||
-                                it.repeatDuration == RepeatDuration.EveryWeek && it.dt.dayOfWeek == thisDate.dayOfWeek
+                                it.repeatDuration == RepeatDuration.EveryWeek && it.dt?.dayOfWeek == dateOfThisPage.dayOfWeek
                     }
                     val lostReminders = reminders.filter {
-                        it.dt.toLocalDate() < thisDate
+                        it.repeatDuration == RepeatDuration.NoRepeat &&
+                                dateOfThisPage > it.dt?.toLocalDate()
                     }
                     TextForThisTheme(
                         modifier = Modifier.fillMaxWidth(),
                         textAlign = TextAlign.Center,
                         text = "События в этот день\\"
                     )
-                    for (reminder in remindersForThisDay) {
-                        reminder.ReminderDataString(viewModel = viewModel)
+                    remindersForThisDay.forEach {
+                        it.ReminderDataString(
+                            modifier = Modifier.clickable {
+                                lastReminder.value = it
+                                isEditingReminder = true
+                            },
+                            viewModel = viewModel,
+                            dateOfThisPage = dateOfThisPage,
+                            context = context
+                        )
                     }
                     TextForThisTheme(
                         modifier = Modifier.fillMaxWidth(),
@@ -219,9 +240,16 @@ fun MainScreen(
                         text = "Прошедшие события\\"
                     )
                     if (lostReminders.isNotEmpty()) {
-
-                        for (reminder in lostReminders) {
-                            reminder.ReminderDataString(viewModel = viewModel)
+                        lostReminders.forEach {
+                            it.ReminderDataString(
+                                modifier = Modifier.clickable {
+                                    lastReminder.value = it
+                                    isEditingReminder = true
+                                },
+                                viewModel = viewModel,
+                                dateOfThisPage = dateOfThisPage,
+                                context = context
+                            )
                         }
                     }
                 }

@@ -11,4 +11,7 @@
     <string name="friday">Fri</string>
     <string name="satudray">Sat</string>
     <string name="sunday">Sun</string>
+    <string name="no_repeat">No repeat</string>
+    <string name="every_day">Every day</string>
+    <string name="every_week">Every week</string>
 </resources>
