@@ -8,15 +8,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -43,6 +45,7 @@ import ru.vafeen.whisperoftasks.ui.theme.Theme
 import java.time.LocalDate
 import java.time.LocalDateTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RemindersScreen(
     viewModel: RemindersScreenViewModel,
@@ -64,14 +67,28 @@ fun RemindersScreen(
         }
     }
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .statusBarsPadding(),
-            horizontalArrangement = Arrangement.Center
-        ) {
-            TextForThisTheme(text = "Reminders", fontSize = FontSize.huge27)
-        }
+        TopAppBar(colors = TopAppBarColors(
+            containerColor = Theme.colors.singleTheme,
+            scrolledContainerColor = Theme.colors.singleTheme,
+            navigationIconContentColor = Theme.colors.oppositeTheme,
+            titleContentColor = Theme.colors.oppositeTheme,
+            actionIconContentColor = Theme.colors.singleTheme
+        ), title = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+//                    .statusBarsPadding()
+                ,
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextForThisTheme(
+                    text = stringResource(id = R.string.tasks_list),
+                    fontSize = FontSize.huge27
+                )
+            }
+        })
+
     }, bottomBar = {
         BottomBar(containerColor = Theme.colors.mainColor,
             selectedRemindersScreen = true,
@@ -118,8 +135,8 @@ fun RemindersScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .background(Theme.colors.singleTheme)
-                .padding(innerPadding),
+                .padding(innerPadding)
+                .background(Theme.colors.singleTheme),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

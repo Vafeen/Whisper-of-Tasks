@@ -18,8 +18,10 @@
     <string name="events_on_this_day">Events on this day</string>
     <string name="past_events">Past events</string>
     <string name="no_events_today">No events today</string>
-    <string name="you_havent_added_any_events_yet">You haven\'t added\nany events yet</string>
+    <string name="you_havent_added_any_events_yet">You haven\'t added\n  any events yet</string>
     <string name="notification">Notification</string>
     <string name="send">Send</string>
     <string name="add_to_list">Add to list</string>
+    <string name="tasks_by_day">Tasks by day</string>
+    <string name="tasks_list">Tasks list</string>
 </resources>

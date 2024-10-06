@@ -2,10 +2,12 @@ package ru.vafeen.whisperoftasks.ui.common.screen
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,8 +19,11 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -60,6 +65,7 @@ import ru.vafeen.whisperoftasks.utils.suitableColor
 import java.time.LocalDate
 import java.time.LocalTime
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(
     navController: NavController, viewModel: MainScreenViewModel,
@@ -157,11 +163,38 @@ fun MainScreen(
                 selectedMainScreen = true,
                 navigateToRemindersScreen = { navController.navigate(ScreenRoute.Reminders.route) },
                 navigateToSettingsScreen = { navController.navigate(ScreenRoute.Settings.route) })
+        },
+        topBar = {
+            TopAppBar(colors = TopAppBarColors(
+                containerColor = Theme.colors.singleTheme,
+                scrolledContainerColor = Theme.colors.singleTheme,
+                navigationIconContentColor = Theme.colors.oppositeTheme,
+                titleContentColor = Theme.colors.oppositeTheme,
+                actionIconContentColor = Theme.colors.singleTheme
+            ),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(0.dp),
+                title = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        TextForThisTheme(
+                            text = stringResource(id = R.string.tasks_by_day),
+                            fontSize = FontSize.huge27
+                        )
+                    }
+
+                })
+
         }) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
+                .background(Theme.colors.singleTheme)
         ) {
             if (isEditingReminder) {
                 ReminderDialog(
@@ -171,8 +204,7 @@ fun MainScreen(
             LazyRow(
                 state = cardsWithDateState,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(3.dp),
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 items(count = viewModel.pageNumber) { index ->
