@@ -6,11 +6,11 @@ plugins {
 }
 
 android {
-    namespace = "ru.vafeen.reminder"
+    namespace = "ru.vafeen.whisperoftasks"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "ru.vafeen.reminder"
+        applicationId = "ru.vafeen.whisperoftasks"
         minSdk = 26
         targetSdk = 34
         versionCode = 1
