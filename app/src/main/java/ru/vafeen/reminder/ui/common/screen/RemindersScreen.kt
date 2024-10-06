@@ -27,7 +27,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
+import ru.vafeen.reminder.R
 import ru.vafeen.reminder.noui.duration.RepeatDuration
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
 import ru.vafeen.reminder.ui.common.components.bottom_bar.BottomBar
@@ -40,7 +42,6 @@ import ru.vafeen.reminder.ui.theme.FontSize
 import ru.vafeen.reminder.ui.theme.Theme
 import java.time.LocalDate
 import java.time.LocalDateTime
-
 
 @Composable
 fun RemindersScreen(
@@ -62,54 +63,48 @@ fun RemindersScreen(
             reminders = it
         }
     }
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize(),
-        topBar = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .statusBarsPadding(),
-                horizontalArrangement = Arrangement.Center
-            ) {
-                TextForThisTheme(text = "Reminders", fontSize = FontSize.huge27)
-            }
-        },
-        bottomBar = {
-            BottomBar(
-                containerColor = Theme.colors.mainColor,
-                selectedRemindersScreen = true,
-                navigateToMainScreen = {
-                    navController.popBackStack()
-                    navController.popBackStack()
-                    navController.navigate(ScreenRoute.Main.route)
-                },
-                navigateToSettingsScreen = {
-                    navController.popBackStack()
-                    navController.navigate(ScreenRoute.Settings.route)
-                })
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = {
-                    lastReminder.value = null
-                    isAddingReminder = true
-                },
-                containerColor = Theme.colors.mainColor
-            ) {
-                Icon(
-                    imageVector = Icons.Filled.Add,
-                    contentDescription = "Add new reminder",
-                    tint = Theme.colors.oppositeTheme
-                )
-            }
-        },
-        floatingActionButtonPosition = FabPosition.End
+    Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding(),
+            horizontalArrangement = Arrangement.Center
+        ) {
+            TextForThisTheme(text = "Reminders", fontSize = FontSize.huge27)
+        }
+    }, bottomBar = {
+        BottomBar(containerColor = Theme.colors.mainColor,
+            selectedRemindersScreen = true,
+            navigateToMainScreen = {
+                navController.popBackStack()
+                navController.popBackStack()
+                navController.navigate(ScreenRoute.Main.route)
+            },
+            navigateToSettingsScreen = {
+                navController.popBackStack()
+                navController.navigate(ScreenRoute.Settings.route)
+            })
+    }, floatingActionButton = {
+        FloatingActionButton(
+            onClick = {
+                lastReminder.value = null
+                isAddingReminder = true
+            }, containerColor = Theme.colors.mainColor
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Add,
+                contentDescription = "Add new reminder",
+                tint = Theme.colors.oppositeTheme
+            )
+        }
+    }, floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
         if (isAddingReminder) {
             if (lastReminder.value == null) {
                 lastReminder.value = Reminder(
-                    title = "", text = "", dt = LocalDateTime.now().plusMinutes(5),
+                    title = "",
+                    text = "",
+                    dt = LocalDateTime.now().plusMinutes(5),
                     idOfReminder = 0,
                     repeatDuration = RepeatDuration.NoRepeat
                 )
@@ -129,20 +124,19 @@ fun RemindersScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val date by remember { mutableStateOf(LocalDate.now()) }
-            if (reminders.isNotEmpty())
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(reminders) {
-                        it.ReminderDataString(
-                            modifier = Modifier.clickable {
-                                lastReminder.value = it
-                                isAddingReminder = true
-                            },
-                            viewModel = viewModel, dateOfThisPage = date, context = context
-                        )
-                    }
+            if (reminders.isNotEmpty()) LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(reminders) {
+                    it.ReminderDataString(
+                        modifier = Modifier.clickable {
+                            lastReminder.value = it
+                            isAddingReminder = true
+                        }, viewModel = viewModel, dateOfThisPage = date, context = context
+                    )
                 }
+            }
             else TextForThisTheme(
-                text = "Вы еще не добавили\nни одного напоминания"
+                text = stringResource(id = R.string.you_havent_added_any_events_yet),
+                fontSize = FontSize.big22,
             )
         }
     }

@@ -1,5 +1,6 @@
 package ru.vafeen.reminder.ui.common.components.ui_utils
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -30,13 +31,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.koin.java.KoinJavaComponent.inject
+import ru.vafeen.reminder.R
 import ru.vafeen.reminder.noui.EventCreator
 import ru.vafeen.reminder.noui.duration.RepeatDuration
 import ru.vafeen.reminder.noui.local_database.DatabaseRepository
@@ -50,12 +54,12 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
-
 @Composable
 fun ReminderDialog(
     newReminder: MutableState<Reminder>,
     onDismissRequest: () -> Unit,
 ) {
+    val context = LocalContext.current
     val lastReminder by remember { mutableStateOf(newReminder.value.toString()) }
     val cor = rememberCoroutineScope()
     val focusRequester1 = remember { FocusRequester() }
@@ -76,13 +80,28 @@ fun ReminderDialog(
     }
     var selectedTime by remember {
         mutableStateOf(
-            newReminder.value.dt?.toLocalTime() ?: LocalTime.now()
+            newReminder.value.dt.toLocalTime()?.let {
+                Log.d("reminder", it.toString())
+                if (it.hour == 0 && it.minute == 0) LocalTime.now()
+                else it
+            } ?: LocalTime.now()
         )
     }
     var isChoosingDurationInProcess by remember { mutableStateOf(false) }
     LaunchedEffect(null) {
         focusRequester1.requestFocus()
     }
+    fun createMainButtonText(): String = "${
+        ContextCompat.getString(
+            context,
+            R.string.send
+        )
+    } ${selectedDate.getDateString()} ${
+        ContextCompat.getString(
+            context,
+            R.string.`in`
+        )
+    } ${selectedTime.hour.getTimeDefaultStr()}:${selectedTime.minute.getTimeDefaultStr()}"
     DefaultDialog(onDismissRequest = onDismissRequest) { dp ->
         Column(
             modifier = Modifier
@@ -108,41 +127,47 @@ fun ReminderDialog(
             )
             Spacer(modifier = Modifier.height(20.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
-                TextForThisTheme(text = "Уведомление", fontSize = FontSize.medium19)
+                TextForThisTheme(
+                    text = stringResource(id = R.string.notification),
+                    fontSize = FontSize.medium19
+                )
                 Checkbox(
                     checked = newReminder.value.isNotificationNeeded == true,
                     onCheckedChange = {
                         newReminder.value =
-                            newReminder.value.copy(isNotificationNeeded = newReminder.value.isNotificationNeeded != true)
+                            newReminder.value.copy(isNotificationNeeded = !newReminder.value.isNotificationNeeded)
                     })
             }
             MyDateTimePicker(
                 isTimeNeeded = newReminder.value.isNotificationNeeded == true,
-                initialDate = newReminder.value.dt?.toLocalDate() ?: LocalDate.now(),
+                initialDate = selectedDate,
                 onDateSelected = { date ->
-                    selectedDate = date
-                    mainButtonText =
-                        "Отправить ${selectedDate.getDateString()} в ${selectedTime.hour.getTimeDefaultStr()}:${selectedTime.minute.getTimeDefaultStr()}"
-                    newReminder.value = newReminder.value.copy(
-                        dt = LocalDateTime.of(
-                            selectedDate,
-                            selectedTime
+                    Log.d("reminder", "onDateSelected")
+                    if (date != selectedTime) {
+                        selectedDate = date
+                        mainButtonText = createMainButtonText()
+
+                        newReminder.value = newReminder.value.copy(
+                            dt = LocalDateTime.of(
+                                selectedDate,
+                                selectedTime
+                            )
                         )
-                    )
+                    }
                 },
-                initialTime = newReminder.value.dt?.toLocalTime()
-                    ?: LocalTime.now()
-                        .plusMinutes(5),
+                initialTime = selectedTime,
                 onTimeSelected = { time ->
-                    selectedTime = time
-                    mainButtonText =
-                        "Отправить ${selectedDate.getDateString()} в ${selectedTime.hour.getTimeDefaultStr()}:${selectedTime.minute.getTimeDefaultStr()}"
-                    newReminder.value = newReminder.value.copy(
-                        dt = LocalDateTime.of(
-                            selectedDate,
-                            selectedTime
+                    Log.d("reminder", "onTimeSelected")
+                    if (time != selectedTime) {
+                        selectedTime = time
+                        mainButtonText = createMainButtonText()
+                        newReminder.value = newReminder.value.copy(
+                            dt = LocalDateTime.of(
+                                selectedDate,
+                                selectedTime
+                            )
                         )
-                    )
+                    }
                 }
             )
             Box(modifier = Modifier.clickable {
@@ -176,14 +201,18 @@ fun ReminderDialog(
             }
 
             Button(
-                enabled = (lastReminder != newReminder.value.toString()) &&
+                enabled = (lastReminder.also {
+                    Log.d("reminder", "last = $it")
+                } != newReminder.value.toString().also {
+                    Log.d("reminder", "new = $it")
+                }) &&
                         (newReminder.value.let { it.text.isNotEmpty() && it.title.isNotEmpty() } == true),
                 onClick = {
                     cor.launch(Dispatchers.IO) {
                         newReminder.value = newReminder.value.copy(
                             idOfReminder = databaseRepository.getAllRemindersAsFlow().first()
                                 .map { it.idOfReminder }.generateID(),
-                            dt = newReminder.value.dt?.let {
+                            dt = newReminder.value.dt.let {
                                 LocalDateTime.of(
                                     it.toLocalDate(),
                                     if (!newReminder.value.isNotificationNeeded) LocalTime.of(0, 0)
@@ -199,7 +228,9 @@ fun ReminderDialog(
                 },
             ) {
                 TextForThisTheme(
-                    text = if (newReminder.value.isNotificationNeeded == true) mainButtonText else "Добавить в список",
+                    text = if (newReminder.value.isNotificationNeeded == true) mainButtonText else stringResource(
+                        id = R.string.add_to_list
+                    ),
                     fontSize = FontSize.medium19
                 )
             }

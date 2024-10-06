@@ -13,4 +13,12 @@
     <string name="no_repeat">Без повторений</string>
     <string name="every_day">Каждый день</string>
     <string name="every_week">Каждую неделю</string>
+    <string name="in">в</string>
+    <string name="events_on_this_day">События в этот день</string>
+    <string name="past_events">Прошедшие события</string>
+    <string name="no_events_today">Событий сегодня нет</string>
+    <string name="you_havent_added_any_events_yet">Вы еще не добавили\nни одного события</string>
+    <string name="notification">Уведомление</string>
+    <string name="send">Отправить</string>
+    <string name="add_to_list">Добавить в список</string>
 </resources>

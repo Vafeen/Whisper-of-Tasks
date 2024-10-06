@@ -6,8 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -25,9 +27,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -35,6 +39,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import ru.vafeen.reminder.R
 import ru.vafeen.reminder.network.downloader.Downloader
 import ru.vafeen.reminder.network.downloader.Progress
 import ru.vafeen.reminder.noui.duration.RepeatDuration
@@ -210,36 +215,61 @@ fun MainScreen(
                         cardsWithDateState.animateScrollToItem(pagerState.currentPage)
                     }
                     val remindersForThisDay = reminders.filter {
-                        it.dt?.toLocalDate() == dateOfThisPage ||
+                        it.dt.toLocalDate() == dateOfThisPage ||
                                 it.repeatDuration == RepeatDuration.EveryDay ||
                                 it.repeatDuration == RepeatDuration.EveryWeek && it.dt?.dayOfWeek == dateOfThisPage.dayOfWeek
                     }
                     val lostReminders = reminders.filter {
                         it.repeatDuration == RepeatDuration.NoRepeat &&
-                                dateOfThisPage > it.dt?.toLocalDate()
+                                dateOfThisPage > it.dt.toLocalDate()
                     }
-                    TextForThisTheme(
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        text = "События в этот день\\"
-                    )
-                    remindersForThisDay.forEach {
-                        it.ReminderDataString(
-                            modifier = Modifier.clickable {
-                                lastReminder.value = it
-                                isEditingReminder = true
-                            },
-                            viewModel = viewModel,
-                            dateOfThisPage = dateOfThisPage,
-                            context = context
+                    if (remindersForThisDay.isEmpty() && lostReminders.isEmpty()) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        Column(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            TextForThisTheme(
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center,
+                                text = stringResource(id = R.string.no_events_today),
+                                fontSize = FontSize.big22
+                            )
+                        }
+
+                    }
+                    if (remindersForThisDay.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        TextForThisTheme(
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            text = stringResource(id = R.string.events_on_this_day),
+                            fontSize = FontSize.medium19
                         )
+                        remindersForThisDay.forEach {
+                            it.ReminderDataString(
+                                modifier = Modifier.clickable {
+                                    lastReminder.value = it
+                                    isEditingReminder = true
+                                },
+                                viewModel = viewModel,
+                                dateOfThisPage = dateOfThisPage,
+                                context = context
+                            )
+                        }
                     }
-                    TextForThisTheme(
-                        modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center,
-                        text = "Прошедшие события\\"
-                    )
+
                     if (lostReminders.isNotEmpty()) {
+                        Spacer(modifier = Modifier.height(10.dp))
+                        TextForThisTheme(
+                            modifier = Modifier.fillMaxWidth(),
+                            textAlign = TextAlign.Center,
+                            text = stringResource(id = R.string.past_events),
+                            fontSize = FontSize.medium19
+                        )
                         lostReminders.forEach {
                             it.ReminderDataString(
                                 modifier = Modifier.clickable {

@@ -115,7 +115,6 @@ private fun DateColumnPicker(
     for (i in 0..365) {
         list.add(dateToday.plusDays((i).toLong()).getDateString())
     }
-    val firstIndex = remember { derivedStateOf { listState.firstVisibleItemIndex } }
     list.add("")
     LaunchedEffect(listState.isScrollInProgress) {
         if (!listState.isScrollInProgress) {
@@ -136,9 +135,8 @@ private fun DateColumnPicker(
             verticalArrangement = Arrangement.spacedBy(space)
         ) {
             itemsIndexed(list) { index, it ->
-                val isSelected = firstIndex.value == index - 1
                 val newDT = dateToday.plusDays(index.toLong() - 1)
-                if (isSelected) onValueChange(newDT)
+                if (listState.firstVisibleItemIndex == index - 1) onValueChange(newDT)
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -194,7 +192,7 @@ private fun TimeColumnPicker(
             verticalArrangement = Arrangement.spacedBy(space)
         ) {
             itemsIndexed(list) { index, it ->
-                val isSelected = firstIndex.value == index - 1
+                val isSelected by remember { mutableStateOf(firstIndex.value == index - 1) }
                 if (isSelected) onValueChange(list[firstIndex.value + 1].toIntOrNull())
                 Column(
                     modifier = Modifier

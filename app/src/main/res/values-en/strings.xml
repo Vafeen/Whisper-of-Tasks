@@ -14,4 +14,12 @@
     <string name="no_repeat">No repeat</string>
     <string name="every_day">Every day</string>
     <string name="every_week">Every week</string>
+    <string name="in">in</string>
+    <string name="events_on_this_day">Events on this day</string>
+    <string name="past_events">Past events</string>
+    <string name="no_events_today">No events today</string>
+    <string name="you_havent_added_any_events_yet">You haven\'t added\nany events yet</string>
+    <string name="notification">Notification</string>
+    <string name="send">Send</string>
+    <string name="add_to_list">Add to list</string>
 </resources>

@@ -12,7 +12,7 @@ data class Reminder(
     val idOfReminder: Int,
     val title: String,
     val text: String,
-    val dt: LocalDateTime?,
+    val dt: LocalDateTime,
     val repeatDuration: RepeatDuration,
     val dateOfDone: LocalDate? = null,
     val isNotificationNeeded: Boolean = false,

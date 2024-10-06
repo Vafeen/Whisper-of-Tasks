@@ -20,7 +20,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import ru.vafeen.reminder.R
 import ru.vafeen.reminder.noui.local_database.entity.Reminder
 import ru.vafeen.reminder.ui.common.components.EventCreation
 import ru.vafeen.reminder.ui.theme.FontSize
@@ -78,10 +81,24 @@ fun Reminder.ReminderDataString(
                 modifier = Modifier.weight(1f)
             ) {
                 TextForThisTheme(text = title, fontSize = FontSize.big22)
-                TextForThisTheme(text = text, fontSize = FontSize.big22)
-                TextForThisTheme(
-                    text = dt.toString(), fontSize = FontSize.big22
-                )
+                TextForThisTheme(text = text, fontSize = FontSize.medium19)
+                Row {
+                    TextForThisTheme(
+                        text = "${stringResource(id = this@ReminderDataString.repeatDuration.resourceName)} ${
+                            this@ReminderDataString.dt.toLocalTime().let {
+                                if (it.hour != 0 && it.minute != 0)
+                                    "${stringResource(id = R.string.`in`)} $it"
+                                else ""
+                            }
+                        }", fontSize = FontSize.medium19
+                    )
+                    Icon(
+                        painter = painterResource(R.drawable.message),
+                        contentDescription = "message",
+                        tint = Theme.colors.oppositeTheme
+                    )
+                }
+
             }
             IconButton(onClick = { isDialogDeleteShows = true }) {
                 Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete reminder ")
