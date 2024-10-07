@@ -2,11 +2,13 @@ package ru.vafeen.whisperoftasks.ui.common.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -28,8 +30,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.navigation.NavController
 import ru.vafeen.whisperoftasks.R
 import ru.vafeen.whisperoftasks.noui.duration.RepeatDuration
@@ -102,7 +107,19 @@ fun RemindersScreen(
                 navController.navigate(ScreenRoute.Settings.route)
             })
     }, floatingActionButton = {
+        var offset by remember { mutableStateOf(Offset(0f, 0f)) }
         FloatingActionButton(
+            modifier = Modifier
+                .offset { IntOffset(offset.x.toInt(), offset.y.toInt()) }
+                .pointerInput(Unit) {
+                    detectDragGestures { change, dragAmount ->
+                        change.consume()
+                        offset = Offset(
+                            x = offset.x + dragAmount.x,
+                            y = offset.y + dragAmount.y
+                        )
+                    }
+                },
             onClick = {
                 lastReminder.value = null
                 isAddingReminder = true
