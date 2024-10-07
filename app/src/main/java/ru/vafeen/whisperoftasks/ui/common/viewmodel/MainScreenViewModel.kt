@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ru.vafeen.whisperoftasks.R
 import ru.vafeen.whisperoftasks.noui.EventCreator
 import ru.vafeen.whisperoftasks.noui.local_database.DatabaseRepository
 import ru.vafeen.whisperoftasks.noui.local_database.entity.Reminder
@@ -21,18 +20,6 @@ class MainScreenViewModel(
     override val eventCreator: EventCreator,
     context: Context,
 ) : ViewModel(), EventCreation {
-    val ruDaysOfWeek =
-        context.let {
-            listOf(
-                it.getString(R.string.monday),
-                it.getString(R.string.tuesday),
-                it.getString(R.string.wednesday),
-                it.getString(R.string.thursday),
-                it.getString(R.string.friday),
-                it.getString(R.string.satudray),
-                it.getString(R.string.sunday)
-            )
-        }
     var settings = sharedPreferences.getSettingsOrCreateIfNull()
     val todayDate: LocalDate = LocalDate.now()
     val pageNumber = 365

@@ -12,12 +12,16 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -48,8 +52,9 @@ import ru.vafeen.whisperoftasks.noui.local_database.entity.Reminder
 import ru.vafeen.whisperoftasks.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.ui.theme.Theme
 import ru.vafeen.whisperoftasks.utils.generateID
-import ru.vafeen.whisperoftasks.utils.getDateString
+import ru.vafeen.whisperoftasks.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.utils.getTimeDefaultStr
+import ru.vafeen.whisperoftasks.utils.suitableColor
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
@@ -75,7 +80,7 @@ fun ReminderDialog(
     }
     var selectedDate by remember {
         mutableStateOf(
-            newReminder.value.dt?.toLocalDate() ?: LocalDate.now()
+            newReminder.value.dt.toLocalDate() ?: LocalDate.now()
         )
     }
     var selectedTime by remember {
@@ -96,12 +101,22 @@ fun ReminderDialog(
             context,
             R.string.send
         )
-    } ${selectedDate.getDateString()} ${
+    } ${selectedDate.getDateStringWithWeekOfDay(context = context)} ${
         ContextCompat.getString(
             context,
             R.string.`in`
         )
     } ${selectedTime.hour.getTimeDefaultStr()}:${selectedTime.minute.getTimeDefaultStr()}"
+
+    val colors = OutlinedTextFieldDefaults.colors(
+        focusedTextColor = Theme.colors.oppositeTheme,
+        unfocusedTextColor = Theme.colors.oppositeTheme,
+        focusedBorderColor = Theme.colors.oppositeTheme,
+        unfocusedBorderColor = Theme.colors.oppositeTheme,
+        focusedLabelColor = Theme.colors.oppositeTheme,
+        unfocusedLabelColor = Theme.colors.oppositeTheme,
+        cursorColor = Theme.colors.oppositeTheme
+    )
     DefaultDialog(onDismissRequest = onDismissRequest) { dp ->
         Column(
             modifier = Modifier
@@ -115,7 +130,8 @@ fun ReminderDialog(
                 value = newReminder.value.title,
                 onValueChange = { newReminder.value = newReminder.value.copy(title = it) },
                 label = { Text(text = "title") },
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next)
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Next),
+                colors = colors
             )
             Spacer(modifier = Modifier.height(10.dp))
             OutlinedTextField(
@@ -123,7 +139,8 @@ fun ReminderDialog(
                 value = newReminder.value.text,
                 onValueChange = { newReminder.value = newReminder.value.copy(text = it) },
                 label = { Text(text = "text") },
-                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done)
+                keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Done),
+                colors = colors,
             )
             Spacer(modifier = Modifier.height(20.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -136,7 +153,12 @@ fun ReminderDialog(
                     onCheckedChange = {
                         newReminder.value =
                             newReminder.value.copy(isNotificationNeeded = !newReminder.value.isNotificationNeeded)
-                    })
+                    }, colors = CheckboxDefaults.colors(
+                        checkedColor = Theme.colors.oppositeTheme,
+                        uncheckedColor = Theme.colors.oppositeTheme,
+                        checkmarkColor = Theme.colors.singleTheme,
+                    )
+                )
             }
             MyDateTimePicker(
                 isTimeNeeded = newReminder.value.isNotificationNeeded == true,
@@ -170,9 +192,11 @@ fun ReminderDialog(
                     }
                 }
             )
-            Box(modifier = Modifier.clickable {
-                isChoosingDurationInProcess = true
-            }) {
+            Box(modifier = Modifier
+                .padding(vertical = 5.dp)
+                .clickable {
+                    isChoosingDurationInProcess = true
+                }) {
                 TextForThisTheme(
                     text = stringResource(id = newReminder.value.repeatDuration.resourceName),
                     fontSize = FontSize.medium19
@@ -201,12 +225,16 @@ fun ReminderDialog(
             }
 
             Button(
+                shape = RoundedCornerShape(5.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Theme.colors.mainColor
+                ),
                 enabled = (lastReminder.also {
                     Log.d("reminder", "last = $it")
                 } != newReminder.value.toString().also {
                     Log.d("reminder", "new = $it")
                 }) &&
-                        (newReminder.value.let { it.text.isNotEmpty() && it.title.isNotEmpty() } == true),
+                        (newReminder.value.let { it.text.isNotEmpty() || it.title.isNotEmpty() } == true),
                 onClick = {
                     cor.launch(Dispatchers.IO) {
                         newReminder.value = newReminder.value.copy(
@@ -227,7 +255,8 @@ fun ReminderDialog(
                     }
                 },
             ) {
-                TextForThisTheme(
+                Text(
+                    color = Theme.colors.mainColor.suitableColor(),
                     text = if (newReminder.value.isNotificationNeeded == true) mainButtonText else stringResource(
                         id = R.string.add_to_list
                     ),

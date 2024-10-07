@@ -23,12 +23,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.vafeen.whisperoftasks.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.ui.theme.Theme
-import ru.vafeen.whisperoftasks.utils.getDateString
+import ru.vafeen.whisperoftasks.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.utils.getTimeDefaultStr
 import java.time.LocalDate
 import java.time.LocalTime
@@ -74,25 +75,30 @@ fun MyDateTimePicker(
                 }
             })
         if (isTimeNeeded && initialTime != null && pickedTime != null) {
-            TimeColumnPicker(
-                modifier = Modifier.weight(2f),
-                value = pickedTime?.hour ?: 0,
-                onValueChange = { hour ->
-                    if (hour != null) {
-                        pickedTime = LocalTime.of(hour, pickedTime?.minute ?: 0)
-                        pickedTime?.let { onTimeSelected(it) }
-                    }
-                },
-                range = 0..23,
-            )
-            TimeColumnPicker(
-                value = pickedTime?.minute ?: 0, onValueChange = { minute ->
-                    if (minute != null) {
-                        pickedTime = LocalTime.of(pickedTime?.hour ?: 0, minute)
-                        pickedTime?.let { onTimeSelected(it) }
-                    }
-                }, range = 0..59, modifier = Modifier.weight(1f)
-            )
+            Row(modifier = Modifier.weight(1f)) {
+                TimeColumnPicker(
+                    modifier = Modifier.weight(1f),
+                    value = pickedTime?.hour ?: 0,
+                    onValueChange = { hour ->
+                        if (hour != null) {
+                            pickedTime = LocalTime.of(hour, pickedTime?.minute ?: 0)
+                            pickedTime?.let { onTimeSelected(it) }
+                        }
+                    },
+                    range = 0..23,
+                )
+                TimeColumnPicker(
+                    modifier = Modifier.weight(1f),
+                    value = pickedTime?.minute ?: 0,
+                    onValueChange = { minute ->
+                        if (minute != null) {
+                            pickedTime = LocalTime.of(pickedTime?.hour ?: 0, minute)
+                            pickedTime?.let { onTimeSelected(it) }
+                        }
+                    },
+                    range = 0..59,
+                )
+            }
         }
     }
 }
@@ -101,6 +107,7 @@ fun MyDateTimePicker(
 private fun DateColumnPicker(
     onValueChange: (LocalDate?) -> Unit, modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     // Высота одного элемента
     val itemHeight = 40.dp
     // Количество видимых элементов в столбце
@@ -113,7 +120,7 @@ private fun DateColumnPicker(
     val dateToday = LocalDate.now()
     val list = mutableListOf("")
     for (i in 0..365) {
-        list.add(dateToday.plusDays((i).toLong()).getDateString())
+        list.add(dateToday.plusDays((i).toLong()).getDateStringWithWeekOfDay(context = context))
     }
     list.add("")
     LaunchedEffect(listState.isScrollInProgress) {
@@ -135,8 +142,10 @@ private fun DateColumnPicker(
             verticalArrangement = Arrangement.spacedBy(space)
         ) {
             itemsIndexed(list) { index, it ->
-                val newDT = dateToday.plusDays(index.toLong() - 1)
-                if (listState.firstVisibleItemIndex == index - 1) onValueChange(newDT)
+                val newDT by remember { mutableStateOf(dateToday.plusDays(index.toLong() - 1)) }
+                if (remember { derivedStateOf { listState.firstVisibleItemIndex } }.value == index - 1 && listState.isScrollInProgress) onValueChange(
+                    newDT
+                )
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -168,11 +177,10 @@ private fun TimeColumnPicker(
     // Высота списка (должна вмещать ровно три элемента)
     val listHeight = itemHeight * size + space * 2
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = value)
-    val firstIndex = remember { derivedStateOf { listState.firstVisibleItemIndex } }
+    val firstIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
     val list = mutableListOf("")
     for (i in range) list.add(i.getTimeDefaultStr())
     list.add("")
-
     LaunchedEffect(listState.isScrollInProgress) {
         if (!listState.isScrollInProgress) {
             // Перемотка к центральному элементу
@@ -192,8 +200,7 @@ private fun TimeColumnPicker(
             verticalArrangement = Arrangement.spacedBy(space)
         ) {
             itemsIndexed(list) { index, it ->
-                val isSelected by remember { mutableStateOf(firstIndex.value == index - 1) }
-                if (isSelected) onValueChange(list[firstIndex.value + 1].toIntOrNull())
+                if (firstIndex == index - 1) onValueChange(list[firstIndex + 1].toIntOrNull())
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

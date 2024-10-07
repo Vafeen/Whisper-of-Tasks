@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ru.vafeen.whisperoftasks.R
+import ru.vafeen.whisperoftasks.noui.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.noui.local_database.entity.Reminder
 import ru.vafeen.whisperoftasks.ui.common.components.EventCreation
 import ru.vafeen.whisperoftasks.ui.theme.FontSize
@@ -57,21 +58,28 @@ fun Reminder.ReminderDataString(
                 .padding(10.dp)
         ) {
             Checkbox(
-                checked = dateOfDone != null && dateOfDone >= dateOfThisPage, onCheckedChange = {
+                checked = dateOfDone != null && (dateOfDone >= dateOfThisPage ||
+                        this@ReminderDataString.repeatDuration == RepeatDuration.NoRepeat),
+                onCheckedChange = {
                     viewModel.updateEvent(
                         copy(
-                            dateOfDone = if (dateOfDone == dateOfThisPage) null else {
-                                if (dateOfDone != null)
-                                    Toast.makeText(
-                                        context,
-                                        "Помечено выполненным до сегодня",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                dateOfThisPage
+                            dateOfDone = if (this@ReminderDataString.repeatDuration != RepeatDuration.NoRepeat) {
+                                if (dateOfDone == dateOfThisPage) null else {
+                                    if (dateOfDone != null)
+                                        Toast.makeText(
+                                            context,
+                                            "Помечено выполненным до сегодня",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    dateOfThisPage
+                                }
+                            } else {
+                                if (dateOfDone != null) null else dateOfThisPage
                             }
                         )
                     )
-                }, colors = CheckboxDefaults.colors(
+                },
+                colors = CheckboxDefaults.colors(
                     checkedColor = Theme.colors.oppositeTheme,
                     uncheckedColor = Theme.colors.oppositeTheme,
                     checkmarkColor = Theme.colors.singleTheme,
@@ -92,16 +100,20 @@ fun Reminder.ReminderDataString(
                             }
                         }", fontSize = FontSize.medium19
                     )
-                    Icon(
-                        painter = painterResource(R.drawable.message),
-                        contentDescription = "message",
-                        tint = Theme.colors.oppositeTheme
-                    )
+                    if (this@ReminderDataString.isNotificationNeeded)
+                        Icon(
+                            painter = painterResource(R.drawable.message),
+                            contentDescription = "message",
+                            tint = Theme.colors.oppositeTheme
+                        )
                 }
-
             }
             IconButton(onClick = { isDialogDeleteShows = true }) {
-                Icon(imageVector = Icons.Default.Delete, contentDescription = "Delete reminder ")
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Delete reminder ",
+                    tint = Theme.colors.oppositeTheme
+                )
             }
         }
     }

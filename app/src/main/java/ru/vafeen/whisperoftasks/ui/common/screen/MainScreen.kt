@@ -59,7 +59,7 @@ import ru.vafeen.whisperoftasks.ui.common.viewmodel.MainScreenViewModel
 import ru.vafeen.whisperoftasks.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.ui.theme.Theme
 import ru.vafeen.whisperoftasks.utils.Path
-import ru.vafeen.whisperoftasks.utils.getDateStringWithDayOfWeek
+import ru.vafeen.whisperoftasks.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.utils.getMainColorForThisTheme
 import ru.vafeen.whisperoftasks.utils.suitableColor
 import java.time.LocalDate
@@ -225,7 +225,7 @@ fun MainScreen(
                         else Theme.colors.buttonColor).suitableColor()
                     )) {
                         Text(
-                            text = day.getDateStringWithDayOfWeek(ruDaysOfWeek = viewModel.ruDaysOfWeek),
+                            text = day.getDateStringWithWeekOfDay(context = context),
                             fontSize = FontSize.small17,
                             modifier = Modifier.padding(
                                 vertical = 5.dp, horizontal = 10.dp

@@ -14,6 +14,7 @@ import androidx.navigation.compose.rememberNavController
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import ru.vafeen.whisperoftasks.noui.permission.RequestNotificationPermission
 import ru.vafeen.whisperoftasks.ui.common.components.ui_utils.CheckUpdateAndOpenBottomSheetIfNeed
+import ru.vafeen.whisperoftasks.ui.common.components.ui_utils.SetNavigationBarColor
 import ru.vafeen.whisperoftasks.ui.common.navigation.ScreenRoute
 import ru.vafeen.whisperoftasks.ui.common.screen.MainScreen
 import ru.vafeen.whisperoftasks.ui.common.screen.RemindersScreen
@@ -34,12 +35,12 @@ class MainActivity : ComponentActivity() {
     private val settingsScreenViewModel: SettingsScreenViewModel by viewModel()
 
 
-    override
-    fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             MainTheme {
+                SetNavigationBarColor(color = Theme.colors.singleTheme)
                 RequestNotificationPermission()
                 if (!viewModel.updateIsShowed) {
                     CheckUpdateAndOpenBottomSheetIfNeed(
