@@ -163,8 +163,16 @@ fun MainScreen(
             BottomBar(
                 containerColor = Theme.colors.mainColor,
                 selectedMainScreen = true,
-                navigateToRemindersScreen = { navController.navigate(ScreenRoute.Reminders.route) },
-                navigateToSettingsScreen = { navController.navigate(ScreenRoute.Settings.route) })
+                navigateToRemindersScreen = {
+                    if (!isUpdateInProcess) navController.navigate(
+                        ScreenRoute.Reminders.route
+                    )
+                },
+                navigateToSettingsScreen = {
+                    if (!isUpdateInProcess) navController.navigate(
+                        ScreenRoute.Settings.route
+                    )
+                })
         },
         topBar = {
             TopAppBar(colors = TopAppBarColors(
