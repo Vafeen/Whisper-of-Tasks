@@ -47,7 +47,7 @@ fun Reminder.ReminderDataString(
         viewModel.removeEvent(reminder = this)
     }
     Card(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp),
         colors = CardDefaults.cardColors(containerColor = Theme.colors.buttonColor)
