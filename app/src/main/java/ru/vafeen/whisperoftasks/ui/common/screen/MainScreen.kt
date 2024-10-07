@@ -214,7 +214,8 @@ fun MainScreen(
             LazyRow(
                 state = cardsWithDateState,
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(5.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 items(count = viewModel.pageNumber) { index ->

@@ -53,7 +53,7 @@ fun Reminder.ReminderDataString(
         colors = CardDefaults.cardColors(containerColor = Theme.colors.buttonColor)
     ) {
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
                 .padding(10.dp)
         ) {
