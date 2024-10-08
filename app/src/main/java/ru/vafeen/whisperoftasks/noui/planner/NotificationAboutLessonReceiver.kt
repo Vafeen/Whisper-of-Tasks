@@ -31,7 +31,7 @@ class NotificationAboutLessonReceiver : BroadcastReceiver() {
                     title = it.title,
                     text = it.text
                 )
-//                databaseRepository.deleteAllReminders(it)
+                databaseRepository.deleteAllReminders(it)
             }
         }
     }
