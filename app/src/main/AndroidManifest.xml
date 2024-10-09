@@ -45,7 +45,7 @@
         </provider>
 
         <receiver
-            android:name=".noui.planner.NotificationAboutLessonReceiver"
+            android:name=".noui.planner.NotificationReminderReceiver"
             android:exported="false" />
         <receiver
             android:name=".noui.planner.ReminderRecoveryReceiver"

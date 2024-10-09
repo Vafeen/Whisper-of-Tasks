@@ -10,7 +10,7 @@ import org.koin.java.KoinJavaComponent.inject
 import ru.vafeen.whisperoftasks.noui.local_database.DatabaseRepository
 import ru.vafeen.whisperoftasks.noui.notification.NotificationService
 
-class NotificationAboutLessonReceiver : BroadcastReceiver() {
+class NotificationReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         val notificationService: NotificationService by inject(
             clazz = NotificationService::class.java
@@ -31,7 +31,6 @@ class NotificationAboutLessonReceiver : BroadcastReceiver() {
                     title = it.title,
                     text = it.text
                 )
-                databaseRepository.deleteAllReminders(it)
             }
         }
     }

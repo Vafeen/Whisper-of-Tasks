@@ -19,7 +19,7 @@ class Scheduler(
     private val SKIP_1_DAY_IN_DAYS: Long = 1
 
     fun Reminder.resultDT(): LocalDateTime? = if (dateOfDone != null) {
-        val time = dt?.toLocalTime()
+        val time = dt.toLocalTime()
         when (repeatDuration) {
             RepeatDuration.EveryDay -> LocalDateTime.of(
                 dateOfDone.plusDays(SKIP_1_DAY_IN_DAYS),
@@ -37,7 +37,7 @@ class Scheduler(
 
 
     fun planOneTimeWork(reminder: Reminder) {
-        val intent = Intent(context, NotificationAboutLessonReceiver::class.java)
+        val intent = Intent(context, NotificationReminderReceiver::class.java)
         intent.apply {
             putExtra(SchedulerExtra.ID_OF_REMINDER, reminder.idOfReminder)
         }
@@ -49,7 +49,7 @@ class Scheduler(
         )
         val resultDt = reminder.resultDT()
 
-        if (reminder.dt != null && resultDt != null) {
+        if (resultDt != null) {
             alarmManager.setExact(
                 AlarmManager.RTC_WAKEUP,
                 localDateTimeConverters.localDateTimeToLongMilliSeconds(resultDt),
@@ -59,7 +59,7 @@ class Scheduler(
     }
 
     fun planRepeatWork(reminder: Reminder) {
-        val intent = Intent(context, NotificationAboutLessonReceiver::class.java)
+        val intent = Intent(context, NotificationReminderReceiver::class.java)
         intent.apply {
             putExtra(SchedulerExtra.ID_OF_REMINDER, reminder.idOfReminder)
         }
@@ -70,7 +70,7 @@ class Scheduler(
             PendingIntent.FLAG_IMMUTABLE
         )
         val resultDt = reminder.resultDT()
-        if (reminder.dt != null && resultDt != null) {
+        if (resultDt != null) {
             alarmManager.setRepeating(
                 AlarmManager.RTC_WAKEUP,
                 localDateTimeConverters.localDateTimeToLongMilliSeconds(resultDt),
@@ -81,7 +81,7 @@ class Scheduler(
     }
 
     fun cancelWork(reminder: Reminder) {
-        val intent = Intent(context, NotificationAboutLessonReceiver::class.java)
+        val intent = Intent(context, NotificationReminderReceiver::class.java)
         intent.apply {
             putExtra(SchedulerExtra.ID_OF_REMINDER, reminder.idOfReminder)
         }
