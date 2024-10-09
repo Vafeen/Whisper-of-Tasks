@@ -7,12 +7,12 @@ plugins {
 
 android {
     namespace = "ru.vafeen.whisperoftasks"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "ru.vafeen.whisperoftasks"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 10
         versionName = "1.0-rc10"
 
