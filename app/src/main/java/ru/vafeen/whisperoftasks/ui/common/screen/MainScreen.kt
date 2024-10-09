@@ -170,7 +170,12 @@ fun MainScreen(
     )
     BackHandler {
         when {
-            pagerState.currentPage == 0 -> {
+            isDeletingInProcess -> {
+                isDeletingInProcess = false
+                reminderForRemoving.clear()
+            }
+
+            !isDeletingInProcess && pagerState.currentPage == 0 -> {
                 navController.popBackStack()
                 (context as Activity).finish()
             }

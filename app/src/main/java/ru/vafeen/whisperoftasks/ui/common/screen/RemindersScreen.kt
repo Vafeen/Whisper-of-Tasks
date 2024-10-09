@@ -1,5 +1,6 @@
 package ru.vafeen.whisperoftasks.ui.common.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
@@ -110,6 +111,18 @@ fun RemindersScreen(
             if (it)
                 reminderForRemoving.remove(idOfReminder)
             else reminderForRemoving.set(idOfReminder, this)
+        }
+    }
+    BackHandler {
+        when {
+            isDeletingInProcess -> {
+                isDeletingInProcess = false
+                reminderForRemoving.clear()
+            }
+
+            else -> {
+                navController.popBackStack()
+            }
         }
     }
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
