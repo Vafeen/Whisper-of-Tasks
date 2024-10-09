@@ -15,7 +15,7 @@ import java.time.LocalDate
 
 
 class MainScreenViewModel(
-    val databaseRepository: DatabaseRepository,
+    private val databaseRepository: DatabaseRepository,
     private val sharedPreferences: SharedPreferences,
     override val eventCreator: EventCreator,
     context: Context,
@@ -23,7 +23,7 @@ class MainScreenViewModel(
     var settings = sharedPreferences.getSettingsOrCreateIfNull()
     val todayDate: LocalDate = LocalDate.now()
     val pageNumber = 365
-
+    val remindersFlow = databaseRepository.getAllRemindersAsFlow()
     override fun removeEvent(reminder: Reminder) {
         viewModelScope.launch(Dispatchers.IO) {
             eventCreator.removeEvent(reminder = reminder)

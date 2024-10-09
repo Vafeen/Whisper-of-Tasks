@@ -24,4 +24,5 @@
     <string name="add_to_list">Add to list</string>
     <string name="tasks_by_day">Tasks by day</string>
     <string name="tasks_list">Tasks list</string>
+    <string name="hold">Hold</string>
 </resources>

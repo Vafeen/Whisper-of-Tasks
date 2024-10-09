@@ -1,7 +1,8 @@
 package ru.vafeen.whisperoftasks.ui.common.screen
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -40,6 +42,7 @@ import ru.vafeen.whisperoftasks.R
 import ru.vafeen.whisperoftasks.noui.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.noui.local_database.entity.Reminder
 import ru.vafeen.whisperoftasks.ui.common.components.bottom_bar.BottomBar
+import ru.vafeen.whisperoftasks.ui.common.components.ui_utils.DeleteReminders
 import ru.vafeen.whisperoftasks.ui.common.components.ui_utils.ReminderDataString
 import ru.vafeen.whisperoftasks.ui.common.components.ui_utils.ReminderDialog
 import ru.vafeen.whisperoftasks.ui.common.components.ui_utils.TextForThisTheme
@@ -50,7 +53,7 @@ import ru.vafeen.whisperoftasks.ui.theme.Theme
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun RemindersScreen(
     viewModel: RemindersScreenViewModel,
@@ -66,9 +69,47 @@ fun RemindersScreen(
     val lastReminder: MutableState<Reminder?> = remember {
         mutableStateOf(null)
     }
+    var fabOffset by remember { mutableStateOf(Offset(0f, 0f)) }
     LaunchedEffect(null) {
         viewModel.databaseRepository.getAllRemindersAsFlow().collect {
             reminders = it
+        }
+    }
+    var isDeletingInProcess by remember { mutableStateOf(false) }
+    var reminderForRemoving = remember { mutableStateMapOf<Int, Reminder>() }
+    fun Modifier.combinedClickableForRemovingReminder(reminder: Reminder): Modifier =
+        this.combinedClickable(
+            onClick = {
+                if (!isDeletingInProcess) {
+                    lastReminder.value = reminder
+                    isAddingReminder = true
+                } else {
+                    if (reminderForRemoving[reminder.idOfReminder] == null)
+                        reminderForRemoving[reminder.idOfReminder] = reminder
+                    else {
+                        reminderForRemoving.remove(reminder.idOfReminder)
+                        if (reminderForRemoving.isEmpty())
+                            isDeletingInProcess = false
+                    }
+                }
+            },
+            onLongClick = {
+                isDeletingInProcess = !isDeletingInProcess
+                if (isDeletingInProcess)
+                    reminderForRemoving[reminder.idOfReminder] = reminder
+                else
+                    reminderForRemoving.clear()
+            }
+        )
+
+    fun Reminder.isItCandidateForDelete(): Boolean? =
+        if (isDeletingInProcess) reminderForRemoving[idOfReminder] != null else null
+
+    fun Reminder.changeStatusOfDeleting() {
+        isItCandidateForDelete()?.let {
+            if (it)
+                reminderForRemoving.remove(idOfReminder)
+            else reminderForRemoving.set(idOfReminder, this)
         }
     }
     Scaffold(modifier = Modifier.fillMaxSize(), topBar = {
@@ -81,9 +122,7 @@ fun RemindersScreen(
         ), title = {
             Row(
                 modifier = Modifier
-                    .fillMaxWidth()
-//                    .statusBarsPadding()
-                ,
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -107,30 +146,30 @@ fun RemindersScreen(
                 navController.navigate(ScreenRoute.Settings.route)
             })
     }, floatingActionButton = {
-        var offset by remember { mutableStateOf(Offset(0f, 0f)) }
-        FloatingActionButton(
-            modifier = Modifier
-                .offset { IntOffset(offset.x.toInt(), offset.y.toInt()) }
-                .pointerInput(Unit) {
-                    detectDragGestures { change, dragAmount ->
-                        change.consume()
-                        offset = Offset(
-                            x = offset.x + dragAmount.x,
-                            y = offset.y + dragAmount.y
-                        )
-                    }
-                },
-            onClick = {
-                lastReminder.value = null
-                isAddingReminder = true
-            }, containerColor = Theme.colors.mainColor
-        ) {
-            Icon(
-                imageVector = Icons.Filled.Add,
-                contentDescription = "Add new reminder",
-                tint = Theme.colors.oppositeTheme
-            )
-        }
+        if (!isDeletingInProcess)
+            FloatingActionButton(
+                modifier = Modifier
+                    .offset { IntOffset(fabOffset.x.toInt(), fabOffset.y.toInt()) }
+                    .pointerInput(Unit) {
+                        detectDragGestures { change, dragAmount ->
+                            change.consume()
+                            fabOffset = Offset(
+                                x = fabOffset.x + dragAmount.x,
+                                y = fabOffset.y + dragAmount.y
+                            )
+                        }
+                    },
+                onClick = {
+                    lastReminder.value = null
+                    isAddingReminder = true
+                }, containerColor = Theme.colors.mainColor
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.Add,
+                    contentDescription = "Add new reminder",
+                    tint = Theme.colors.oppositeTheme
+                )
+            }
     }, floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
         if (isAddingReminder) {
@@ -158,13 +197,15 @@ fun RemindersScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val date by remember { mutableStateOf(LocalDate.now()) }
-            if (reminders.isNotEmpty()) LazyColumn(modifier = Modifier.fillMaxSize()) {
+            if (reminders.isNotEmpty()) LazyColumn(modifier = Modifier.weight(1f)) {
                 items(reminders) {
                     it.ReminderDataString(
-                        modifier = Modifier.clickable {
-                            lastReminder.value = it
-                            isAddingReminder = true
-                        }, viewModel = viewModel, dateOfThisPage = date, context = context
+                        modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
+                        viewModel = viewModel,
+                        dateOfThisPage = date,
+                        context = context,
+                        isItCandidateForDelete = it.isItCandidateForDelete(),
+                        changeStatusOfDeleting = it::changeStatusOfDeleting,
                     )
                 }
             }
@@ -172,6 +213,13 @@ fun RemindersScreen(
                 text = stringResource(id = R.string.you_havent_added_any_events_yet),
                 fontSize = FontSize.big22,
             )
+            if (isDeletingInProcess) DeleteReminders {
+                isDeletingInProcess = false
+                reminderForRemoving.values.forEach {
+                    viewModel.removeEvent(it)
+                    reminderForRemoving.remove(it.idOfReminder)
+                }
+            }
         }
     }
 }

@@ -23,4 +23,5 @@
     <string name="add_to_list">Добавить в список</string>
     <string name="tasks_by_day">Задачи по дням</string>
     <string name="tasks_list">Список задач</string>
+    <string name="hold">Удерживайте</string>
 </resources>

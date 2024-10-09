@@ -6,20 +6,18 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -37,6 +35,8 @@ fun Reminder.ReminderDataString(
     dateOfThisPage: LocalDate,
     modifier: Modifier = Modifier,
     viewModel: EventCreation,
+    isItCandidateForDelete: Boolean?,
+    changeStatusOfDeleting: (() -> Unit)?,
 ) {
     var isDialogDeleteShows by remember {
         mutableStateOf(false)
@@ -49,71 +49,78 @@ fun Reminder.ReminderDataString(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(10.dp),
+            .padding(10.dp)
+            .alpha(if (isItCandidateForDelete == true) 0.5f else 1.0f),
         colors = CardDefaults.cardColors(containerColor = Theme.colors.buttonColor)
     ) {
         Row(
             modifier = modifier
                 .fillMaxWidth()
-                .padding(10.dp)
+                .padding(5.dp)
         ) {
-            Checkbox(
-                checked = dateOfDone != null && (dateOfDone >= dateOfThisPage ||
-                        this@ReminderDataString.repeatDuration == RepeatDuration.NoRepeat),
-                onCheckedChange = {
-                    viewModel.updateEvent(
-                        copy(
-                            dateOfDone = if (this@ReminderDataString.repeatDuration != RepeatDuration.NoRepeat) {
-                                if (dateOfDone == dateOfThisPage) null else {
-                                    if (dateOfDone != null)
-                                        Toast.makeText(
-                                            context,
-                                            "Помечено выполненным до сегодня",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
-                                    dateOfThisPage
-                                }
-                            } else {
-                                if (dateOfDone != null) null else dateOfThisPage
-                            }
-                        )
+            Column {
+                Checkbox(
+                    checked = dateOfDone != null && (dateOfDone >= dateOfThisPage ||
+                            this@ReminderDataString.repeatDuration == RepeatDuration.NoRepeat),
+                    onCheckedChange = if (isItCandidateForDelete != null && changeStatusOfDeleting != null) {
+                        {
+                            changeStatusOfDeleting()
+                        }
+                    } else {
+                        {
+                            viewModel.updateEvent(
+                                copy(
+                                    dateOfDone = if (this@ReminderDataString.repeatDuration != RepeatDuration.NoRepeat) {
+                                        if (dateOfDone == dateOfThisPage) null else {
+                                            if (dateOfDone != null)
+                                                Toast.makeText(
+                                                    context,
+                                                    "Помечено выполненным до сегодня",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
+                                            dateOfThisPage
+                                        }
+                                    } else {
+                                        if (dateOfDone != null) null else dateOfThisPage
+                                    }
+                                )
+                            )
+                        }
+                    },
+                    colors = CheckboxDefaults.colors(
+                        checkedColor = Theme.colors.oppositeTheme,
+                        uncheckedColor = Theme.colors.oppositeTheme,
+                        checkmarkColor = Theme.colors.singleTheme,
                     )
-                },
-                colors = CheckboxDefaults.colors(
-                    checkedColor = Theme.colors.oppositeTheme,
-                    uncheckedColor = Theme.colors.oppositeTheme,
-                    checkmarkColor = Theme.colors.singleTheme,
                 )
-            )
+//                Spacer(modifier = Modifier.height(5.dp))
+//                if (isItCandidateForDelete != null) {
+//                    Icon()
+//                }
+            }
             Column(
                 modifier = Modifier.weight(1f)
             ) {
                 TextForThisTheme(text = title, fontSize = FontSize.big22)
                 TextForThisTheme(text = text, fontSize = FontSize.medium19)
-                Row {
-                    TextForThisTheme(
-                        text = "${stringResource(id = this@ReminderDataString.repeatDuration.resourceName)} ${
-                            this@ReminderDataString.dt.toLocalTime().let {
-                                if (it.hour != 0 && it.minute != 0)
-                                    "${stringResource(id = R.string.`in`)} $it"
-                                else ""
-                            }
-                        }", fontSize = FontSize.medium19
-                    )
-                    if (this@ReminderDataString.isNotificationNeeded)
+
+                TextForThisTheme(
+                    text = stringResource(id = this@ReminderDataString.repeatDuration.resourceName),
+                    fontSize = FontSize.medium19
+                )
+                if (this@ReminderDataString.isNotificationNeeded) {
+                    Row {
+                        TextForThisTheme(
+                            text = "${this@ReminderDataString.dt.toLocalTime()}",
+                            fontSize = FontSize.medium19
+                        )
                         Icon(
                             painter = painterResource(R.drawable.message),
                             contentDescription = "message",
                             tint = Theme.colors.oppositeTheme
                         )
+                    }
                 }
-            }
-            IconButton(onClick = { isDialogDeleteShows = true }) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Delete reminder ",
-                    tint = Theme.colors.oppositeTheme
-                )
             }
         }
     }

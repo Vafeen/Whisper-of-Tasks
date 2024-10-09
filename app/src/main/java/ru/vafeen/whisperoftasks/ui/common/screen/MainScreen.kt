@@ -2,8 +2,10 @@ package ru.vafeen.whisperoftasks.ui.common.screen
 
 import android.app.Activity
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,7 +31,9 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -52,6 +56,7 @@ import ru.vafeen.whisperoftasks.network.downloader.Progress
 import ru.vafeen.whisperoftasks.noui.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.noui.local_database.entity.Reminder
 import ru.vafeen.whisperoftasks.ui.common.components.bottom_bar.BottomBar
+import ru.vafeen.whisperoftasks.ui.common.components.ui_utils.DeleteReminders
 import ru.vafeen.whisperoftasks.ui.common.components.ui_utils.ReminderDataString
 import ru.vafeen.whisperoftasks.ui.common.components.ui_utils.ReminderDialog
 import ru.vafeen.whisperoftasks.ui.common.components.ui_utils.TextForThisTheme
@@ -67,7 +72,7 @@ import ru.vafeen.whisperoftasks.utils.suitableColor
 import java.time.LocalDate
 import java.time.LocalTime
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
     navController: NavController, viewModel: MainScreenViewModel,
@@ -99,6 +104,43 @@ fun MainScreen(
     val lastReminder: MutableState<Reminder?> = remember {
         mutableStateOf(null)
     }
+    var isDeletingInProcess by remember { mutableStateOf(false) }
+    var reminderForRemoving = remember { mutableStateMapOf<Int, Reminder>() }
+    fun Modifier.combinedClickableForRemovingReminder(reminder: Reminder): Modifier =
+        this.combinedClickable(
+            onClick = {
+                if (!isDeletingInProcess) {
+                    lastReminder.value = reminder
+                    isEditingReminder = true
+                } else {
+                    if (reminderForRemoving[reminder.idOfReminder] == null)
+                        reminderForRemoving[reminder.idOfReminder] = reminder
+                    else {
+                        reminderForRemoving.remove(reminder.idOfReminder)
+                        if (reminderForRemoving.isEmpty())
+                            isDeletingInProcess = false
+                    }
+                }
+            },
+            onLongClick = {
+                isDeletingInProcess = !isDeletingInProcess
+                if (isDeletingInProcess)
+                    reminderForRemoving[reminder.idOfReminder] = reminder
+                else
+                    reminderForRemoving.clear()
+            }
+        )
+
+    fun Reminder.isItCandidateForDelete(): Boolean? =
+        if (isDeletingInProcess) reminderForRemoving[idOfReminder] != null else null
+
+    fun Reminder.changeStatusOfDeleting() {
+        isItCandidateForDelete()?.let {
+            if (it)
+                reminderForRemoving.remove(idOfReminder)
+            else reminderForRemoving.set(idOfReminder, this)
+        }
+    }
     LaunchedEffect(key1 = null) {
         Downloader.isUpdateInProcessFlow.collect {
             isUpdateInProcess = it
@@ -118,16 +160,8 @@ fun MainScreen(
         }
     }
 
-    var reminders by remember {
-        mutableStateOf(listOf<Reminder>())
-    }
+    val reminders by viewModel.remindersFlow.collectAsState(listOf())
     val cardsWithDateState = rememberLazyListState()
-
-    LaunchedEffect(key1 = null) {
-        viewModel.databaseRepository.getAllRemindersAsFlow().collect {
-            reminders = it
-        }
-    }
 
     val pagerState = rememberPagerState(
         pageCount = {
@@ -295,13 +329,12 @@ fun MainScreen(
                         )
                         remindersForThisDay.forEach {
                             it.ReminderDataString(
-                                modifier = Modifier.clickable {
-                                    lastReminder.value = it
-                                    isEditingReminder = true
-                                },
+                                modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
                                 viewModel = viewModel,
                                 dateOfThisPage = dateOfThisPage,
-                                context = context
+                                context = context,
+                                isItCandidateForDelete = it.isItCandidateForDelete(),
+                                changeStatusOfDeleting = it::changeStatusOfDeleting,
                             )
                         }
                     }
@@ -316,16 +349,22 @@ fun MainScreen(
                         )
                         lostReminders.forEach {
                             it.ReminderDataString(
-                                modifier = Modifier.clickable {
-                                    lastReminder.value = it
-                                    isEditingReminder = true
-                                },
+                                modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
                                 viewModel = viewModel,
                                 dateOfThisPage = dateOfThisPage,
-                                context = context
+                                context = context,
+                                isItCandidateForDelete = it.isItCandidateForDelete(),
+                                changeStatusOfDeleting = it::changeStatusOfDeleting,
                             )
                         }
                     }
+                }
+            }
+            if (isDeletingInProcess) DeleteReminders {
+                isDeletingInProcess = false
+                reminderForRemoving.values.forEach {
+                    viewModel.removeEvent(it)
+                    reminderForRemoving.remove(it.idOfReminder)
                 }
             }
             if (isUpdateInProcess) UpdateProgress(percentage = progress)
