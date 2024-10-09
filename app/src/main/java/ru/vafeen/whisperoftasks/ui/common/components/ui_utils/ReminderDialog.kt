@@ -121,7 +121,7 @@ fun ReminderDialog(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Theme.colors.singleTheme)
+                .background(Theme.colors.buttonColor)
                 .padding(dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {

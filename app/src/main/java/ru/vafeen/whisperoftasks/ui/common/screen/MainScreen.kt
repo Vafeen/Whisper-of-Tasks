@@ -295,7 +295,7 @@ fun MainScreen(
                     val remindersForThisDay = reminders.filter {
                         it.dt.toLocalDate() == dateOfThisPage ||
                                 it.repeatDuration == RepeatDuration.EveryDay ||
-                                it.repeatDuration == RepeatDuration.EveryWeek && it.dt?.dayOfWeek == dateOfThisPage.dayOfWeek
+                                it.repeatDuration == RepeatDuration.EveryWeek && it.dt.dayOfWeek == dateOfThisPage.dayOfWeek
                     }
                     val lostReminders = reminders.filter {
                         it.repeatDuration == RepeatDuration.NoRepeat &&
@@ -317,16 +317,9 @@ fun MainScreen(
                                 fontSize = FontSize.big22
                             )
                         }
-
                     }
                     if (remindersForThisDay.isNotEmpty()) {
                         Spacer(modifier = Modifier.height(10.dp))
-                        TextForThisTheme(
-                            modifier = Modifier.fillMaxWidth(),
-                            textAlign = TextAlign.Center,
-                            text = stringResource(id = R.string.events_on_this_day),
-                            fontSize = FontSize.medium19
-                        )
                         remindersForThisDay.forEach {
                             it.ReminderDataString(
                                 modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
