@@ -23,4 +23,6 @@
     <string name="tasks_by_day">Задачи по дням</string>
     <string name="tasks_list">Список задач</string>
     <string name="hold">Удерживайте</string>
+    <string name="reminder_recovery">Восстановление будильников</string>
+    <string name="reminders_restored">Будильники восстановлены</string>
 </resources>

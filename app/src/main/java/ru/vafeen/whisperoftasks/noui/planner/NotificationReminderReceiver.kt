@@ -28,8 +28,10 @@ class NotificationReminderReceiver : BroadcastReceiver() {
             )
             reminder?.let {
                 notificationService.showNotification(
-                    title = it.title,
-                    text = it.text
+                    NotificationService.createNotificationTask(
+                        title = it.title,
+                        text = it.text
+                    )
                 )
             }
         }
