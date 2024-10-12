@@ -298,8 +298,9 @@ fun MainScreen(
                         cardsWithDateState.animateScrollToItem(pagerState.currentPage)
                     }
                     val remindersForThisDay = reminders.filter {
-                        it.dt.toLocalDate() == dateOfThisPage ||
-                                it.repeatDuration == RepeatDuration.EveryDay ||
+                        val d = it.dt.toLocalDate()
+                        d == dateOfThisPage ||
+                                it.repeatDuration == RepeatDuration.EveryDay && d <= dateOfThisPage ||
                                 it.repeatDuration == RepeatDuration.EveryWeek && it.dt.dayOfWeek == dateOfThisPage.dayOfWeek
                     }
                     val lostReminders = reminders.filter {

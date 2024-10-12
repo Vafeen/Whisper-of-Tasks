@@ -35,6 +35,7 @@ import ru.vafeen.whisperoftasks.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.utils.getTimeDefaultStr
 import java.time.LocalDate
 import java.time.LocalTime
+import java.time.temporal.ChronoUnit
 
 
 @Composable
@@ -78,11 +79,13 @@ fun MyDateTimePicker(
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         if (initialDate != null)
-            DateColumnPicker(modifier = Modifier.weight(1f), onValueChange = {
-                if (it != null) {
-                    onDateSelected(it)
-                }
-            })
+            DateColumnPicker(modifier = Modifier.weight(1f),
+                initialDate = initialDate,
+                onValueChange = {
+                    if (it != null) {
+                        onDateSelected(it)
+                    }
+                })
         if (isTimeNeeded && initialTime != null) {
             Row(modifier = Modifier.weight(1f)) {
                 TimeColumnPicker(
@@ -108,9 +111,10 @@ fun MyDateTimePicker(
 
 @Composable
 private fun DateColumnPicker(
+    initialDate: LocalDate,
     onValueChange: (LocalDate?) -> Unit, modifier: Modifier = Modifier,
 ) {
-    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
+    var selectedDate by remember { mutableStateOf(initialDate) }
     val context = LocalContext.current
     // Высота одного элемента
     val itemHeight = 40.dp
@@ -120,8 +124,13 @@ private fun DateColumnPicker(
     val space = 24.dp
     // Высота списка (должна вмещать ровно три элемента)
     val listHeight = itemHeight * size + space * 2
-    val listState = rememberLazyListState(initialFirstVisibleItemIndex = 0)
     val dateToday = LocalDate.now()
+    val listState = rememberLazyListState(
+        initialFirstVisibleItemIndex = ChronoUnit.DAYS.between(
+            dateToday,
+            selectedDate
+        ).toInt()
+    )
     val list = mutableListOf("")
     for (i in 0..365) {
         list.add(dateToday.plusDays((i).toLong()).getDateStringWithWeekOfDay(context = context))
