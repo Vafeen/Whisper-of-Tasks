@@ -9,7 +9,7 @@ import ru.vafeen.whisperoftasks.noui.local_database.DBInfo
 import ru.vafeen.whisperoftasks.noui.local_database.DatabaseRepository
 
 
-val koinDIModule = module {
+val koinDatabaseDIModule = module {
     single<AppDatabase> {
         Room.databaseBuilder(
             context = get(), klass = AppDatabase::class.java, name = DBInfo.NAME
