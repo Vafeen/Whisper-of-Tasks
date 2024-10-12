@@ -96,10 +96,8 @@ fun MyDateTimePicker(
                     modifier = Modifier.weight(1f),
                     value = pickedTime?.hour ?: 0,
                     onValueChange = { hour ->
-                        if (hour != null) {
-                            pickedTime = LocalTime.of(hour, pickedTime?.minute ?: 0)
-                            pickedTime?.let { onTimeSelected(it) }
-                        }
+                        pickedTime = LocalTime.of(hour, pickedTime?.minute ?: 0)
+                        pickedTime?.let { onTimeSelected(it) }
                     },
                     range = 0..23,
                 )
@@ -107,10 +105,8 @@ fun MyDateTimePicker(
                     modifier = Modifier.weight(1f),
                     value = pickedTime?.minute ?: 0,
                     onValueChange = { minute ->
-                        if (minute != null) {
-                            pickedTime = LocalTime.of(pickedTime?.hour ?: 0, minute)
-                            pickedTime?.let { onTimeSelected(it) }
-                        }
+                        pickedTime = LocalTime.of(pickedTime?.hour ?: 0, minute)
+                        pickedTime?.let { onTimeSelected(it) }
                     },
                     range = 0..59,
                 )
@@ -123,6 +119,7 @@ fun MyDateTimePicker(
 private fun DateColumnPicker(
     onValueChange: (LocalDate?) -> Unit, modifier: Modifier = Modifier,
 ) {
+    var selectedDate by remember { mutableStateOf(LocalDate.now()) }
     val context = LocalContext.current
     // Высота одного элемента
     val itemHeight = 40.dp
@@ -159,9 +156,11 @@ private fun DateColumnPicker(
         ) {
             itemsIndexed(list) { index, it ->
                 val newDT by remember { mutableStateOf(dateToday.plusDays(index.toLong() - 1)) }
-                if (remember { derivedStateOf { listState.firstVisibleItemIndex } }.value == index - 1 && listState.isScrollInProgress) onValueChange(
-                    newDT
-                )
+                if (remember { derivedStateOf { listState.firstVisibleItemIndex } }.value == index - 1 && listState.isScrollInProgress)
+                    if (newDT != selectedDate) {
+                        onValueChange(newDT)
+                        selectedDate = newDT
+                    }
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -182,7 +181,7 @@ private fun DateColumnPicker(
 
 @Composable
 private fun TimeColumnPicker(
-    value: Int, onValueChange: (Int?) -> Unit, range: IntRange, modifier: Modifier = Modifier,
+    value: Int, onValueChange: (Int) -> Unit, range: IntRange, modifier: Modifier = Modifier,
 ) {
     // Высота одного элемента
     val itemHeight = 40.dp
@@ -196,6 +195,7 @@ private fun TimeColumnPicker(
     val firstIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
     val list = mutableListOf("")
     for (i in range) list.add(i.getTimeDefaultStr())
+    var selectedValue by remember { mutableStateOf(value) }
     list.add("")
     LaunchedEffect(listState.isScrollInProgress) {
         if (!listState.isScrollInProgress) {
@@ -216,7 +216,13 @@ private fun TimeColumnPicker(
             verticalArrangement = Arrangement.spacedBy(space)
         ) {
             itemsIndexed(list) { index, it ->
-                if (firstIndex == index - 1) onValueChange(list[firstIndex + 1].toIntOrNull())
+                if (firstIndex == index - 1 && listState.isScrollInProgress) {
+                    val newValue = list[firstIndex + 1].toIntOrNull()
+                    if (newValue != null && newValue != selectedValue) {
+                        onValueChange(newValue)
+                        selectedValue = newValue
+                    }
+                }
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()

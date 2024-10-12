@@ -1,6 +1,5 @@
 package ru.vafeen.whisperoftasks.ui.common.components.ui_utils
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -86,7 +85,6 @@ fun ReminderDialog(
     var selectedTime by remember {
         mutableStateOf(
             newReminder.value.dt.toLocalTime()?.let {
-                Log.d("reminder", it.toString())
                 if (it.hour == 0 && it.minute == 0) LocalTime.now()
                 else it
             } ?: LocalTime.now()
@@ -161,35 +159,28 @@ fun ReminderDialog(
                 )
             }
             MyDateTimePicker(
-                isTimeNeeded = newReminder.value.isNotificationNeeded == true,
+                isTimeNeeded = newReminder.value.isNotificationNeeded,
                 initialDate = selectedDate,
                 onDateSelected = { date ->
-                    Log.d("reminder", "onDateSelected")
-                    if (date != selectedTime) {
-                        selectedDate = date
-                        mainButtonText = createMainButtonText()
-
-                        newReminder.value = newReminder.value.copy(
-                            dt = LocalDateTime.of(
-                                selectedDate,
-                                selectedTime
-                            )
+                    selectedDate = date
+                    mainButtonText = createMainButtonText()
+                    newReminder.value = newReminder.value.copy(
+                        dt = LocalDateTime.of(
+                            selectedDate,
+                            selectedTime
                         )
-                    }
+                    )
                 },
                 initialTime = selectedTime,
                 onTimeSelected = { time ->
-                    Log.d("reminder", "onTimeSelected")
-                    if (time != selectedTime) {
-                        selectedTime = time
-                        mainButtonText = createMainButtonText()
-                        newReminder.value = newReminder.value.copy(
-                            dt = LocalDateTime.of(
-                                selectedDate,
-                                selectedTime
-                            )
+                    selectedTime = time
+                    mainButtonText = createMainButtonText()
+                    newReminder.value = newReminder.value.copy(
+                        dt = LocalDateTime.of(
+                            selectedDate,
+                            selectedTime
                         )
-                    }
+                    )
                 }
             )
             Box(modifier = Modifier
@@ -229,12 +220,7 @@ fun ReminderDialog(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Theme.colors.mainColor
                 ),
-                enabled = (lastReminder.also {
-                    Log.d("reminder", "last = $it")
-                } != newReminder.value.toString().also {
-                    Log.d("reminder", "new = $it")
-                }) &&
-                        (newReminder.value.let { it.text.isNotEmpty() || it.title.isNotEmpty() } == true),
+                enabled = (lastReminder != newReminder.value.toString()) && newReminder.value.let { it.text.isNotEmpty() || it.title.isNotEmpty() },
                 onClick = {
                     cor.launch(Dispatchers.IO) {
                         newReminder.value = newReminder.value.copy(
@@ -257,7 +243,7 @@ fun ReminderDialog(
             ) {
                 Text(
                     color = Theme.colors.mainColor.suitableColor(),
-                    text = if (newReminder.value.isNotificationNeeded == true) mainButtonText else stringResource(
+                    text = if (newReminder.value.isNotificationNeeded) mainButtonText else stringResource(
                         id = R.string.add_to_list
                     ),
                     fontSize = FontSize.medium19
