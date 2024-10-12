@@ -77,7 +77,7 @@ fun RemindersScreen(
         }
     }
     var isDeletingInProcess by remember { mutableStateOf(false) }
-    var reminderForRemoving = remember { mutableStateMapOf<Int, Reminder>() }
+    val reminderForRemoving = remember { mutableStateMapOf<Int, Reminder>() }
     fun Modifier.combinedClickableForRemovingReminder(reminder: Reminder): Modifier =
         this.combinedClickable(
             onClick = {
