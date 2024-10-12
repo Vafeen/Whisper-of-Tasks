@@ -23,6 +23,10 @@ operator fun LocalTime.compareTo(localDateTime: LocalDateTime): Int {
 fun LocalDate.getDateString(): String = "${dayOfMonth}." + if (month.value < 10) "0${month.value}"
 else month.value
 
+fun LocalDateTime.getDateStringWithWeekOfDay(context: Context): String =
+    "${context.getString(daysOfWeek[dayOfWeek.value - 1])}, ${dayOfMonth}." + if (month.value < 10) "0${month.value}"
+    else month.value
+
 fun LocalDate.getDateStringWithWeekOfDay(context: Context): String =
     "${context.getString(daysOfWeek[dayOfWeek.value - 1])}, ${dayOfMonth}." + if (month.value < 10) "0${month.value}"
     else month.value
@@ -31,6 +35,11 @@ fun LocalDateTime.getDateString(): String =
     "${dayOfMonth}." + if (month.value < 10) "0${month.value}"
     else month.value
 
+fun localTimeNowHHMM(): LocalTime = LocalTime.now().withSecond(0).withNano(0)
 
+fun LocalDateTime.withTime(localTime: LocalTime?): LocalDateTime =
+    this.withHour(localTime?.hour ?: 0).withMinute(localTime?.minute ?: 0)
 
-
+fun LocalDateTime.withDate(localDate: LocalDate): LocalDateTime =
+    this.withDayOfMonth(localDate.dayOfMonth).withMonth(localDate.monthValue)
+        .withYear(localDate.year)

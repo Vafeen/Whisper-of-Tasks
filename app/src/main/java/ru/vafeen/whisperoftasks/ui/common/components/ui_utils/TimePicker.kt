@@ -71,42 +71,33 @@ fun MyDateTimePicker(
     initialTime: LocalTime?,
     onTimeSelected: (LocalTime) -> Unit,
 ) {
-    var pickedTime by remember {
-        mutableStateOf(initialTime)
-    }
-    var pickedDate by remember {
-        mutableStateOf(initialDate)
-    }
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .border(border = BorderStroke(width = 2.dp, color = Theme.colors.oppositeTheme)),
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
-        if (initialDate != null && pickedDate != null)
+        if (initialDate != null)
             DateColumnPicker(modifier = Modifier.weight(1f), onValueChange = {
                 if (it != null) {
-                    pickedDate = it
                     onDateSelected(it)
                 }
             })
-        if (isTimeNeeded && initialTime != null && pickedTime != null) {
+        if (isTimeNeeded && initialTime != null) {
             Row(modifier = Modifier.weight(1f)) {
                 TimeColumnPicker(
                     modifier = Modifier.weight(1f),
-                    value = pickedTime?.hour ?: 0,
+                    value = initialTime.hour,
                     onValueChange = { hour ->
-                        pickedTime = LocalTime.of(hour, pickedTime?.minute ?: 0)
-                        pickedTime?.let { onTimeSelected(it) }
+                        onTimeSelected(initialTime.withHour(hour))
                     },
                     range = 0..23,
                 )
                 TimeColumnPicker(
                     modifier = Modifier.weight(1f),
-                    value = pickedTime?.minute ?: 0,
+                    value = initialTime.minute,
                     onValueChange = { minute ->
-                        pickedTime = LocalTime.of(pickedTime?.hour ?: 0, minute)
-                        pickedTime?.let { onTimeSelected(it) }
+                        onTimeSelected(initialTime.withMinute(minute))
                     },
                     range = 0..59,
                 )

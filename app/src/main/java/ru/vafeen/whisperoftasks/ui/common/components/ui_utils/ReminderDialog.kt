@@ -1,5 +1,6 @@
 package ru.vafeen.whisperoftasks.ui.common.components.ui_utils
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -53,16 +54,17 @@ import ru.vafeen.whisperoftasks.ui.theme.Theme
 import ru.vafeen.whisperoftasks.utils.generateID
 import ru.vafeen.whisperoftasks.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.utils.getTimeDefaultStr
+import ru.vafeen.whisperoftasks.utils.localTimeNowHHMM
 import ru.vafeen.whisperoftasks.utils.suitableColor
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import ru.vafeen.whisperoftasks.utils.withDate
+import ru.vafeen.whisperoftasks.utils.withTime
 
 @Composable
 fun ReminderDialog(
     newReminder: MutableState<Reminder>,
     onDismissRequest: () -> Unit,
 ) {
+    Log.d("reminder", newReminder.value.toString())
     val context = LocalContext.current
     val lastReminder by remember { mutableStateOf(newReminder.value.toString()) }
     val cor = rememberCoroutineScope()
@@ -74,37 +76,14 @@ fun ReminderDialog(
     val eventCreator: EventCreator by inject(
         clazz = EventCreator::class.java
     )
-    var mainButtonText by remember {
-        mutableStateOf("")
-    }
-    var selectedDate by remember {
-        mutableStateOf(
-            newReminder.value.dt.toLocalDate() ?: LocalDate.now()
-        )
-    }
-    var selectedTime by remember {
-        mutableStateOf(
-            newReminder.value.dt.toLocalTime()?.let {
-                if (it.hour == 0 && it.minute == 0) LocalTime.now()
-                else it
-            } ?: LocalTime.now()
-        )
+
+    var selectedDateTime by remember {
+        mutableStateOf(newReminder.value.dt)
     }
     var isChoosingDurationInProcess by remember { mutableStateOf(false) }
     LaunchedEffect(null) {
         focusRequester1.requestFocus()
     }
-    fun createMainButtonText(): String = "${
-        ContextCompat.getString(
-            context,
-            R.string.send
-        )
-    } ${selectedDate.getDateStringWithWeekOfDay(context = context)} ${
-        ContextCompat.getString(
-            context,
-            R.string.`in`
-        )
-    } ${selectedTime.hour.getTimeDefaultStr()}:${selectedTime.minute.getTimeDefaultStr()}"
 
     val colors = OutlinedTextFieldDefaults.colors(
         focusedTextColor = Theme.colors.oppositeTheme,
@@ -147,10 +126,19 @@ fun ReminderDialog(
                     fontSize = FontSize.medium19
                 )
                 Checkbox(
-                    checked = newReminder.value.isNotificationNeeded == true,
-                    onCheckedChange = {
+                    checked = newReminder.value.isNotificationNeeded,
+                    onCheckedChange = { checked ->
+                        selectedDateTime = selectedDateTime.withTime(
+                            if (checked) localTimeNowHHMM().plusMinutes(5)
+                            else null
+                        )
+                        Log.d("slt", selectedDateTime.toString())
                         newReminder.value =
-                            newReminder.value.copy(isNotificationNeeded = !newReminder.value.isNotificationNeeded)
+                            newReminder.value.copy(
+                                isNotificationNeeded = !newReminder.value.isNotificationNeeded,
+                                dt = selectedDateTime
+                            )
+
                     }, colors = CheckboxDefaults.colors(
                         checkedColor = Theme.colors.oppositeTheme,
                         uncheckedColor = Theme.colors.oppositeTheme,
@@ -160,26 +148,18 @@ fun ReminderDialog(
             }
             MyDateTimePicker(
                 isTimeNeeded = newReminder.value.isNotificationNeeded,
-                initialDate = selectedDate,
+                initialDate = newReminder.value.dt.toLocalDate(),
                 onDateSelected = { date ->
-                    selectedDate = date
-                    mainButtonText = createMainButtonText()
-                    newReminder.value = newReminder.value.copy(
-                        dt = LocalDateTime.of(
-                            selectedDate,
-                            selectedTime
-                        )
-                    )
+                    Log.d("picker", "onDateSelected")
+                    selectedDateTime = selectedDateTime.withDate(date)
+                    newReminder.value = newReminder.value.copy(dt = selectedDateTime)
                 },
-                initialTime = selectedTime,
+                initialTime = selectedDateTime.toLocalTime(),//newReminder.value.dt.toLocalTime(),
                 onTimeSelected = { time ->
-                    selectedTime = time
-                    mainButtonText = createMainButtonText()
+                    Log.d("picker", "onTimeSelected")
+                    selectedDateTime = selectedDateTime.withTime(time)
                     newReminder.value = newReminder.value.copy(
-                        dt = LocalDateTime.of(
-                            selectedDate,
-                            selectedTime
-                        )
+                        dt = selectedDateTime
                     )
                 }
             )
@@ -226,24 +206,26 @@ fun ReminderDialog(
                         newReminder.value = newReminder.value.copy(
                             idOfReminder = databaseRepository.getAllRemindersAsFlow().first()
                                 .map { it.idOfReminder }.generateID(),
-                            dt = newReminder.value.dt.let {
-                                LocalDateTime.of(
-                                    it.toLocalDate(),
-                                    if (!newReminder.value.isNotificationNeeded) LocalTime.of(0, 0)
-                                    else LocalTime.of(it.hour, it.minute)
-                                )
-                            }
                         )
-                        newReminder.value.let {
-                            eventCreator.planeEvent(it)
-                        }
+                        eventCreator.planeEvent(newReminder.value)
+                        Log.d("reminder", newReminder.value.toString())
                         onDismissRequest()
                     }
                 },
             ) {
                 Text(
                     color = Theme.colors.mainColor.suitableColor(),
-                    text = if (newReminder.value.isNotificationNeeded) mainButtonText else stringResource(
+                    text = if (newReminder.value.isNotificationNeeded) "${
+                        ContextCompat.getString(
+                            context,
+                            R.string.send
+                        )
+                    } ${selectedDateTime.getDateStringWithWeekOfDay(context = context)} ${
+                        ContextCompat.getString(
+                            context,
+                            R.string.`in`
+                        )
+                    } ${selectedDateTime.hour.getTimeDefaultStr()}:${selectedDateTime.minute.getTimeDefaultStr()}" else stringResource(
                         id = R.string.add_to_list
                     ),
                     fontSize = FontSize.medium19

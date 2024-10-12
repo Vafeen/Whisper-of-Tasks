@@ -190,7 +190,7 @@ fun RemindersScreen(
                 lastReminder.value = Reminder(
                     title = "",
                     text = "",
-                    dt = LocalDateTime.now().plusMinutes(5),
+                    dt = LocalDateTime.of(LocalDate.now(), null),
                     idOfReminder = 0,
                     repeatDuration = RepeatDuration.NoRepeat
                 )
