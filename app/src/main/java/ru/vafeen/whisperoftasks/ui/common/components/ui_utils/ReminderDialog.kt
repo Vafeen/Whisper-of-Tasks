@@ -58,6 +58,7 @@ import ru.vafeen.whisperoftasks.utils.localTimeNowHHMM
 import ru.vafeen.whisperoftasks.utils.suitableColor
 import ru.vafeen.whisperoftasks.utils.withDate
 import ru.vafeen.whisperoftasks.utils.withTime
+import java.time.LocalTime
 
 @Composable
 fun ReminderDialog(
@@ -68,6 +69,7 @@ fun ReminderDialog(
     val context = LocalContext.current
     val lastReminder by remember { mutableStateOf(newReminder.value.toString()) }
     val cor = rememberCoroutineScope()
+    val nullTime = LocalTime.of(0, 0)
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
     val databaseRepository: DatabaseRepository by inject(
@@ -130,7 +132,7 @@ fun ReminderDialog(
                     onCheckedChange = { checked ->
                         selectedDateTime = selectedDateTime.withTime(
                             if (checked) localTimeNowHHMM().plusMinutes(5)
-                            else null
+                            else nullTime
                         )
                         Log.d("slt", selectedDateTime.toString())
                         newReminder.value =

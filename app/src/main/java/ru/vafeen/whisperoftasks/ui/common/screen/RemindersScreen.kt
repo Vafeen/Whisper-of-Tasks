@@ -53,6 +53,7 @@ import ru.vafeen.whisperoftasks.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.ui.theme.Theme
 import java.time.LocalDate
 import java.time.LocalDateTime
+import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -64,6 +65,7 @@ fun RemindersScreen(
     var reminders by remember {
         mutableStateOf(listOf<Reminder>())
     }
+    val nullTime = LocalTime.of(0, 0)
     var isAddingReminder by remember {
         mutableStateOf(false)
     }
@@ -190,7 +192,7 @@ fun RemindersScreen(
                 lastReminder.value = Reminder(
                     title = "",
                     text = "",
-                    dt = LocalDateTime.of(LocalDate.now(), null),
+                    dt = LocalDateTime.of(LocalDate.now(), nullTime),
                     idOfReminder = 0,
                     repeatDuration = RepeatDuration.NoRepeat
                 )

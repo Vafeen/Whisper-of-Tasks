@@ -37,8 +37,8 @@ fun LocalDateTime.getDateString(): String =
 
 fun localTimeNowHHMM(): LocalTime = LocalTime.now().withSecond(0).withNano(0)
 
-fun LocalDateTime.withTime(localTime: LocalTime?): LocalDateTime =
-    this.withHour(localTime?.hour ?: 0).withMinute(localTime?.minute ?: 0)
+fun LocalDateTime.withTime(localTime: LocalTime): LocalDateTime =
+    this.withHour(localTime.hour).withMinute(localTime.minute)
 
 fun LocalDateTime.withDate(localDate: LocalDate): LocalDateTime =
     this.withDayOfMonth(localDate.dayOfMonth).withMonth(localDate.monthValue)
