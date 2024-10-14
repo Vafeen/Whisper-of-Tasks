@@ -295,7 +295,10 @@ fun MainScreen(
                     val dateOfThisPage = viewModel.todayDate.plusDays(page.toLong())
                     localDate = viewModel.todayDate.plusDays(pagerState.currentPage.toLong())
                     if (!pagerState.isScrollInProgress) LaunchedEffect(key1 = null) {
-                        cardsWithDateState.animateScrollToItem(pagerState.currentPage)
+                        cardsWithDateState.animateScrollToItem(
+                            if (pagerState.currentPage > 0) pagerState.currentPage - 1
+                            else pagerState.currentPage
+                        )
                     }
                     val remindersForThisDay = reminders.filter {
                         val d = it.dt.toLocalDate()
