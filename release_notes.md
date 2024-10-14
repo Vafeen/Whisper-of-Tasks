@@ -1,8 +1,6 @@
-v1.0-rc13
-New version v1.0-rc13!!
+v1.0-rc14
+New version v1.0-rc14!!
 
 What's new:
 
-- Improved stability
-- Modify layout
-- Fix bug with changing screens during the update.
+- Modify padding between tasks card in RemindersScreen
