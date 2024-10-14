@@ -65,7 +65,6 @@ fun ReminderDialog(
     newReminder: MutableState<Reminder>,
     onDismissRequest: () -> Unit,
 ) {
-    Log.d("reminder", newReminder.value.toString())
     val context = LocalContext.current
     val lastReminder by remember { mutableStateOf(newReminder.value.toString()) }
     val cor = rememberCoroutineScope()
@@ -152,13 +151,11 @@ fun ReminderDialog(
                 isTimeNeeded = newReminder.value.isNotificationNeeded,
                 initialDate = newReminder.value.dt.toLocalDate(),
                 onDateSelected = { date ->
-                    Log.d("picker", "onDateSelected")
                     selectedDateTime = selectedDateTime.withDate(date)
                     newReminder.value = newReminder.value.copy(dt = selectedDateTime)
                 },
                 initialTime = selectedDateTime.toLocalTime(),//newReminder.value.dt.toLocalTime(),
                 onTimeSelected = { time ->
-                    Log.d("picker", "onTimeSelected")
                     selectedDateTime = selectedDateTime.withTime(time)
                     newReminder.value = newReminder.value.copy(
                         dt = selectedDateTime
@@ -210,7 +207,6 @@ fun ReminderDialog(
                                 .map { it.idOfReminder }.generateID(),
                         )
                         eventCreator.planeEvent(newReminder.value)
-                        Log.d("reminder", newReminder.value.toString())
                         onDismissRequest()
                     }
                 },
