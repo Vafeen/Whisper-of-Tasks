@@ -12,10 +12,6 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
@@ -38,14 +34,6 @@ fun Reminder.ReminderDataString(
     isItCandidateForDelete: Boolean?,
     changeStatusOfDeleting: (() -> Unit)?,
 ) {
-    var isDialogDeleteShows by remember {
-        mutableStateOf(false)
-    }
-    if (isDialogDeleteShows) RemoveReminderDialog(onDismissRequest = {
-        isDialogDeleteShows = false
-    }) {
-        viewModel.removeEvent(reminder = this)
-    }
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -93,10 +81,6 @@ fun Reminder.ReminderDataString(
                         checkmarkColor = Theme.colors.singleTheme,
                     )
                 )
-//                Spacer(modifier = Modifier.height(5.dp))
-//                if (isItCandidateForDelete != null) {
-//                    Icon()
-//                }
             }
             Column(
                 modifier = Modifier.weight(1f)
