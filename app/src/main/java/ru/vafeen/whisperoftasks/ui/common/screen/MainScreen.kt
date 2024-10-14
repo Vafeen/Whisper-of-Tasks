@@ -10,10 +10,8 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -200,6 +198,7 @@ fun MainScreen(
     Scaffold(containerColor = Theme.colors.singleTheme,
         bottomBar = {
             BottomBar(
+                enabled = !isUpdateInProcess,
                 containerColor = Theme.colors.mainColor,
                 selectedMainScreen = true,
                 navigateToRemindersScreen = {
@@ -253,8 +252,7 @@ fun MainScreen(
             LazyRow(
                 state = cardsWithDateState,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(5.dp),
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 items(count = viewModel.pageNumber) { index ->
@@ -285,12 +283,16 @@ fun MainScreen(
                 }
             }
             HorizontalPager(
-                state = pagerState, modifier = Modifier.weight(10f)
+                state = pagerState,
+                modifier = Modifier
+                    .weight(10f)
+                    .padding(top = 10.dp),
             ) { page ->
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .verticalScroll(rememberScrollState())
+                        .verticalScroll(rememberScrollState()),
+                    verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
                     val dateOfThisPage = viewModel.todayDate.plusDays(page.toLong())
                     localDate = viewModel.todayDate.plusDays(pagerState.currentPage.toLong())
@@ -311,7 +313,6 @@ fun MainScreen(
                                 dateOfThisPage > it.dt.toLocalDate()
                     }
                     if (remindersForThisDay.isEmpty() && lostReminders.isEmpty()) {
-                        Spacer(modifier = Modifier.height(10.dp))
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -327,8 +328,8 @@ fun MainScreen(
                             )
                         }
                     }
+
                     if (remindersForThisDay.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(10.dp))
                         remindersForThisDay.forEach {
                             it.ReminderDataString(
                                 modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
@@ -342,7 +343,6 @@ fun MainScreen(
                     }
 
                     if (lostReminders.isNotEmpty()) {
-                        Spacer(modifier = Modifier.height(10.dp))
                         TextForThisTheme(
                             modifier = Modifier.fillMaxWidth(),
                             textAlign = TextAlign.Center,

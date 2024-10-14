@@ -22,6 +22,7 @@ import ru.vafeen.whisperoftasks.utils.suitableColor
 
 @Composable
 fun BottomBar(
+    enabled: Boolean = true,
     containerColor: Color,
     navigateToMainScreen: () -> Unit = {},
     navigateToRemindersScreen: () -> Unit = {},
@@ -46,7 +47,7 @@ fun BottomBar(
 
         NavigationBarItem(
             selected = selectedMainScreen,
-            enabled = !selectedMainScreen,
+            enabled = enabled && !selectedMainScreen,
             modifier = Modifier.weight(1 / 3f),
             onClick = navigateToMainScreen,
             icon = {
@@ -60,7 +61,7 @@ fun BottomBar(
 
         NavigationBarItem(
             selected = selectedRemindersScreen,
-            enabled = !selectedRemindersScreen,
+            enabled = enabled && !selectedRemindersScreen,
             modifier = Modifier.weight(1 / 3f),
             onClick = navigateToRemindersScreen,
             icon = {
@@ -73,7 +74,7 @@ fun BottomBar(
         )
         NavigationBarItem(
             selected = selectedSettingsScreen,
-            enabled = !selectedSettingsScreen,
+            enabled = enabled && !selectedSettingsScreen,
             modifier = Modifier.weight(1 / 3f),
             onClick = {
                 Toast.makeText(context, "There is no screen here.", Toast.LENGTH_SHORT).show()
