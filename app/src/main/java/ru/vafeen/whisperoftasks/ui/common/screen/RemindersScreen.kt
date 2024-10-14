@@ -38,6 +38,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ru.vafeen.whisperoftasks.R
 import ru.vafeen.whisperoftasks.noui.duration.RepeatDuration
@@ -208,11 +209,13 @@ fun RemindersScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .background(Theme.colors.singleTheme),
-            verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val date by remember { mutableStateOf(LocalDate.now()) }
-            if (reminders.isNotEmpty()) LazyColumn(modifier = Modifier.weight(1f)) {
+            if (reminders.isNotEmpty()) LazyColumn(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(20.dp),
+            ) {
                 items(reminders) {
                     it.ReminderDataString(
                         modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
