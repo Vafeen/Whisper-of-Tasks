@@ -58,6 +58,7 @@ import ru.vafeen.whisperoftasks.utils.localTimeNowHHMM
 import ru.vafeen.whisperoftasks.utils.suitableColor
 import ru.vafeen.whisperoftasks.utils.withDate
 import ru.vafeen.whisperoftasks.utils.withTime
+import java.time.LocalDate
 import java.time.LocalTime
 
 @Composable
@@ -66,14 +67,27 @@ fun ReminderDialog(
     onDismissRequest: () -> Unit,
 ) {
     val context = LocalContext.current
+    val databaseRepository: DatabaseRepository by inject(
+        clazz = DatabaseRepository::class.java
+    )
+    val dateToday = LocalDate.now()
+    if (newReminder.value.dt.toLocalDate() < dateToday) {
+        newReminder.value = newReminder.value.copy(
+            dt = newReminder.value.dt.withDate(
+                localDate = dateToday
+            )
+        )
+        LaunchedEffect(null) {
+            databaseRepository.insertAllReminders(
+                newReminder.value
+            )
+        }
+    }
     val lastReminder by remember { mutableStateOf(newReminder.value.toString()) }
     val cor = rememberCoroutineScope()
     val nullTime = LocalTime.of(0, 0)
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
-    val databaseRepository: DatabaseRepository by inject(
-        clazz = DatabaseRepository::class.java
-    )
     val eventCreator: EventCreator by inject(
         clazz = EventCreator::class.java
     )
@@ -82,6 +96,7 @@ fun ReminderDialog(
         mutableStateOf(newReminder.value.dt)
     }
     var isChoosingDurationInProcess by remember { mutableStateOf(false) }
+
     LaunchedEffect(null) {
         focusRequester1.requestFocus()
     }
