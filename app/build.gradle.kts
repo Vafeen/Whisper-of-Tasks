@@ -13,8 +13,8 @@ android {
         applicationId = "ru.vafeen.whisperoftasks"
         minSdk = 26
         targetSdk = 35
-        versionCode = 16
-        versionName = "1.0-rc16"
+        versionCode = 17
+        versionName = "1.0-rc17"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

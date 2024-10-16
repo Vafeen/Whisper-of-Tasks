@@ -1,6 +1,6 @@
-v1.0-rc16
-New version v1.0-rc16!!
+v1.0-rc17
+New version v1.0-rc17!!
 
 What's Fix:
 
-- Crash ReminderDialog because of it has crashed when date was in the past
+- Bug with unsupported date
