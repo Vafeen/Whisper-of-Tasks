@@ -1,6 +1,6 @@
-v1.0-rc15
-New version v1.0-rc15!!
+v1.0-rc16
+New version v1.0-rc16!!
 
-What's new:
+What's Fix:
 
-- Add exception Handler that copy to clipboard your Exception
+- Crash ReminderDialog because of it has crashed when date was in the past
