@@ -1,6 +1,6 @@
-v1.0-rc14
-New version v1.0-rc14!!
+v1.0-rc15
+New version v1.0-rc15!!
 
 What's new:
 
-- Modify padding between tasks card in RemindersScreen
+- Add exception Handler that copy to clipboard your Exception
