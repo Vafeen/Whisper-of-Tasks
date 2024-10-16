@@ -41,5 +41,4 @@ fun LocalDateTime.withTime(localTime: LocalTime): LocalDateTime =
     this.withHour(localTime.hour).withMinute(localTime.minute)
 
 fun LocalDateTime.withDate(localDate: LocalDate): LocalDateTime =
-    this.withDayOfMonth(localDate.dayOfMonth).withMonth(localDate.monthValue)
-        .withYear(localDate.year)
+    LocalDateTime.of(localDate, this.toLocalTime())
