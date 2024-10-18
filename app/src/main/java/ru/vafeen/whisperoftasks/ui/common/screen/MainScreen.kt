@@ -23,7 +23,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
@@ -151,7 +150,7 @@ fun MainScreen(
                 if (it.contentLength == it.totalBytesRead) {
                     isUpdateInProcess = false
                     Downloader.installApk(
-                        context = context, apkFilePath = Path.path(context)
+                        context = context, apkFilePath = Path.path(context).toString()
                     )
                 }
             } else isUpdateInProcess = false
@@ -194,7 +193,12 @@ fun MainScreen(
             }
         }
     }
-
+    LaunchedEffect(key1 = pagerState.currentPage) {
+        cardsWithDateState.animateScrollToItem(
+            if (pagerState.currentPage > 0) pagerState.currentPage - 1
+            else pagerState.currentPage
+        )
+    }
     Scaffold(containerColor = Theme.colors.singleTheme,
         bottomBar = {
             BottomBar(
@@ -258,7 +262,8 @@ fun MainScreen(
                 items(count = viewModel.pageNumber) { index ->
                     val day = viewModel.todayDate.plusDays(index.toLong())
                     Card(modifier = Modifier
-                        .padding(horizontal = 3.dp)
+                        .fillParentMaxWidth(1 / 3f)
+                        .padding(horizontal = 5.dp)
                         .clickable {
                             cor.launch(Dispatchers.Main) {
                                 pagerState.animateScrollToPage(index)
@@ -272,12 +277,15 @@ fun MainScreen(
                         contentColor = (if (day == viewModel.todayDate) mainColor
                         else Theme.colors.buttonColor).suitableColor()
                     )) {
-                        Text(
+                        TextForThisTheme(
                             text = day.getDateStringWithWeekOfDay(context = context),
                             fontSize = FontSize.small17,
-                            modifier = Modifier.padding(
-                                vertical = 5.dp, horizontal = 10.dp
-                            )
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(
+                                    vertical = 5.dp, horizontal = 10.dp
+                                ),
+                            textAlign = TextAlign.Center
                         )
                     }
                 }
@@ -296,12 +304,6 @@ fun MainScreen(
                 ) {
                     val dateOfThisPage = viewModel.todayDate.plusDays(page.toLong())
                     localDate = viewModel.todayDate.plusDays(pagerState.currentPage.toLong())
-                    if (!pagerState.isScrollInProgress) LaunchedEffect(key1 = null) {
-                        cardsWithDateState.animateScrollToItem(
-                            if (pagerState.currentPage > 0) pagerState.currentPage - 1
-                            else pagerState.currentPage
-                        )
-                    }
                     val remindersForThisDay = reminders.filter {
                         val d = it.dt.toLocalDate()
                         d == dateOfThisPage ||
