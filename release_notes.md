@@ -1,6 +1,6 @@
-v1.0-rc18
-New version v1.0-rc18!!
+v1.0-rc19
+New version v1.0-rc19!!
 
 What's new:
 
-- Improved cards with date layout and behavior
+- Fix text color in cards with date  
