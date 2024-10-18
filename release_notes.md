@@ -1,6 +1,6 @@
-v1.0-rc17
-New version v1.0-rc17!!
+v1.0-rc18
+New version v1.0-rc18!!
 
-What's Fix:
+What's new:
 
-- Bug with unsupported date
+- Improved cards with date layout and behavior
