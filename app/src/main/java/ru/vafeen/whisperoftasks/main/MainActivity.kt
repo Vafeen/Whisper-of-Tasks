@@ -2,7 +2,6 @@ package ru.vafeen.whisperoftasks.main
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -26,7 +25,6 @@ import ru.vafeen.whisperoftasks.ui.common.viewmodel.RemindersScreenViewModel
 import ru.vafeen.whisperoftasks.ui.common.viewmodel.SettingsScreenViewModel
 import ru.vafeen.whisperoftasks.ui.theme.MainTheme
 import ru.vafeen.whisperoftasks.ui.theme.Theme
-import ru.vafeen.whisperoftasks.utils.copyToClipboard
 
 @RequiresApi(Build.VERSION_CODES.TIRAMISU)
 class MainActivity : ComponentActivity() {
@@ -39,13 +37,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
-            // Копирование информации об ошибке в буфер обмена
-            copyToClipboard(throwable)
-
-            // Выводим информацию в Logcat для отладки
-            Log.e("UncaughtException", "Uncaught exception in thread ${thread.name}", throwable)
-        }
+        viewModel.registerGeneralExceptionCallback(context = this)
         enableEdgeToEdge()
         setContent {
             MainTheme {
