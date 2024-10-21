@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -33,6 +34,7 @@ import ru.vafeen.whisperoftasks.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.ui.theme.Theme
 import ru.vafeen.whisperoftasks.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.utils.getTimeDefaultStr
+import ru.vafeen.whisperoftasks.utils.pixelsToDp
 import java.time.LocalDate
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
@@ -117,36 +119,47 @@ private fun DateColumnPicker(
     var selectedDate by remember { mutableStateOf(initialDate) }
     val context = LocalContext.current
     // Высота одного элемента
-    val itemHeight = 40.dp
+    val itemHeight by remember { mutableIntStateOf(40) }
     // Количество видимых элементов в столбце
-    val size = 3
+    val size by remember { mutableIntStateOf(3) }
     // Отступ между элементами
-    val space = 24.dp
+    val space by remember { mutableStateOf(24.dp) }
     // Высота списка (должна вмещать ровно три элемента)
-    val listHeight = itemHeight * size + space * 2
-    val dateToday = LocalDate.now()
+    val listHeight by remember { mutableStateOf(itemHeight.dp * size + space * 2) }
+    val dateToday by remember { mutableStateOf(LocalDate.now()) }
     val listState = rememberLazyListState(
         initialFirstVisibleItemIndex = ChronoUnit.DAYS.between(
             dateToday,
             selectedDate
         ).toInt()
     )
-    val list = mutableListOf("")
-    for (i in 0..365) {
-        list.add(dateToday.plusDays((i).toLong()).getDateStringWithWeekOfDay(context = context))
+
+    val list by remember {
+        mutableStateOf(List(size = 367) {
+            return@List when (it) {
+                0 -> ""
+                366 -> ""
+                else -> dateToday.plusDays((it).toLong())
+                    .getDateStringWithWeekOfDay(context = context)
+            }
+        })
     }
-    list.add("")
+
+
     LaunchedEffect(listState.isScrollInProgress) {
-        if (!listState.isScrollInProgress) {
+        if (!listState.isScrollInProgress && listState.firstVisibleItemScrollOffset.pixelsToDp(
+                context
+            ) % itemHeight != 0f
+        ) {
             // Перемотка к центральному элементу
             listState.animateScrollToItem(listState.firstVisibleItemIndex)
         }
     }
     Box(
-        modifier = modifier.height(listHeight), contentAlignment = Alignment.Center
+        modifier = modifier.height(listHeight.value.dp), contentAlignment = Alignment.Center
     ) {
-
-        Border(itemHeight = itemHeight, color = Theme.colors.oppositeTheme)
+//
+        Border(itemHeight = itemHeight.dp, color = Theme.colors.oppositeTheme)
 
 
         LazyColumn(
@@ -164,7 +177,7 @@ private fun DateColumnPicker(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(itemHeight),
+                        .height(itemHeight.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -183,22 +196,31 @@ private fun DateColumnPicker(
 private fun TimeColumnPicker(
     value: Int, onValueChange: (Int) -> Unit, range: IntRange, modifier: Modifier = Modifier,
 ) {
+    val context = LocalContext.current
     // Высота одного элемента
-    val itemHeight = 40.dp
+    val itemHeight by remember { mutableIntStateOf(40) }
     // Количество видимых элементов в столбце
-    val size = 3
+    val size by remember { mutableIntStateOf(3) }
     // Отступ между элементами
-    val space = 24.dp
+    val space by remember { mutableStateOf(24.dp) }
     // Высота списка (должна вмещать ровно три элемента)
-    val listHeight = itemHeight * size + space * 2
+    val listHeight by remember { mutableStateOf(itemHeight.dp * size + space * 2) }
+
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = value)
     val firstIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
-    val list = mutableListOf("")
-    for (i in range) list.add(i.getTimeDefaultStr())
-    var selectedValue by remember { mutableStateOf(value) }
-    list.add("")
+    val list by remember {
+        mutableStateOf(mutableListOf("").apply {
+            for (i in range) add(i.getTimeDefaultStr())
+            add("")
+        })
+    }
+    var selectedValue by remember { mutableIntStateOf(value) }
+
     LaunchedEffect(listState.isScrollInProgress) {
-        if (!listState.isScrollInProgress) {
+        if (!listState.isScrollInProgress && listState.firstVisibleItemScrollOffset.pixelsToDp(
+                context
+            ) % itemHeight != 0f
+        ) {
             // Перемотка к центральному элементу
             listState.animateScrollToItem(listState.firstVisibleItemIndex)
         }
@@ -207,7 +229,7 @@ private fun TimeColumnPicker(
     Box(
         modifier = modifier.height(listHeight), contentAlignment = Alignment.Center
     ) {
-        Border(itemHeight = itemHeight, color = Theme.colors.oppositeTheme)
+        Border(itemHeight = itemHeight.dp, color = Theme.colors.oppositeTheme)
 
         LazyColumn(
             state = listState,
@@ -226,7 +248,7 @@ private fun TimeColumnPicker(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(itemHeight),
+                        .height(itemHeight.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
