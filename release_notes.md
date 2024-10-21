@@ -1,6 +1,10 @@
-v1.0-rc19
-New version v1.0-rc19!!
+v1.0-rc20
+New version v1.0-rc20!!
 
 What's new:
 
-- Fix text color in cards with date  
+- Now when the application crashes, the error is copied to the clipboard and you can write to us so that we can fix it
+
+What's fix:
+
+- Unlimited recomposition in adding task dialog
