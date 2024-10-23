@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_need">Приложение устарело, пора обновить!</string>
+    <string name="view_releases">Обновление по клику на QR ниже</string>
+    <string name="updating">Обновление . . .</string>
+    <string name="monday">ПН</string>
+    <string name="tuesday">ВТ</string>
+    <string name="wednesday">СР</string>
+    <string name="thursday">ЧТ</string>
+    <string name="friday">ПТ</string>
+    <string name="satudray">СБ</string>
+    <string name="sunday">ВС</string>
+    <string name="no_repeat">Без повторений</string>
+    <string name="every_day">Каждый день</string>
+    <string name="every_week">Каждую неделю</string>
+    <string name="in">в</string>
+    <string name="past_events">Прошедшие события</string>
+    <string name="no_events_today">Задач сегодня нет</string>
+    <string name="you_havent_added_any_events_yet">Вы еще не добавили\n ни одной задачи</string>
+    <string name="notification">Уведомление</string>
+    <string name="send">Отправить</string>
+    <string name="add_to_list">Добавить в список</string>
+    <string name="tasks_by_day">Задачи по дням</string>
+    <string name="tasks_list">Список задач</string>
+    <string name="hold">Удерживайте</string>
+    <string name="reminder_recovery">Восстановление будильников</string>
+    <string name="reminders_restored">Будильники восстановлены</string>
+</resources>

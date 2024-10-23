@@ -8,16 +8,16 @@ junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 koinAndroid = "4.0.0"
 lifecycleRuntimeKtx = "2.8.6"
-activityCompose = "1.9.2"
-composeBom = "2024.09.03"
-kotlin = "2.0.20"
-navigationCompose = "2.8.2"
+activityCompose = "1.9.3"
+composeBom = "2024.10.00"
+kotlin = "2.0.21"
+navigationCompose = "2.8.3"
 retrofit = "2.11.0"
-roomCommon = "2.6.1"
-roomKtx = "2.6.1"
+roomRuntime = "2.6.1"
 startupRuntime = "1.2.0"
 appcompat = "1.7.0"
 material = "1.12.0"
+uiGraphicsAndroid = "1.7.4"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -37,10 +37,9 @@ androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 
 # ROOM
-androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomCommon" }
-androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomCommon" }
-androidx-room-common = { group = "androidx.room", name = "room-common", version.ref = "roomCommon" }
-androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "roomKtx" }
+androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
+androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 
 # Navigation
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
@@ -54,13 +53,12 @@ converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref
 koin-android = { module = "io.insert-koin:koin-android", version.ref = "koinAndroid" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "appcompat" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+androidx-ui-graphics-android = { group = "androidx.compose.ui", name = "ui-graphics-android", version.ref = "uiGraphicsAndroid" }
 
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
-# kapt
-org-jetbrains-kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 # compose compiler
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 android-library = { id = "com.android.library", version.ref = "agp" }

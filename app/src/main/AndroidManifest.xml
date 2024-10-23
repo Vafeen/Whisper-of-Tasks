@@ -24,7 +24,7 @@
         android:theme="@style/Theme.Reminder"
         tools:targetApi="31">
         <activity
-            android:name=".main.MainActivity"
+            android:name=".presentation.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Reminder"
             tools:targetApi="tiramisu">
@@ -45,10 +45,10 @@
         </provider>
 
         <receiver
-            android:name=".noui.planner.NotificationReminderReceiver"
+            android:name=".presentation.NotificationReminderReceiver"
             android:exported="false" />
         <receiver
-            android:name=".noui.planner.ReminderRecoveryReceiver"
+            android:name=".presentation.ReminderRecoveryReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
