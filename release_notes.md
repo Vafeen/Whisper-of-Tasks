@@ -1,7 +1,9 @@
-v1.0-rc21
-New version v1.0-rc21!!
+v1.0
+New version v1.0!!
 
 What's new:
 
-- Improve date and time pickers 
+- CATS on your screen!! You can enable it in settings!
+- Add Settings screen!
+- Add new UI! 
 
