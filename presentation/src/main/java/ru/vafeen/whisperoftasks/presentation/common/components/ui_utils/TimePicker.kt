@@ -27,7 +27,6 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import ru.vafeen.whisperoftasks.data.utils.getDateStringWithWeekOfDay
@@ -39,6 +38,10 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
+// Количество видимых элементов в столбце
+private const val countOfVisibleItemsInPicker = 3
+private const val itemHeight = 60
+private const val listHeight = countOfVisibleItemsInPicker * itemHeight
 
 @Composable
 fun Border(itemHeight: Dp, color: Color) {
@@ -118,14 +121,6 @@ private fun DateColumnPicker(
 ) {
     var selectedDate by remember { mutableStateOf(initialDate) }
     val context = LocalContext.current
-    // Высота одного элемента
-    val itemHeight by remember { mutableIntStateOf(40) }
-    // Количество видимых элементов в столбце
-    val size by remember { mutableIntStateOf(3) }
-    // Отступ между элементами
-    val space by remember { mutableStateOf(24.dp) }
-    // Высота списка (должна вмещать ровно три элемента)
-    val listHeight by remember { mutableStateOf(itemHeight.dp * size + space * 2) }
     val dateToday by remember { mutableStateOf(LocalDate.now()) }
     val listState = rememberLazyListState(
         initialFirstVisibleItemIndex = ChronoUnit.DAYS.between(
@@ -155,7 +150,7 @@ private fun DateColumnPicker(
         }
     }
     Box(
-        modifier = modifier.height(listHeight.value.dp), contentAlignment = Alignment.Center
+        modifier = modifier.height(listHeight.dp), contentAlignment = Alignment.Center
     ) {
 //
         Border(itemHeight = itemHeight.dp, color = Theme.colors.oppositeTheme)
@@ -164,7 +159,7 @@ private fun DateColumnPicker(
         LazyColumn(
             state = listState,
             modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(space)
+//            verticalArrangement = Arrangement.spacedBy(space)
         ) {
             itemsIndexed(list) { index, it ->
                 val newDT by remember { mutableStateOf(dateToday.plusDays(index.toLong() - 1)) }
@@ -176,14 +171,13 @@ private fun DateColumnPicker(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(itemHeight.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .fillParentMaxHeight(1 / 3f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
                     TextForThisTheme(
                         text = it,
                         fontSize = FontSize.medium19,
-                        textAlign = TextAlign.Center
                     )
                 }
             }
@@ -196,15 +190,6 @@ private fun TimeColumnPicker(
     value: Int, onValueChange: (Int) -> Unit, range: IntRange, modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    // Высота одного элемента
-    val itemHeight by remember { mutableIntStateOf(40) }
-    // Количество видимых элементов в столбце
-    val size by remember { mutableIntStateOf(3) }
-    // Отступ между элементами
-    val space by remember { mutableStateOf(24.dp) }
-    // Высота списка (должна вмещать ровно три элемента)
-    val listHeight by remember { mutableStateOf(itemHeight.dp * size + space * 2) }
-
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = value)
     val firstIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
     val list by remember {
@@ -226,7 +211,7 @@ private fun TimeColumnPicker(
     }
 
     Box(
-        modifier = modifier.height(listHeight), contentAlignment = Alignment.Center
+        modifier = modifier.height(listHeight.dp), contentAlignment = Alignment.Center
     ) {
         Border(itemHeight = itemHeight.dp, color = Theme.colors.oppositeTheme)
 
@@ -234,7 +219,7 @@ private fun TimeColumnPicker(
             state = listState,
             modifier = Modifier
                 .fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(space)
+//            verticalArrangement = Arrangement.spacedBy(space)
         ) {
             itemsIndexed(list) { index, it ->
                 if (firstIndex == index - 1 && listState.isScrollInProgress) {
@@ -247,11 +232,14 @@ private fun TimeColumnPicker(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(itemHeight.dp),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .fillParentMaxHeight(1 / 3f),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    TextForThisTheme(text = it, fontSize = FontSize.medium19)
+                    TextForThisTheme(
+                        text = it,
+                        fontSize = FontSize.medium19,
+                    )
                 }
             }
         }
