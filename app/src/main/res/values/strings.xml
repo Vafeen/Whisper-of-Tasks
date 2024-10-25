@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Whisper of Tasks</string>
+    <string name="name_for_debug">Whisper of Tasks</string>
 </resources>
