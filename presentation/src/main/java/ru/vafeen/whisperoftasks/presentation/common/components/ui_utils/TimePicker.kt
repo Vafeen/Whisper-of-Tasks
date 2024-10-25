@@ -12,7 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -43,12 +43,12 @@ import java.time.temporal.ChronoUnit
 private const val countOfVisibleItemsInPicker = 3
 
 // Высота одного элемента
-private const val itemHeight = 60
+private const val itemHeight = 50
 
 // Высота списка
 private const val listHeight = countOfVisibleItemsInPicker * itemHeight
 
-private fun LazyListState.fullVisibleItem(context: Context): Int {
+private fun LazyListState.itemForScrollTo(context: Context): Int {
     val offset = firstVisibleItemScrollOffset.pixelsToDp(context)
     return when {
         offset == 0f -> firstVisibleItemIndex
@@ -57,7 +57,6 @@ private fun LazyListState.fullVisibleItem(context: Context): Int {
         else -> firstVisibleItemIndex
     }
 }
-
 
 
 @Composable
@@ -112,7 +111,7 @@ fun MyDateTimePicker(
             Row(modifier = Modifier.weight(1f)) {
                 TimeColumnPicker(
                     modifier = Modifier.weight(1f),
-                    value = initialTime.hour,
+                    initialValue = initialTime.hour,
                     onValueChange = { hour ->
                         onTimeSelected(initialTime.withHour(hour))
                     },
@@ -120,7 +119,7 @@ fun MyDateTimePicker(
                 )
                 TimeColumnPicker(
                     modifier = Modifier.weight(1f),
-                    value = initialTime.minute,
+                    initialValue = initialTime.minute,
                     onValueChange = { minute ->
                         onTimeSelected(initialTime.withMinute(minute))
                     },
@@ -150,7 +149,6 @@ private fun DateColumnPicker(
     val listState = rememberLazyListState(
         initialFirstVisibleItemIndex = initialDaysIndexItem
     )
-    var offset by remember { mutableStateOf(0f) }
     val list by remember {
         mutableStateOf(List(size = 367) {
             return@List when (it) {
@@ -162,7 +160,7 @@ private fun DateColumnPicker(
         })
     }
     LaunchedEffect(listState.firstVisibleItemScrollOffset) {
-        val newDate = dateToday.plusDays(listState.fullVisibleItem(context = context).toLong())
+        val newDate = dateToday.plusDays(listState.itemForScrollTo(context = context).toLong())
         if (newDate != selectedDate) {
             onValueChange(newDate)
             selectedDate = newDate
@@ -176,10 +174,9 @@ private fun DateColumnPicker(
             ) % itemHeight != 0f // иначе будет постоянная рекомпозиция
         ) {
             // Перемотка к центральному элементу
-            listState.animateScrollToItem(listState.fullVisibleItem(context = context))
+            listState.animateScrollToItem(listState.itemForScrollTo(context = context))
         }
     }
-
     Box(
         modifier = modifier.height(listHeight.dp), contentAlignment = Alignment.Center
     ) {
@@ -189,7 +186,7 @@ private fun DateColumnPicker(
             state = listState,
             modifier = Modifier.fillMaxSize(),
         ) {
-            itemsIndexed(list) { index, dateStr ->
+            items(items = list) { dateStr ->
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -210,19 +207,20 @@ private fun DateColumnPicker(
 
 @Composable
 private fun TimeColumnPicker(
-    value: Int, onValueChange: (Int) -> Unit, range: IntRange, modifier: Modifier = Modifier,
+    initialValue: Int, onValueChange: (Int) -> Unit, range: IntRange, modifier: Modifier = Modifier,
 ) {
     val context = LocalContext.current
-    val listState = rememberLazyListState(initialFirstVisibleItemIndex = value)
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialValue)
     val list by remember {
         mutableStateOf(mutableListOf("").apply {
             for (i in range) add(i.getTimeDefaultStr())
             add("")
         })
     }
-    var selectedValue by remember { mutableIntStateOf(value) }
+
+    var selectedValue by remember { mutableIntStateOf(initialValue) }
     LaunchedEffect(listState.firstVisibleItemScrollOffset) {
-        val newValue = list[listState.fullVisibleItem(context = context) + 1].toIntOrNull()
+        val newValue = list[listState.itemForScrollTo(context = context) + 1].toIntOrNull()
         if (newValue != null && newValue != selectedValue) {
             onValueChange(newValue)
             selectedValue = newValue
@@ -234,7 +232,7 @@ private fun TimeColumnPicker(
             ) % itemHeight != 0f // иначе будет постоянная рекомпозиция
         ) {
             // Перемотка к центральному элементу
-            listState.animateScrollToItem(listState.fullVisibleItem(context = context))
+            listState.animateScrollToItem(listState.itemForScrollTo(context = context))
         }
     }
     Box(
@@ -246,10 +244,8 @@ private fun TimeColumnPicker(
             state = listState,
             modifier = Modifier
                 .fillMaxSize(),
-//            verticalArrangement = Arrangement.spacedBy(space)
         ) {
-            itemsIndexed(list) { index, it ->
-
+            items(items = list) {
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -265,7 +261,4 @@ private fun TimeColumnPicker(
             }
         }
     }
-
 }
-
-
