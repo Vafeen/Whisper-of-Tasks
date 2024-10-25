@@ -9,7 +9,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "ru.vafeen.whisperoftasks"
+        applicationId = "ru.vafeen.whisperoftasks2"
         minSdk = 26
         targetSdk = 35
         versionCode = 20
@@ -58,4 +58,5 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     implementation(platform(libs.androidx.compose.bom))
+    implementation(libs.androidx.activity.compose)
 }
