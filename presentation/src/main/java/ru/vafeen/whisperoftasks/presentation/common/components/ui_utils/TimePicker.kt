@@ -58,10 +58,6 @@ private fun LazyListState.fullVisibleItem(context: Context): Int {
     }
 }
 
-//private suspend fun LazyListState.animatedScrollToFullVisibleItem(context: Context) {
-//    Log.d("scroll", "scroll")
-//    animateScrollToItem(fullVisibleItem(context = context))
-//}
 
 
 @Composable
@@ -165,10 +161,8 @@ private fun DateColumnPicker(
             }
         })
     }
-    var itemForScrolling by remember { mutableStateOf(initialDaysIndexItem) }
     LaunchedEffect(listState.firstVisibleItemScrollOffset) {
-        itemForScrolling = listState.fullVisibleItem(context = context)
-        val newDate = dateToday.plusDays(itemForScrolling.toLong())
+        val newDate = dateToday.plusDays(listState.fullVisibleItem(context = context).toLong())
         if (newDate != selectedDate) {
             onValueChange(newDate)
             selectedDate = newDate
@@ -189,9 +183,7 @@ private fun DateColumnPicker(
     Box(
         modifier = modifier.height(listHeight.dp), contentAlignment = Alignment.Center
     ) {
-//
         Border(itemHeight = itemHeight.dp, color = Theme.colors.oppositeTheme)
-
 
         LazyColumn(
             state = listState,
@@ -229,10 +221,8 @@ private fun TimeColumnPicker(
         })
     }
     var selectedValue by remember { mutableIntStateOf(value) }
-    var itemForScrolling by remember { mutableStateOf(value) }
     LaunchedEffect(listState.firstVisibleItemScrollOffset) {
-        itemForScrolling = listState.fullVisibleItem(context = context)
-        val newValue = list[itemForScrolling + 1].toIntOrNull()
+        val newValue = list[listState.fullVisibleItem(context = context) + 1].toIntOrNull()
         if (newValue != null && newValue != selectedValue) {
             onValueChange(newValue)
             selectedValue = newValue
