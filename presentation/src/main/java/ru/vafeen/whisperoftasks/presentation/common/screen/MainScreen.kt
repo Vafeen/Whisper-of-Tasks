@@ -50,9 +50,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.vafeen.whisperoftasks.data.R
 import ru.vafeen.whisperoftasks.data.local_database.entity.Reminder
-import ru.vafeen.whisperoftasks.data.network.downloader.Downloader
-import ru.vafeen.whisperoftasks.data.network.downloader.Progress
-import ru.vafeen.whisperoftasks.data.utils.Path
 import ru.vafeen.whisperoftasks.data.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.domain.utils.getMainColorForThisTheme
 import ru.vafeen.whisperoftasks.presentation.common.components.bottom_bar.BottomBar
@@ -76,18 +73,13 @@ fun MainScreen(
 ) {
     val context = LocalContext.current
     val defaultColor = Theme.colors.mainColor
-    val progress = remember {
-        mutableStateOf(Progress(totalBytesRead = 0L, contentLength = 0L, done = false))
-    }
     val dark = isSystemInDarkTheme()
     val mainColor by remember {
         mutableStateOf(
             viewModel.settings.getMainColorForThisTheme(isDark = dark) ?: defaultColor
         )
     }
-    var isUpdateInProcess by remember {
-        mutableStateOf(false)
-    }
+
     val cor = rememberCoroutineScope()
     var localTime by remember {
         mutableStateOf(LocalTime.now())
@@ -141,24 +133,10 @@ fun MainScreen(
             else reminderForRemoving.set(idOfReminder, this)
         }
     }
-    LaunchedEffect(key1 = null) {
-        Downloader.isUpdateInProcessFlow.collect {
-            isUpdateInProcess = it
-        }
-    }
-    LaunchedEffect(key1 = null) {
-        Downloader.sizeFlow.collect {
-            if (!it.failed) {
-                progress.value = it
-                if (it.contentLength == it.totalBytesRead) {
-                    isUpdateInProcess = false
-                    Downloader.installApk(
-                        context = context, apkFilePath = Path.path(context).toString()
-                    )
-                }
-            } else isUpdateInProcess = false
-        }
-    }
+
+    val isUpdateInProcess by viewModel.isUpdateInProcessFlow.collectAsState(false)
+    val downloadedPercentage by viewModel.percentageFlow.collectAsState(0f)
+
 
     val reminders by viewModel.remindersFlow.collectAsState(listOf())
     val cardsWithDateState = rememberLazyListState()
@@ -376,7 +354,7 @@ fun MainScreen(
                     reminderForRemoving.remove(it.idOfReminder)
                 }
             }
-            if (isUpdateInProcess) UpdateProgress(percentage = progress)
+            if (isUpdateInProcess) UpdateProgress(percentage = downloadedPercentage)
         }
     }
 }

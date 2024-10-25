@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import ru.vafeen.whisperoftasks.data.local_database.DatabaseRepository
 import ru.vafeen.whisperoftasks.data.local_database.entity.Reminder
+import ru.vafeen.whisperoftasks.data.network.downloader.Downloader
 import ru.vafeen.whisperoftasks.data.shared_preferences.SharedPreferences
 import ru.vafeen.whisperoftasks.data.utils.getSettingsOrCreateIfNull
 import ru.vafeen.whisperoftasks.domain.noui.EventCreation
@@ -20,13 +21,17 @@ class MainScreenViewModel(
     private val databaseRepository: DatabaseRepository,
     private val sharedPreferences: SharedPreferences,
     override val eventCreator: EventCreator,
+    private val downloader: Downloader,
     context: Context,
 ) : ViewModel(), EventCreation {
     var settings = sharedPreferences.getSettingsOrCreateIfNull()
     val todayDate: LocalDate = LocalDate.now()
     val pageNumber = 365
     val remindersFlow = databaseRepository.getAllRemindersAsFlow()
-    val intent = Intent(context, MainActivity::class.java)
+    private val intent = Intent(context, MainActivity::class.java)
+    val isUpdateInProcessFlow = downloader.isUpdateInProcessFlow
+    val percentageFlow = downloader.percentageFlow
+
     override fun removeEvent(reminder: Reminder) {
         viewModelScope.launch(Dispatchers.IO) {
             eventCreator.removeEvent(reminder = reminder, intent = intent)

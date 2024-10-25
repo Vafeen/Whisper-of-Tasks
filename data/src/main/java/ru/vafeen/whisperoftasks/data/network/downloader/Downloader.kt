@@ -7,20 +7,29 @@ import androidx.core.content.FileProvider
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import ru.vafeen.whisperoftasks.data.network.repository.NetworkRepository
+import ru.vafeen.whisperoftasks.data.utils.pathToDownloadRelease
 import java.io.File
 import java.io.FileOutputStream
 
 
-object Downloader {
-    val sizeFlow = MutableSharedFlow<Progress>()
-    val isUpdateInProcessFlow = MutableSharedFlow<Boolean>()
-    fun installApk(context: Context, apkFilePath: String) {
+class Downloader(
+    private val networkRepository: NetworkRepository
+) {
+    private val _percentageFlow = MutableSharedFlow<Float>()
+    val percentageFlow = _percentageFlow.asSharedFlow()
+
+    private val _isUpdateInProcessFlow = MutableSharedFlow<Boolean>()
+    val isUpdateInProcessFlow = _isUpdateInProcessFlow.asSharedFlow()
+
+    private fun installApk(context: Context) {
+        val apkFilePath = context.pathToDownloadRelease()
         // Создаем объект File для APK файла по указанному пути
         val file = File(apkFilePath)
 
@@ -51,9 +60,13 @@ object Downloader {
     }
 
     fun downloadApk(
-        networkRepository: NetworkRepository,
-        url: String, filePath: String,
+        context: Context,
+        url: String
     ) {
+        CoroutineScope(Dispatchers.IO).launch {
+            _isUpdateInProcessFlow.emit(true)
+        }
+        val apkFilePath = context.pathToDownloadRelease()
         // Создаем вызов для загрузки файла
         val call = networkRepository.downloadFile(url)
 
@@ -62,15 +75,15 @@ object Downloader {
             // Обрабатываем успешный ответ
             override fun onResponse(
                 call: Call<ResponseBody>,
-                response: Response<ResponseBody>,
+                response: Response<ResponseBody>
             ) {
-                CoroutineScope(Dispatchers.IO).launch(Dispatchers.IO) {
+                CoroutineScope(Dispatchers.IO).launch {
                     try {
                         val body = response.body()
                         // Проверяем, успешен ли ответ
                         if (response.isSuccessful && body != null) {
                             // Создаем файл для записи данных
-                            val file = File(filePath)
+                            val file = File(apkFilePath)
                             // Получаем поток данных из тела ответа
                             val inputStream = body.byteStream()
                             // Создаем поток для записи данных в файл
@@ -87,22 +100,24 @@ object Downloader {
                                 // запись данных из буфера в выходной поток
                                 outputStream.write(buffer, 0, bytesRead)
                                 totalBytesRead += bytesRead
-                                // Отправляем прогресс загрузки
-                                sizeFlow.emit(
-                                    Progress(
-                                        totalBytesRead = totalBytesRead,
-                                        contentLength = contentLength,
-                                        done = totalBytesRead == contentLength
-                                    )
-                                )
+                                // Отправляем процент загрузки
+                                _percentageFlow.emit(totalBytesRead.toFloat() / contentLength)
+                                if (contentLength == totalBytesRead) {
+                                    // отправляем окончание процесса загрузки
+                                    _isUpdateInProcessFlow.emit(false)
+                                    // установка
+                                    installApk(context = context)
+                                }
                             }
                         } else {
                             //  Отправляем сигнал о неудаче
-                            sizeFlow.emit(Progress(failed = true))
+                            _isUpdateInProcessFlow.emit(false)
+                            _percentageFlow.emit(0f)
                         }
                     } catch (e: Exception) {
                         // Обрабатываем исключение и отправляем сигнал о неудаче
-                        sizeFlow.emit(Progress(failed = true))
+                        _isUpdateInProcessFlow.emit(false)
+                        _percentageFlow.emit(0f)
                     }
                 }
             }

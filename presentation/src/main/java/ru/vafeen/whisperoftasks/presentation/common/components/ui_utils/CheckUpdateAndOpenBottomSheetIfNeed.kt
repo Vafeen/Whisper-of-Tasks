@@ -9,9 +9,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import ru.vafeen.whisperoftasks.data.network.repository.NetworkRepository
 import ru.vafeen.whisperoftasks.data.utils.getVersionName
 import ru.vafeen.whisperoftasks.network.parcelable.github_service.Release
-import ru.vafeen.whisperoftasks.data.network.repository.NetworkRepository
 import ru.vafeen.whisperoftasks.presentation.ui.common.components.bottom_sheet.UpdaterBottomSheet
 
 
@@ -42,7 +42,6 @@ fun CheckUpdateAndOpenBottomSheetIfNeed(
     if (isUpdateNeeded)
         release?.let { releaseParam ->
             UpdaterBottomSheet(
-                networkRepository = networkRepository,
                 release = releaseParam,
                 state = bottomSheetState,
             ) {

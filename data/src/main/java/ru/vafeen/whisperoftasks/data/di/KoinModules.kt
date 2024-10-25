@@ -8,6 +8,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import ru.vafeen.whisperoftasks.data.local_database.AppDatabase
 import ru.vafeen.whisperoftasks.data.local_database.DBInfo
 import ru.vafeen.whisperoftasks.data.local_database.converters.LocalDateTimeConverters
+import ru.vafeen.whisperoftasks.data.network.downloader.Downloader
 import ru.vafeen.whisperoftasks.data.network.end_points.DownloadServiceLink
 import ru.vafeen.whisperoftasks.data.network.end_points.GHDServiceLink
 import ru.vafeen.whisperoftasks.data.network.service.DownloadService
@@ -41,4 +42,5 @@ val koinDataNetworkModule = module {
 val koinDataServicesModule = module {
     singleOf(::LocalDateTimeConverters)
     singleOf(::SharedPreferences)
+    singleOf(::Downloader)
 }
