@@ -134,7 +134,7 @@ private fun DateColumnPicker(
             return@List when (it) {
                 0 -> ""
                 366 -> ""
-                else -> dateToday.plusDays((it).toLong())
+                else -> dateToday.plusDays((it - 1).toLong())
                     .getDateStringWithWeekOfDay(context = context)
             }
         })
@@ -161,12 +161,12 @@ private fun DateColumnPicker(
             modifier = Modifier.fillMaxSize(),
 //            verticalArrangement = Arrangement.spacedBy(space)
         ) {
-            itemsIndexed(list) { index, it ->
-                val newDT by remember { mutableStateOf(dateToday.plusDays(index.toLong() - 1)) }
+            itemsIndexed(list) { index, dateStr ->
+                val newDate by remember { mutableStateOf(dateToday.plusDays(index.toLong() - 1)) }
                 if (remember { derivedStateOf { listState.firstVisibleItemIndex } }.value == index - 1 && listState.isScrollInProgress)
-                    if (newDT != selectedDate) {
-                        onValueChange(newDT)
-                        selectedDate = newDT
+                    if (newDate != selectedDate) {
+                        onValueChange(newDate)
+                        selectedDate = newDate
                     }
                 Column(
                     modifier = Modifier
@@ -176,7 +176,7 @@ private fun DateColumnPicker(
                     verticalArrangement = Arrangement.Center
                 ) {
                     TextForThisTheme(
-                        text = it,
+                        text = dateStr,
                         fontSize = FontSize.medium19,
                     )
                 }
