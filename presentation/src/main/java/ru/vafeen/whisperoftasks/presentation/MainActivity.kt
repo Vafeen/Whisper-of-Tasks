@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -19,9 +20,6 @@ import ru.vafeen.whisperoftasks.presentation.common.screen.MainScreen
 import ru.vafeen.whisperoftasks.presentation.common.screen.RemindersScreen
 import ru.vafeen.whisperoftasks.presentation.common.screen.SettingsScreen
 import ru.vafeen.whisperoftasks.presentation.common.viewmodel.MainActivityViewModel
-import ru.vafeen.whisperoftasks.presentation.common.viewmodel.MainScreenViewModel
-import ru.vafeen.whisperoftasks.presentation.common.viewmodel.RemindersScreenViewModel
-import ru.vafeen.whisperoftasks.presentation.common.viewmodel.SettingsScreenViewModel
 import ru.vafeen.whisperoftasks.presentation.permission.RequestNotificationPermission
 import ru.vafeen.whisperoftasks.presentation.ui.theme.MainTheme
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
@@ -30,9 +28,6 @@ import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 class MainActivity : ComponentActivity() {
 
     private val viewModel: MainActivityViewModel by viewModel()
-    private val mainScreenViewModel: MainScreenViewModel by viewModel()
-    private val remindersScreenViewModel: RemindersScreenViewModel by viewModel()
-    private val settingsScreenViewModel: SettingsScreenViewModel by viewModel()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -52,28 +47,23 @@ class MainActivity : ComponentActivity() {
                 }
 
                 val navController = rememberNavController()
-                NavHost(
-                    navController = navController,
-                    startDestination = ScreenRoute.Main.route,
-                    modifier = Modifier.background(Theme.colors.singleTheme)
+                Column(
+                    modifier = Modifier
+                        .background(Theme.colors.singleTheme)
                 ) {
-                    composable(route = ScreenRoute.Main.route) {
-                        MainScreen(
-                            viewModel = mainScreenViewModel,
-                            navController = navController
-                        )
-                    }
-                    composable(route = ScreenRoute.Reminders.route) {
-                        RemindersScreen(
-                            viewModel = remindersScreenViewModel,
-                            navController = navController
-                        )
-                    }
-                    composable(route = ScreenRoute.Settings.route) {
-                        SettingsScreen(
-                            viewModel = settingsScreenViewModel,
-                            navController = navController
-                        )
+                    NavHost(
+                        navController = navController,
+                        startDestination = ScreenRoute.Main.route,
+                    ) {
+                        composable(route = ScreenRoute.Main.route) {
+                            MainScreen(navController = navController)
+                        }
+                        composable(route = ScreenRoute.Reminders.route) {
+                            RemindersScreen(navController = navController)
+                        }
+                        composable(route = ScreenRoute.Settings.route) {
+                            SettingsScreen(navController = navController)
+                        }
                     }
                 }
             }

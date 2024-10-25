@@ -5,6 +5,7 @@ import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -40,8 +42,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import org.koin.androidx.compose.koinViewModel
 import ru.vafeen.whisperoftasks.data.R
 import ru.vafeen.whisperoftasks.data.local_database.entity.Reminder
+import ru.vafeen.whisperoftasks.domain.utils.getMainColorForThisTheme
 import ru.vafeen.whisperoftasks.presentation.common.components.bottom_bar.BottomBar
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.DeleteReminders
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ReminderDataString
@@ -51,27 +55,29 @@ import ru.vafeen.whisperoftasks.presentation.common.navigation.ScreenRoute
 import ru.vafeen.whisperoftasks.presentation.common.viewmodel.RemindersScreenViewModel
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
+import ru.vafeen.whisperoftasks.presentation.utils.suitableColor
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-fun RemindersScreen(
-    viewModel: RemindersScreenViewModel,
-    navController: NavController,
-) {
+fun RemindersScreen(navController: NavController) {
+    val dark = isSystemInDarkTheme()
+    val viewModel: RemindersScreenViewModel = koinViewModel()
     val context = LocalContext.current
     var reminders by remember {
-        mutableStateOf(listOf<ru.vafeen.whisperoftasks.data.local_database.entity.Reminder>())
+        mutableStateOf(listOf<Reminder>())
     }
     val nullTime = LocalTime.of(0, 0)
     var isAddingReminder by remember {
         mutableStateOf(false)
     }
-    val lastReminder: MutableState<ru.vafeen.whisperoftasks.data.local_database.entity.Reminder?> = remember {
+    val lastReminder: MutableState<Reminder?> = remember {
         mutableStateOf(null)
     }
+    val settings by viewModel.settings.collectAsState()
+    val mainColor = settings.getMainColorForThisTheme(isDark = dark) ?: Theme.colors.mainColor
     var fabOffset by remember { mutableStateOf(Offset(0f, 0f)) }
     LaunchedEffect(null) {
         viewModel.databaseRepository.getAllRemindersAsFlow().collect {
@@ -79,8 +85,8 @@ fun RemindersScreen(
         }
     }
     var isDeletingInProcess by remember { mutableStateOf(false) }
-    val reminderForRemoving = remember { mutableStateMapOf<Int, ru.vafeen.whisperoftasks.data.local_database.entity.Reminder>() }
-    fun Modifier.combinedClickableForRemovingReminder(reminder: ru.vafeen.whisperoftasks.data.local_database.entity.Reminder): Modifier =
+    val reminderForRemoving = remember { mutableStateMapOf<Int, Reminder>() }
+    fun Modifier.combinedClickableForRemovingReminder(reminder: Reminder): Modifier =
         this.combinedClickable(
             onClick = {
                 if (!isDeletingInProcess) {
@@ -105,10 +111,10 @@ fun RemindersScreen(
             }
         )
 
-    fun ru.vafeen.whisperoftasks.data.local_database.entity.Reminder.isItCandidateForDelete(): Boolean? =
+    fun Reminder.isItCandidateForDelete(): Boolean? =
         if (isDeletingInProcess) reminderForRemoving[idOfReminder] != null else null
 
-    fun ru.vafeen.whisperoftasks.data.local_database.entity.Reminder.changeStatusOfDeleting() {
+    fun Reminder.changeStatusOfDeleting() {
         isItCandidateForDelete()?.let {
             if (it)
                 reminderForRemoving.remove(idOfReminder)
@@ -149,7 +155,7 @@ fun RemindersScreen(
         })
 
     }, bottomBar = {
-        BottomBar(containerColor = Theme.colors.mainColor,
+        BottomBar(containerColor = mainColor,
             selectedRemindersScreen = true,
             navigateToMainScreen = {
                 navController.popBackStack()
@@ -177,19 +183,19 @@ fun RemindersScreen(
                 onClick = {
                     lastReminder.value = null
                     isAddingReminder = true
-                }, containerColor = Theme.colors.mainColor
+                }, containerColor = mainColor
             ) {
                 Icon(
                     imageVector = Icons.Filled.Add,
                     contentDescription = "Add new reminder",
-                    tint = Theme.colors.oppositeTheme
+                    tint = mainColor.suitableColor()
                 )
             }
     }, floatingActionButtonPosition = FabPosition.End
     ) { innerPadding ->
         if (isAddingReminder) {
             if (lastReminder.value == null) {
-                lastReminder.value = ru.vafeen.whisperoftasks.data.local_database.entity.Reminder(
+                lastReminder.value = Reminder(
                     title = "",
                     text = "",
                     dt = LocalDateTime.of(LocalDate.now(), nullTime),
@@ -201,7 +207,8 @@ fun RemindersScreen(
             ReminderDialog(
                 newReminder = lastReminder as MutableState<Reminder>, // safety is above
                 onDismissRequest = { isAddingReminder = false },
-                eventCreation = viewModel)
+                eventCreation = viewModel
+            )
         }
 
         Column(

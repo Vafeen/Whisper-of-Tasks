@@ -63,4 +63,11 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     // Compose compiler
     implementation(libs.androidx.activity.compose)
+    // color-picker
+    implementation(libs.alwan)
+    // koin for compose
+    implementation(libs.koin.androidx.compose)
+    // glide
+    implementation(libs.glide)
+    annotationProcessor(libs.compiler)
 }

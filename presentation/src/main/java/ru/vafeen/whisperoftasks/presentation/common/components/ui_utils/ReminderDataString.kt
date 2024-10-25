@@ -39,7 +39,8 @@ fun Reminder.ReminderDataString(
             .fillMaxWidth()
             .padding(horizontal = 10.dp)
             .alpha(if (isItCandidateForDelete == true) 0.5f else 1.0f),
-        colors = CardDefaults.cardColors(containerColor = Theme.colors.buttonColor)
+        colors = CardDefaults.cardColors(containerColor = Theme.colors.buttonColor),
+        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
     ) {
         Row(
             modifier = modifier

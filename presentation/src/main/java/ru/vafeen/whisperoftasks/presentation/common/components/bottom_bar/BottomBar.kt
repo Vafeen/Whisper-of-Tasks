@@ -1,6 +1,5 @@
 package ru.vafeen.whisperoftasks.presentation.common.components.bottom_bar
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
@@ -76,10 +75,7 @@ fun BottomBar(
             selected = selectedSettingsScreen,
             enabled = enabled && !selectedSettingsScreen,
             modifier = Modifier.weight(1 / 3f),
-            onClick = {
-                Toast.makeText(context, "There is no screen here.", Toast.LENGTH_SHORT).show()
-            }//navigateToSettingsScreen
-            ,
+            onClick = navigateToSettingsScreen,
             icon = {
                 Icon(
                     Icons.Default.Settings,

@@ -7,21 +7,20 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-data class ReminderColors(
+data class Colors(
     val mainColor: Color,
     val singleTheme: Color,
     val oppositeTheme: Color,
     val buttonColor: Color,
 )
 
-val baseLightPalette = ReminderColors(
+internal val baseLightPalette = Colors(
     mainColor = mainLightColor,
     singleTheme = Color.White,
     oppositeTheme = Color.Black,
-    buttonColor = Color(0xFFEFEEEE)// Color(0xFFEFEFFF)
+    buttonColor = Color.White// Color(0xFFF9F9F9)// Color(0xFFEFEFFF)
 )
-
-val baseDarkPalette = baseLightPalette.copy(
+internal val baseDarkPalette = baseLightPalette.copy(
     mainColor = mainDarkColor,
     singleTheme = Color.Black,
     oppositeTheme = Color.White,
@@ -44,11 +43,11 @@ fun MainTheme(
 }
 
 object Theme {
-    val colors: ReminderColors
+    val colors: Colors
         @ReadOnlyComposable @Composable
         get() = LocalColors.current
 }
 
-val LocalColors = staticCompositionLocalOf<ReminderColors> {
+val LocalColors = staticCompositionLocalOf<Colors> {
     error("Composition error")
 }

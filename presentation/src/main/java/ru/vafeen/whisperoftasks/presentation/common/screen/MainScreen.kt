@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -38,7 +39,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -48,6 +48,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.koin.androidx.compose.koinViewModel
 import ru.vafeen.whisperoftasks.data.R
 import ru.vafeen.whisperoftasks.data.local_database.entity.Reminder
 import ru.vafeen.whisperoftasks.data.utils.getDateStringWithWeekOfDay
@@ -69,15 +70,15 @@ import java.time.LocalTime
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun MainScreen(
-    navController: NavController, viewModel: MainScreenViewModel,
+    navController: NavController
 ) {
+    val viewModel: MainScreenViewModel = koinViewModel()
     val context = LocalContext.current
     val defaultColor = Theme.colors.mainColor
     val dark = isSystemInDarkTheme()
+    val settings by viewModel.settings.collectAsState()
     val mainColor by remember {
-        mutableStateOf(
-            viewModel.settings.getMainColorForThisTheme(isDark = dark) ?: defaultColor
-        )
+        mutableStateOf(settings.getMainColorForThisTheme(isDark = dark) ?: defaultColor)
     }
 
     val cor = rememberCoroutineScope()
@@ -184,7 +185,7 @@ fun MainScreen(
         bottomBar = {
             BottomBar(
                 enabled = !isUpdateInProcess,
-                containerColor = Theme.colors.mainColor,
+                containerColor = mainColor,
                 selectedMainScreen = true,
                 navigateToRemindersScreen = {
                     if (!isUpdateInProcess) navController.navigate(
@@ -239,37 +240,49 @@ fun MainScreen(
             LazyRow(
                 state = cardsWithDateState,
                 modifier = Modifier
-                    .fillMaxWidth(),
+                    .fillMaxWidth()
+                    .padding(vertical = 10.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 items(count = viewModel.pageNumber) { index ->
-                    val day = viewModel.todayDate.plusDays(index.toLong())
-                    Card(modifier = Modifier
-                        .fillParentMaxWidth(1 / 3f)
-                        .padding(horizontal = 5.dp)
-                        .clickable {
-                            cor.launch(Dispatchers.Main) {
-                                pagerState.animateScrollToPage(index)
-                            }
-                        }
-                        .alpha(
-                            if (day != localDate && day != viewModel.todayDate) 0.5f else 1f
-                        ), colors = CardDefaults.cardColors(
-                        containerColor = if (day == viewModel.todayDate) mainColor
-                        else Theme.colors.buttonColor,
-                        contentColor = (if (day == viewModel.todayDate) mainColor
-                        else Theme.colors.buttonColor).suitableColor()
-                    )) {
-                        Text(
-                            text = day.getDateStringWithWeekOfDay(context = context),
-                            fontSize = FontSize.small17,
+                    val day by remember { mutableStateOf(viewModel.todayDate.plusDays(index.toLong())) }
+                    Column {
+                        Card(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(
-                                    vertical = 5.dp, horizontal = 10.dp
-                                ),
-                            textAlign = TextAlign.Center
-                        )
+                                .fillParentMaxWidth(1 / 3f)
+                                .padding(horizontal = 5.dp)
+                                .clickable {
+                                    cor.launch(Dispatchers.Main) {
+                                        pagerState.animateScrollToPage(index)
+                                    }
+                                },
+                            colors = CardDefaults.cardColors(
+                                containerColor = if (day == viewModel.todayDate) mainColor
+                                else Theme.colors.buttonColor,
+                                contentColor = (if (day == viewModel.todayDate) mainColor
+                                else Theme.colors.buttonColor).suitableColor()
+                            ), elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
+                        ) {
+                            Text(
+                                text = day.getDateStringWithWeekOfDay(context = context),
+                                fontSize = FontSize.small17,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(
+                                        vertical = 5.dp, horizontal = 10.dp
+                                    ),
+                                textAlign = TextAlign.Center
+                            )
+                        }
+                        if (day == localDate)
+                            Card(
+                                modifier = Modifier
+                                    .fillParentMaxWidth(1 / 3f)
+                                    .padding(top = 2.dp)
+                                    .padding(horizontal = 18.dp)
+                                    .height(2.dp),
+                                colors = CardDefaults.cardColors(containerColor = Theme.colors.oppositeTheme)
+                            ) {}
                     }
                 }
             }

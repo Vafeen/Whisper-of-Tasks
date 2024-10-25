@@ -1,6 +1,7 @@
 [versions]
 accompanistPermissions = "0.31.1-alpha"
 agp = "8.7.1"
+alwan = "1.0.1"
 converterGson = "2.11.0"
 coreKtx = "1.13.1"
 junit = "4.13.2"
@@ -17,7 +18,10 @@ roomRuntime = "2.6.1"
 startupRuntime = "1.2.0"
 appcompat = "1.7.0"
 material = "1.12.0"
+koinAndroidxCompose = "4.0.0"
 uiGraphicsAndroid = "1.7.4"
+glide = "4.14.2"
+glideCompiler = "4.14.2"
 
 [libraries]
 accompanist-permissions = { module = "com.google.accompanist:accompanist-permissions", version.ref = "accompanistPermissions" }
@@ -35,6 +39,13 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+# color-picker
+alwan = { module = "com.raedapps:alwan", version.ref = "alwan" }
+#koin for compose
+koin-androidx-compose = { module = "io.insert-koin:koin-androidx-compose", version.ref = "koinAndroidxCompose" }
+# glide
+glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
+compiler = { module = "com.github.bumptech.glide:compiler", version.ref = "glideCompiler" }
 
 # ROOM
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }

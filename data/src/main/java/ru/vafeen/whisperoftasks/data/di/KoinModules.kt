@@ -1,6 +1,9 @@
 package ru.vafeen.whisperoftasks.data.di
 
+import android.content.Context
+import android.content.SharedPreferences
 import androidx.room.Room
+import org.koin.android.ext.koin.androidContext
 import org.koin.core.module.dsl.singleOf
 import org.koin.dsl.module
 import retrofit2.Retrofit
@@ -13,7 +16,7 @@ import ru.vafeen.whisperoftasks.data.network.end_points.DownloadServiceLink
 import ru.vafeen.whisperoftasks.data.network.end_points.GHDServiceLink
 import ru.vafeen.whisperoftasks.data.network.service.DownloadService
 import ru.vafeen.whisperoftasks.data.network.service.GitHubDataService
-import ru.vafeen.whisperoftasks.data.shared_preferences.SharedPreferences
+import ru.vafeen.whisperoftasks.data.shared_preferences.SharedPreferencesValue
 
 
 val koinDataDatabaseModule = module {
@@ -41,6 +44,11 @@ val koinDataNetworkModule = module {
 
 val koinDataServicesModule = module {
     singleOf(::LocalDateTimeConverters)
-    singleOf(::SharedPreferences)
+    single<SharedPreferences> {
+        androidContext().getSharedPreferences(
+            SharedPreferencesValue.Name.key, Context.MODE_PRIVATE
+        )
+    }
+
     singleOf(::Downloader)
 }
