@@ -60,6 +60,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
+val nullTime: LocalTime = LocalTime.of(0, 0)
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun RemindersScreen(navController: NavController) {
@@ -69,7 +70,7 @@ fun RemindersScreen(navController: NavController) {
     var reminders by remember {
         mutableStateOf(listOf<Reminder>())
     }
-    val nullTime = LocalTime.of(0, 0)
+
     var isAddingReminder by remember {
         mutableStateOf(false)
     }
