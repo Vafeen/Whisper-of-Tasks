@@ -40,7 +40,7 @@ import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
 // Количество видимых элементов в столбце
-private const val countOfVisibleItemsInPicker = 3
+private const val countOfVisibleItemsInPicker = 5
 
 // Высота одного элемента
 private const val itemHeight = 50
@@ -190,7 +190,7 @@ private fun DateColumnPicker(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillParentMaxHeight(1 / 3f),
+                        .fillParentMaxHeight(1f / countOfVisibleItemsInPicker),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -249,7 +249,7 @@ private fun TimeColumnPicker(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillParentMaxHeight(1 / 3f),
+                        .fillParentMaxHeight(1f / countOfVisibleItemsInPicker),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
