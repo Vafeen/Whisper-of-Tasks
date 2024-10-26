@@ -14,7 +14,7 @@ import ru.vafeen.whisperoftasks.data.local_database.entity.Reminder
 import ru.vafeen.whisperoftasks.domain.noui.EventCreation
 import ru.vafeen.whisperoftasks.domain.noui.EventCreator
 import ru.vafeen.whisperoftasks.domain.utils.getSettingsOrCreateIfNull
-import ru.vafeen.whisperoftasks.presentation.MainActivity
+import ru.vafeen.whisperoftasks.presentation.NotificationReminderReceiver
 
 
 class RemindersScreenViewModel(
@@ -23,7 +23,7 @@ class RemindersScreenViewModel(
     private val sharedPreferences: SharedPreferences,
     context: Context
 ) : ViewModel(), EventCreation {
-    private val intent = Intent(context, MainActivity::class.java)
+    private val intent = Intent(context, NotificationReminderReceiver::class.java)
     private val _settings =
         MutableStateFlow(sharedPreferences.getSettingsOrCreateIfNull())
     val settings = _settings.asStateFlow()
