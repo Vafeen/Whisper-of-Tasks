@@ -1,5 +1,6 @@
 package ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker
 
+import DateColumnPicker
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -13,7 +14,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 
 @Composable
-fun MyDateTimePicker(
+internal fun MyDateTimePicker(
     isTimeNeeded: Boolean,
     initialDate: LocalDate?,
     onDateSelected: (LocalDate) -> Unit,
