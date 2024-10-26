@@ -12,8 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -43,7 +44,7 @@ import java.time.temporal.ChronoUnit
 private const val countOfVisibleItemsInPicker = 5
 
 // Высота одного элемента
-private const val itemHeight = 50
+private const val itemHeight = 49
 
 // Высота списка
 private const val listHeight = countOfVisibleItemsInPicker * itemHeight
@@ -150,17 +151,32 @@ private fun DateColumnPicker(
         initialFirstVisibleItemIndex = initialDaysIndexItem
     )
     val list by remember {
-        mutableStateOf(List(size = 367) {
-            return@List when (it) {
-                0 -> ""
-                366 -> ""
-                else -> dateToday.plusDays((it - 1).toLong())
-                    .getDateStringWithWeekOfDay(context = context)
-            }
-        })
+        mutableStateOf(
+            mutableListOf<String>().apply {
+                (1..countOfVisibleItemsInPicker / 2).forEach { _ ->
+                    add((""))
+                }
+                (0..367).forEach {
+                    add(
+                        dateToday.plusDays((it).toLong())
+                            .getDateStringWithWeekOfDay(context = context)
+                    )
+                }
+                (1..countOfVisibleItemsInPicker / 2).forEach { _ ->
+                    add((""))
+                }
+            })
+    }
+    var offset by remember {
+        mutableStateOf(
+            listState.firstVisibleItemScrollOffset.pixelsToDp(
+                context
+            ) % itemHeight
+        )
     }
     LaunchedEffect(listState.firstVisibleItemScrollOffset) {
         val newDate = dateToday.plusDays(listState.itemForScrollTo(context = context).toLong())
+        offset = listState.firstVisibleItemScrollOffset.pixelsToDp(context) % itemHeight
         if (newDate != selectedDate) {
             onValueChange(newDate)
             selectedDate = newDate
@@ -177,27 +193,31 @@ private fun DateColumnPicker(
             listState.animateScrollToItem(listState.itemForScrollTo(context = context))
         }
     }
-    Box(
-        modifier = modifier.height(listHeight.dp), contentAlignment = Alignment.Center
-    ) {
-        Border(itemHeight = itemHeight.dp, color = Theme.colors.oppositeTheme)
 
-        LazyColumn(
-            state = listState,
-            modifier = Modifier.fillMaxSize(),
+    Column(modifier) {
+        Text(offset.toString())
+        Box(
+            modifier = Modifier.height(listHeight.dp), contentAlignment = Alignment.Center
         ) {
-            items(items = list) { dateStr ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillParentMaxHeight(1f / countOfVisibleItemsInPicker),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    TextForThisTheme(
-                        text = dateStr,
-                        fontSize = FontSize.medium19,
-                    )
+            Border(itemHeight = itemHeight.dp, color = Theme.colors.oppositeTheme)
+
+            LazyColumn(
+                state = listState,
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                itemsIndexed(list) { index, dateStr ->
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillParentMaxHeight(1f / countOfVisibleItemsInPicker),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        TextForThisTheme(
+                            text = dateStr,
+                            fontSize = FontSize.medium19,
+                        )
+                    }
                 }
             }
         }
@@ -212,14 +232,29 @@ private fun TimeColumnPicker(
     val context = LocalContext.current
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialValue)
     val list by remember {
-        mutableStateOf(mutableListOf("").apply {
-            for (i in range) add(i.getTimeDefaultStr())
-            add("")
-        })
+        mutableStateOf(
+            mutableListOf<String>().apply {
+                (1..countOfVisibleItemsInPicker / 2).forEach { _ ->
+                    add((""))
+                }
+                range.forEach {
+                    add(it.getTimeDefaultStr())
+                }
+                (1..countOfVisibleItemsInPicker / 2).forEach { _ ->
+                    add((""))
+                }
+            })
     }
-
     var selectedValue by remember { mutableIntStateOf(initialValue) }
+    var offset by remember {
+        mutableStateOf(
+            listState.firstVisibleItemScrollOffset.pixelsToDp(
+                context
+            ) % itemHeight
+        )
+    }
     LaunchedEffect(listState.firstVisibleItemScrollOffset) {
+        offset = listState.firstVisibleItemScrollOffset.pixelsToDp(context) % itemHeight
         val newValue = list[listState.itemForScrollTo(context = context) + 1].toIntOrNull()
         if (newValue != null && newValue != selectedValue) {
             onValueChange(newValue)
@@ -235,28 +270,35 @@ private fun TimeColumnPicker(
             listState.animateScrollToItem(listState.itemForScrollTo(context = context))
         }
     }
-    Box(
-        modifier = modifier.height(listHeight.dp), contentAlignment = Alignment.Center
-    ) {
-        Border(itemHeight = itemHeight.dp, color = Theme.colors.oppositeTheme)
-
-        LazyColumn(
-            state = listState,
-            modifier = Modifier
-                .fillMaxSize(),
+    Column(modifier) {
+        Text(offset.toString())
+        Box(
+            modifier = Modifier.height(listHeight.dp),
+            contentAlignment = Alignment.Center
         ) {
-            items(items = list) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillParentMaxHeight(1f / countOfVisibleItemsInPicker),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    TextForThisTheme(
-                        text = it,
-                        fontSize = FontSize.medium19,
-                    )
+            Border(itemHeight = itemHeight.dp, color = Theme.colors.oppositeTheme)
+
+            LazyColumn(
+                state = listState,
+                modifier = Modifier
+                    .fillMaxSize(),
+//            verticalArrangement = Arrangement.spacedBy(space)
+            ) {
+                itemsIndexed(list) { index, it ->
+
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .fillParentMaxHeight(1f / countOfVisibleItemsInPicker),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        TextForThisTheme(
+                            text = it,
+                            fontSize = FontSize.medium19,
+                        )
+                    }
+
                 }
             }
         }
