@@ -1,6 +1,6 @@
-v1.0.1
-New version v1.0.1!!
+v1.0.2
+New version v1.0.2!!
 
-What's new:
+What's fix:
 
-- NEW Date & Time picker as in Telegram!
+- Bug with lost notifications
