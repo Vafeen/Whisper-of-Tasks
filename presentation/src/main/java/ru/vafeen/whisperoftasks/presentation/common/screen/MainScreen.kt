@@ -337,7 +337,7 @@ fun MainScreen(
                                 viewModel = viewModel,
                                 dateOfThisPage = dateOfThisPage,
                                 context = context,
-                                isItCandidateForDelete = it.isItCandidateForDelete(),
+                                isItCandidateForDelete = it::isItCandidateForDelete.invoke(),
                                 changeStatusOfDeleting = it::changeStatusOfDeleting,
                             )
                         }
