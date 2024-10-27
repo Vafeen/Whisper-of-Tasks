@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.vafeen.whisperoftasks.data.utils.getTimeDefaultStr
 import ru.vafeen.whisperoftasks.data.utils.pixelsToDp
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 
@@ -122,7 +122,7 @@ internal fun TimeColumnPicker(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
+                        TextForThisTheme(
                             text = it,
                             fontSize = FontSize.medium19,
                             overflow = TextOverflow.Visible,

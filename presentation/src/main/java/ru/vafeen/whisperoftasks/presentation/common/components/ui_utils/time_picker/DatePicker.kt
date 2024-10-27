@@ -1,3 +1,4 @@
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -5,7 +6,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.vafeen.whisperoftasks.data.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.data.utils.pixelsToDp
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.Border
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.calculateAlpha
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.calculateScaleX
@@ -120,7 +121,7 @@ internal fun DateColumnPicker(
                             ),
                         contentAlignment = Alignment.Center
                     ) {
-                        Text(
+                        TextForThisTheme(
                             text = dateStr,
                             fontSize = FontSize.medium19,
                             overflow = TextOverflow.Visible,
