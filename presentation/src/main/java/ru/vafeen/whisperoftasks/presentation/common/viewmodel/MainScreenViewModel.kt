@@ -41,9 +41,23 @@ class MainScreenViewModel(
                 _settings.emit(sharedPreferences.getSettingsOrCreateIfNull())
             }
         }
+
     init {
         sharedPreferences.registerOnSharedPreferenceChangeListener(spListener)
     }
+
+    val countOfDaysInPast = 30
+    val startDateInPast: LocalDate = todayDate.minusDays(countOfDaysInPast.toLong())
+    private val _dateList = mutableListOf<LocalDate>()
+    val dateList: List<LocalDate> = _dateList
+
+    init {
+        (0..pageNumber).forEach {
+            _dateList.add(startDateInPast.plusDays(it.toLong()))
+        }
+    }
+
+
     override fun removeEvent(reminder: Reminder) {
         viewModelScope.launch(Dispatchers.IO) {
             eventCreator.removeEvent(reminder = reminder, intent = intent)

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -50,6 +51,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
 import ru.vafeen.whisperoftasks.data.R
+import ru.vafeen.whisperoftasks.data.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.data.local_database.entity.Reminder
 import ru.vafeen.whisperoftasks.data.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.domain.utils.getMainColorForThisTheme
@@ -140,12 +142,13 @@ fun MainScreen(
 
 
     val reminders by viewModel.remindersFlow.collectAsState(listOf())
-    val cardsWithDateState = rememberLazyListState()
+    val cardsWithDateState =
+        rememberLazyListState(initialFirstVisibleItemIndex = viewModel.countOfDaysInPast - 1)
 
     val pagerState = rememberPagerState(
         pageCount = {
             viewModel.pageNumber
-        }, initialPage = 0
+        }, initialPage = viewModel.countOfDaysInPast
     )
     BackHandler {
         when {
@@ -161,7 +164,7 @@ fun MainScreen(
 
             else -> {
                 cor.launch(Dispatchers.Main) {
-                    pagerState.animateScrollToPage(0)
+                    pagerState.animateScrollToPage(viewModel.countOfDaysInPast)
                 }
             }
         }
@@ -244,8 +247,8 @@ fun MainScreen(
                     .padding(vertical = 10.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                items(count = viewModel.pageNumber) { index ->
-                    val day by remember { mutableStateOf(viewModel.todayDate.plusDays(index.toLong())) }
+                itemsIndexed(viewModel.dateList) { index, day ->
+//                    val day by remember { mutableStateOf(viewModel.todayDate.plusDays(index.toLong())) }
                     Column {
                         Card(
                             modifier = Modifier
@@ -298,16 +301,16 @@ fun MainScreen(
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    val dateOfThisPage = viewModel.todayDate.plusDays(page.toLong())
-                    localDate = viewModel.todayDate.plusDays(pagerState.currentPage.toLong())
+                    val dateOfThisPage = viewModel.startDateInPast.plusDays(page.toLong())
+                    localDate = viewModel.startDateInPast.plusDays(pagerState.currentPage.toLong())
                     val remindersForThisDay = reminders.filter {
                         val d = it.dt.toLocalDate()
                         d == dateOfThisPage ||
-                                it.repeatDuration == ru.vafeen.whisperoftasks.data.duration.RepeatDuration.EveryDay && d <= dateOfThisPage ||
-                                it.repeatDuration == ru.vafeen.whisperoftasks.data.duration.RepeatDuration.EveryWeek && it.dt.dayOfWeek == dateOfThisPage.dayOfWeek
+                                it.repeatDuration == RepeatDuration.EveryDay && d <= dateOfThisPage ||
+                                it.repeatDuration == RepeatDuration.EveryWeek && it.dt.dayOfWeek == dateOfThisPage.dayOfWeek
                     }
                     val lostReminders = reminders.filter {
-                        it.repeatDuration == ru.vafeen.whisperoftasks.data.duration.RepeatDuration.NoRepeat &&
+                        it.repeatDuration == RepeatDuration.NoRepeat &&
                                 dateOfThisPage > it.dt.toLocalDate()
                     }
                     if (remindersForThisDay.isEmpty() && lostReminders.isEmpty()) {
