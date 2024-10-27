@@ -20,13 +20,7 @@ import kotlin.math.abs
 internal const val countOfVisibleItemsInPicker = 5
 
 // Высота стандартного элемента.
-internal const val itemHeight = 40f
-
-// Высота для элементов, находящихся рядом с центральным элементом (например, второй и предпоследний).
-internal const val itemOfAVGVisible = 30f
-
-// Минимальная высота для первого и последнего видимых элементов.
-internal const val itemOfFirstAndLastVisible = 20f
+internal const val itemHeight = 35f
 
 // Высота списка.
 internal const val listHeight = countOfVisibleItemsInPicker * itemHeight
@@ -66,17 +60,21 @@ internal fun Border(itemHeight: Dp, color: Color) {
     ) {}
 }
 
-
 // Функция для расчета масштаба элемента по оси X на основе его положения в списке относительно центра видимой области.
 internal fun calculateScaleX(listState: LazyListState, index: Int): Float {
+    // Получаем информацию о текущем состоянии компоновки списка
     val layoutInfo = listState.layoutInfo
+    // Извлекаем индексы видимых элементов
     val visibleItems = layoutInfo.visibleItemsInfo.map { it.index }
+    // Если элемент не виден, возвращаем масштаб 1 (нормальный)
     if (!visibleItems.contains(index)) return 1f
-
+    // Находим информацию о конкретном элементе по индексу
     val itemInfo = layoutInfo.visibleItemsInfo.firstOrNull { it.index == index } ?: return 1f
+    // Вычисляем центр видимой области
     val center = (layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset) / 2f
+    // Вычисляем расстояние от центра до середины элемента
     val distance = abs((itemInfo.offset + itemInfo.size / 2) - center)
-
+    // Максимальное расстояние до центра для расчета масштаба
     val maxDistance = layoutInfo.viewportEndOffset / 2f
     // Сжимаем элемент до половины при максимальном расстоянии
     return 1f - (distance / maxDistance) * 0.5f
@@ -84,35 +82,40 @@ internal fun calculateScaleX(listState: LazyListState, index: Int): Float {
 
 // Функция для расчета масштаба элемента по оси Y на основе его положения в списке относительно центра видимой области.
 internal fun calculateScaleY(listState: LazyListState, index: Int): Float {
+    // Получаем информацию о текущем состоянии компоновки списка
     val layoutInfo = listState.layoutInfo
+    // Извлекаем индексы видимых элементов
     val visibleItems = layoutInfo.visibleItemsInfo.map { it.index }
+    // Если элемент не виден, возвращаем масштаб 1 (нормальный)
     if (!visibleItems.contains(index)) return 1f
-
+    // Находим информацию о конкретном элементе по индексу
     val itemInfo = layoutInfo.visibleItemsInfo.firstOrNull { it.index == index } ?: return 1f
+    // Вычисляем центр видимой области
     val center = (layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset) / 2f
+    // Вычисляем расстояние от центра до середины элемента
     val distance = abs((itemInfo.offset + itemInfo.size / 2) - center)
-
-    // Максимальное расстояние до центра, чтобы элемент стал почти невидимым
+    // Максимальное расстояние до центра для расчета масштаба
     val maxDistanceY = layoutInfo.viewportEndOffset / 2f
-
-    // Применяем сильное уменьшение масштаба по оси Y
-    return if (distance < maxDistanceY) {
-        1f - (distance / maxDistanceY) * 0.9f // Уменьшаем до 10% при максимальном расстоянии
-    } else {
-        0.1f // Минимальный масштаб, когда элемент далеко от центра
-    }
+    // Сжимаем элемент полностью при максимальном расстоянии
+    return 1f - (distance / maxDistanceY)
 }
-
 
 // Функция для расчета прозрачности на основе индекса элемента, общего количества элементов и состояния списка.
 fun calculateAlpha(index: Int, listState: LazyListState): Float {
-    val visibleItems = listState.layoutInfo.visibleItemsInfo.map { it.index }
-
-    return if (visibleItems.isNotEmpty()) when (// Если элемент является первым или последним видимым элементом
-        index) {
-        visibleItems.first(), visibleItems.last() -> 0.3f // Минимальная непрозрачность для крайних элементов
-        // Если элемент является вторым или предпоследним видимым элементом
-        visibleItems[1], visibleItems[visibleItems.size - 2] -> 0.6f // Средняя непрозрачность для второго и предпоследнего
-        else -> 1f // Остальные элементы менее прозрачные
-    } else 1f
+    // Получаем информацию о текущем состоянии компоновки списка
+    val layoutInfo = listState.layoutInfo
+    // Извлекаем индексы видимых элементов
+    val visibleItems = layoutInfo.visibleItemsInfo.map { it.index }
+    // Если нет видимых элементов, возвращаем максимальную непрозрачность
+    if (visibleItems.isEmpty()) return 1f
+    // Вычисляем центр видимой области
+    val center = (layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset) / 2f
+    // Находим информацию о конкретном элементе по индексу
+    val itemInfo = layoutInfo.visibleItemsInfo.firstOrNull { it.index == index } ?: return 1f
+    // Вычисляем расстояние от центра до середины элемента
+    val distance = abs((itemInfo.offset + itemInfo.size / 2) - center)
+    // Максимальное расстояние для расчета прозрачности
+    val maxDistance = layoutInfo.viewportEndOffset / 2f
+    // Уменьшаем прозрачность до 0.3 при максимальном расстоянии
+    return 1f - (distance / maxDistance) * 0.7f
 }

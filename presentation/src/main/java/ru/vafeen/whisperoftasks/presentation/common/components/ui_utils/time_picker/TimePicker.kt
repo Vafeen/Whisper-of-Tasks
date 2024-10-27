@@ -2,7 +2,6 @@ package ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_pi
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -18,7 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.vafeen.whisperoftasks.data.utils.getTimeDefaultStr
 import ru.vafeen.whisperoftasks.data.utils.pixelsToDp
@@ -46,21 +44,16 @@ internal fun TimeColumnPicker(
     }
 
     var selectedValue by remember { mutableIntStateOf(initialValue) }
-    var firstIndex by remember { mutableStateOf(0) }
-    var lastIndex by remember { mutableStateOf(0) }
+//    var firstIndex by remember { mutableStateOf(0) }
+//    var lastIndex by remember { mutableStateOf(0) }
 
     LaunchedEffect(listState.firstVisibleItemScrollOffset) {
         val newValue =
             list[listState.itemForScrollTo(context) + countOfVisibleItemsInPicker / 2].toIntOrNull()
-                ?: return@LaunchedEffect
-        if (newValue != selectedValue) {
+        if (newValue != null && newValue != selectedValue) {
             onValueChange(newValue)
             selectedValue = newValue
         }
-
-        // Обновляем индексы
-        firstIndex = listState.firstVisibleItemIndex
-        lastIndex = firstIndex + countOfVisibleItemsInPicker - 1
     }
 
     LaunchedEffect(listState.isScrollInProgress) {
@@ -81,53 +74,20 @@ internal fun TimeColumnPicker(
 
         LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
             itemsIndexed(items = list) { index, it ->
-                val itemInfo =
-                    listState.layoutInfo.visibleItemsInfo.firstOrNull { it.index == index }
-                val centerOffset =
-                    (listState.layoutInfo.viewportEndOffset + listState.layoutInfo.viewportStartOffset) / 2f
-
-                // Рассчитываем высоту элемента в зависимости от его положения относительно центра.
-                val heightFactor: Float = when {
-                    itemInfo != null -> {
-                        if (index == firstIndex || index == lastIndex) itemOfFirstAndLastVisible
-                        else if (index == firstIndex + 1 || index == lastIndex - 1) itemOfAVGVisible
-                        else itemHeight
-                    }
-
-                    else -> itemHeight // Если элемент не виден, используем стандартную высоту
-                }
-
                 Box(
                     modifier = Modifier
-                        .fillMaxWidth()
                         .fillParentMaxHeight(1f / countOfVisibleItemsInPicker),
-                    contentAlignment = Alignment.Center,
+                    contentAlignment = Alignment.Center
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .height(heightFactor.dp) // Устанавливаем высоту для внутреннего элемента списка.
-                            .graphicsLayer(
-                                scaleX = calculateScaleX(
-                                    listState,
-                                    index
-                                ), // Применяем масштаб по X.
-                                scaleY = calculateScaleY(
-                                    listState,
-                                    index
-                                ),  // Применяем масштаб по Y.
-                                alpha = calculateAlpha(
-                                    index,
-                                    listState
-                                ) // Применяем прозрачность к элементу.
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        TextForThisTheme(
-                            text = it,
-                            fontSize = FontSize.medium19,
-                            overflow = TextOverflow.Visible,
-                        )
-                    }
+                    TextForThisTheme(
+                        modifier = Modifier.graphicsLayer(
+                            scaleX = calculateScaleX(listState, index),
+                            scaleY = calculateScaleY(listState, index),
+                            alpha = calculateAlpha(index, listState)
+                        ),
+                        text = it,
+                        fontSize = FontSize.medium19,
+                    )
                 }
             }
         }

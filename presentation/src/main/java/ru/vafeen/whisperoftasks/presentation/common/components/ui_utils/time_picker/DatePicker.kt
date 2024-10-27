@@ -1,4 +1,3 @@
-
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -17,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import ru.vafeen.whisperoftasks.data.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.data.utils.pixelsToDp
@@ -29,8 +27,6 @@ import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_pic
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.countOfVisibleItemsInPicker
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.itemForScrollTo
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.itemHeight
-import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.itemOfAVGVisible
-import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.itemOfFirstAndLastVisible
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.listHeight
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
@@ -92,41 +88,22 @@ internal fun DateColumnPicker(
             color = Theme.colors.oppositeTheme
         )
         LazyColumn(state = listState, modifier = Modifier.fillMaxSize()) {
-            itemsIndexed(items = list) { index, dateStr ->
-                // Рассчитываем высоту элемента в зависимости от его положения относительно центра.
-                val heightFactor: Float = when {
-                    index == 0 || index == list.size - 1 -> itemOfFirstAndLastVisible
-                    index == 1 || index == list.size - 2 -> itemOfAVGVisible
-                    else -> itemHeight
-                }
-
-                Box(modifier = Modifier.fillParentMaxHeight(1f / countOfVisibleItemsInPicker)) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(heightFactor.dp)
-                            .graphicsLayer(
-                                scaleY = calculateScaleY(
-                                    listState,
-                                    index
-                                ), // Используем новую функцию для Y
-                                scaleX = calculateScaleX(
-                                    listState,
-                                    index
-                                ), // Используем новую функцию для X
-                                alpha = calculateAlpha(
-                                    index,
-                                    listState
-                                ) // Применяем прозрачность к элементу.
-                            ),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        TextForThisTheme(
-                            text = dateStr,
-                            fontSize = FontSize.medium19,
-                            overflow = TextOverflow.Visible,
-                        )
-                    }
+            itemsIndexed(items = list) { index, it ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillParentMaxHeight(1f / countOfVisibleItemsInPicker),
+                    contentAlignment = Alignment.Center
+                ) {
+                    TextForThisTheme(
+                        modifier = Modifier.graphicsLayer(
+                            scaleX = calculateScaleX(listState, index),
+                            scaleY = calculateScaleY(listState, index),
+                            alpha = calculateAlpha(index, listState)
+                        ),
+                        text = it,
+                        fontSize = FontSize.medium19,
+                    )
                 }
             }
         }
