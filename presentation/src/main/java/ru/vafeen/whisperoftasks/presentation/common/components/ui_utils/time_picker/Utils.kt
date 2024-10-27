@@ -66,17 +66,6 @@ internal fun Border(itemHeight: Dp, color: Color) {
     ) {}
 }
 
-// Функция для расчета масштаба элемента на основе его положения в списке относительно центра видимой области.
-internal fun calculateScale(listState: LazyListState, index: Int): Float {
-    val layoutInfo = listState.layoutInfo
-    val visibleItems = layoutInfo.visibleItemsInfo.map { it.index }
-    if (!visibleItems.contains(index)) return 1f
-    val itemInfo = layoutInfo.visibleItemsInfo.firstOrNull { it.index == index } ?: return 1f
-    val center = (layoutInfo.viewportEndOffset + layoutInfo.viewportStartOffset) / 2f
-    val distance = abs((itemInfo.offset + itemInfo.size / 2) - center)
-    val maxDistance = layoutInfo.viewportEndOffset / 2f
-    return 1f - (distance / maxDistance) * 0.5f
-}
 
 // Функция для расчета масштаба элемента по оси X на основе его положения в списке относительно центра видимой области.
 internal fun calculateScaleX(listState: LazyListState, index: Int): Float {
