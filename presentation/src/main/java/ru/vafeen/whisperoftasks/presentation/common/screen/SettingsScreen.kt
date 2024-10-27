@@ -188,37 +188,11 @@ fun SettingsScreen(
                     additionalContentIsVisible = catsOnUIIsChanging,
                     additionalContent = {
                         Column {
-                            val onCheckedChangeWeekendCat = {
-                                viewModel.saveSettingsToSharedPreferences(
-                                    settings = settings.copy(
-                                        weekendCat = !settings.weekendCat
-                                    )
-                                )
-                            }
                             val onCheckedChangeCatInSettings = {
                                 viewModel.saveSettingsToSharedPreferences(
                                     settings = settings.copy(
                                         catInSettings = !settings.catInSettings
                                     )
-                                )
-                            }
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable { onCheckedChangeWeekendCat() }
-                                    .padding(horizontal = it),
-                                horizontalArrangement = Arrangement.SpaceBetween,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                TextForThisTheme(
-                                    text = stringResource(R.string.weekend_cat),
-                                    fontSize = FontSize.medium19
-                                )
-                                Checkbox(
-                                    checked = settings.weekendCat,
-                                    onCheckedChange = {
-                                        onCheckedChangeWeekendCat()
-                                    }, colors = checkBoxColors
                                 )
                             }
                             Row(
