@@ -15,7 +15,7 @@ import ru.vafeen.whisperoftasks.data.network.downloader.Downloader
 import ru.vafeen.whisperoftasks.domain.noui.EventCreation
 import ru.vafeen.whisperoftasks.domain.noui.EventCreator
 import ru.vafeen.whisperoftasks.domain.utils.getSettingsOrCreateIfNull
-import ru.vafeen.whisperoftasks.presentation.MainActivity
+import ru.vafeen.whisperoftasks.presentation.NotificationReminderReceiver
 import java.time.LocalDate
 
 
@@ -32,7 +32,7 @@ class MainScreenViewModel(
     val todayDate: LocalDate = LocalDate.now()
     val pageNumber = 365
     val remindersFlow = databaseRepository.getAllRemindersAsFlow()
-    private val intent = Intent(context, MainActivity::class.java)
+    private val intent = Intent(context, NotificationReminderReceiver::class.java)
     val isUpdateInProcessFlow = downloader.isUpdateInProcessFlow
     val percentageFlow = downloader.percentageFlow
     private val spListener =
