@@ -1,6 +1,6 @@
-v1.0.2
-New version v1.0.2!!
+v1.1.3
+New version v1.1.3!!
 
-What's fix:
+What's fixed:
 
-- Modify type of text in pickers
+- Days in the past for viewing tasks
