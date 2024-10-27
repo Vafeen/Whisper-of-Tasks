@@ -1,6 +1,6 @@
-v1.1.3
-New version v1.1.3!!
+v1.1.4
+New vesion v1.1.4!!
 
 What's fixed:
 
-- Days in the past for viewing tasks
+- Notifications about tasks
