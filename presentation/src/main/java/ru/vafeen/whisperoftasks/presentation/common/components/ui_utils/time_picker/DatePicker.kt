@@ -1,4 +1,3 @@
-
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -18,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import ru.vafeen.whisperoftasks.data.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.data.utils.pixelsToDp
@@ -106,6 +106,9 @@ internal fun DateColumnPicker(
                         ),
                         text = it,
                         fontSize = FontSize.medium19,
+                        textDecoration = if (index < DatePickerInfo.countOfDaysInPast + countOfVisibleItemsInPicker / 2)
+                            TextDecoration.LineThrough
+                        else TextDecoration.None
                     )
                 }
             }

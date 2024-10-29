@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
@@ -18,6 +19,8 @@ fun TextForThisTheme(
     textAlign: TextAlign? = null,
     style: TextStyle = LocalTextStyle.current,
     overflow: TextOverflow = TextOverflow.Clip,
+    maxLines: Int = 1,
+    textDecoration: TextDecoration = TextDecoration.None, // Устанавливаем перечеркивание текста
 ) {
     Text(
         text = text,
@@ -27,7 +30,8 @@ fun TextForThisTheme(
         textAlign = textAlign,
         style = style,
         overflow = overflow,
-        maxLines = 1
+        maxLines = maxLines,
+        textDecoration = textDecoration
     )
 }
 
