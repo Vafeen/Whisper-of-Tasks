@@ -1,6 +1,6 @@
-v1.1.4
-New vesion v1.1.4!!
+v1.1.5
+New vesion v1.1.5!!
 
-What's fixed:
+What's new:
 
-- Notifications about tasks
+- Dates in the past in date picker
