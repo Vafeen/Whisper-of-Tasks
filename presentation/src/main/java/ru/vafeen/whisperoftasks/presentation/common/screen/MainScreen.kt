@@ -65,6 +65,7 @@ import ru.vafeen.whisperoftasks.presentation.common.navigation.ScreenRoute
 import ru.vafeen.whisperoftasks.presentation.common.viewmodel.MainScreenViewModel
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
+import ru.vafeen.whisperoftasks.presentation.utils.DatePickerInfo
 import ru.vafeen.whisperoftasks.presentation.utils.suitableColor
 import java.time.LocalDate
 import java.time.LocalTime
@@ -143,12 +144,12 @@ fun MainScreen(
 
     val reminders by viewModel.remindersFlow.collectAsState(listOf())
     val cardsWithDateState =
-        rememberLazyListState(initialFirstVisibleItemIndex = viewModel.countOfDaysInPast - 1)
+        rememberLazyListState(initialFirstVisibleItemIndex = DatePickerInfo.countOfDaysInPast - 1)
 
     val pagerState = rememberPagerState(
         pageCount = {
-            viewModel.pageNumber
-        }, initialPage = viewModel.countOfDaysInPast
+            DatePickerInfo.pageNumber
+        }, initialPage = DatePickerInfo.countOfDaysInPast
     )
     BackHandler {
         when {
@@ -164,7 +165,7 @@ fun MainScreen(
 
             else -> {
                 cor.launch(Dispatchers.Main) {
-                    pagerState.animateScrollToPage(viewModel.countOfDaysInPast)
+                    pagerState.animateScrollToPage(DatePickerInfo.countOfDaysInPast)
                 }
             }
         }
@@ -247,7 +248,7 @@ fun MainScreen(
                     .padding(vertical = 10.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
-                itemsIndexed(viewModel.dateList) { index, day ->
+                itemsIndexed(DatePickerInfo.dateList()) { index, day ->
 //                    val day by remember { mutableStateOf(viewModel.todayDate.plusDays(index.toLong())) }
                     Column {
                         Card(
@@ -301,8 +302,10 @@ fun MainScreen(
                         .verticalScroll(rememberScrollState()),
                     verticalArrangement = Arrangement.spacedBy(20.dp)
                 ) {
-                    val dateOfThisPage = viewModel.startDateInPast.plusDays(page.toLong())
-                    localDate = viewModel.startDateInPast.plusDays(pagerState.currentPage.toLong())
+                    val startDateInPast = DatePickerInfo.startDateInPast()
+                    val dateOfThisPage = startDateInPast.plusDays(page.toLong())
+                    localDate =
+                        startDateInPast.plusDays(pagerState.currentPage.toLong())
                     val remindersForThisDay = reminders.filter {
                         val d = it.dt.toLocalDate()
                         d == dateOfThisPage ||

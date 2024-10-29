@@ -1,3 +1,4 @@
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +32,7 @@ import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_pic
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.listHeight
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
+import ru.vafeen.whisperoftasks.presentation.utils.DatePickerInfo
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
@@ -40,22 +43,22 @@ internal fun DateColumnPicker(
     onValueChange: (LocalDate?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val cor = rememberCoroutineScope()
     var selectedDate by remember { mutableStateOf(initialDate) }
     val context = LocalContext.current
     val dateToday by remember { mutableStateOf(LocalDate.now()) }
     val initialDaysIndexItem by remember {
         mutableIntStateOf(
-            ChronoUnit.DAYS.between(dateToday, selectedDate).toInt()
+            ChronoUnit.DAYS.between(DatePickerInfo.startDateInPast(), selectedDate).toInt()
         )
     }
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialDaysIndexItem)
-
     // Генерация списка дат.
     val list by remember {
         mutableStateOf(mutableListOf<String>().apply {
             (1..(countOfVisibleItemsInPicker / 2)).forEach { _ -> add("") }
-            (0..365).forEach {
-                add(dateToday.plusDays(it.toLong()).getDateStringWithWeekOfDay(context))
+            DatePickerInfo.dateList().forEach {
+                add(it.getDateStringWithWeekOfDay(context))
             }
             (1..(countOfVisibleItemsInPicker / 2)).forEach { _ -> add("") }
         })

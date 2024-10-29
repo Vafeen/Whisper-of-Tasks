@@ -30,7 +30,6 @@ class MainScreenViewModel(
         MutableStateFlow(sharedPreferences.getSettingsOrCreateIfNull())
     val settings = _settings.asStateFlow()
     val todayDate: LocalDate = LocalDate.now()
-    val pageNumber = 365
     val remindersFlow = databaseRepository.getAllRemindersAsFlow()
     private val intent = Intent(context, NotificationReminderReceiver::class.java)
     val isUpdateInProcessFlow = downloader.isUpdateInProcessFlow
@@ -44,17 +43,6 @@ class MainScreenViewModel(
 
     init {
         sharedPreferences.registerOnSharedPreferenceChangeListener(spListener)
-    }
-
-    val countOfDaysInPast = 30
-    val startDateInPast: LocalDate = todayDate.minusDays(countOfDaysInPast.toLong())
-    private val _dateList = mutableListOf<LocalDate>()
-    val dateList: List<LocalDate> = _dateList
-
-    init {
-        (0..pageNumber).forEach {
-            _dateList.add(startDateInPast.plusDays(it.toLong()))
-        }
     }
 
 

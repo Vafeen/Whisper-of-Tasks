@@ -58,8 +58,8 @@ import ru.vafeen.whisperoftasks.domain.noui.EventCreation
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.MyDateTimePicker
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
+import ru.vafeen.whisperoftasks.presentation.utils.DatePickerInfo
 import ru.vafeen.whisperoftasks.presentation.utils.suitableColor
-import java.time.LocalDate
 import java.time.LocalTime
 
 @Composable
@@ -68,14 +68,14 @@ fun ReminderDialog(
     onDismissRequest: () -> Unit,
     eventCreation: EventCreation,
 ) {
+    val startDateInPast by remember { mutableStateOf(DatePickerInfo.startDateInPast()) }
     val context = LocalContext.current
     val databaseRepository: DatabaseRepository by inject(
         clazz = DatabaseRepository::class.java
     )
-    val dateToday = LocalDate.now()
-    if (newReminder.value.dt.toLocalDate() < dateToday) {
+    if (newReminder.value.dt.toLocalDate() < startDateInPast) {
         newReminder.value = newReminder.value.copy(
-            dt = newReminder.value.dt.withDate(localDate = dateToday)
+            dt = newReminder.value.dt.withDate(localDate = startDateInPast)
         )
         LaunchedEffect(null) {
             databaseRepository.insertAllReminders(
