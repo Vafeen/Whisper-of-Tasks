@@ -1,6 +1,6 @@
-v1.1.5
-New vesion v1.1.5!!
+v1.1.6
+New vesion v1.1.6!!
 
-What's new:
+What's fix:
 
-- Dates in the past in date picker
+- Some bugs with new date picker
