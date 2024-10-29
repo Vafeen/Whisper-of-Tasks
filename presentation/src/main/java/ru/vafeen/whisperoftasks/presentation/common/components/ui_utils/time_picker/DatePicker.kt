@@ -1,3 +1,4 @@
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -11,7 +12,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,10 +43,8 @@ internal fun DateColumnPicker(
     onValueChange: (LocalDate?) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val cor = rememberCoroutineScope()
     var selectedDate by remember { mutableStateOf(initialDate) }
     val context = LocalContext.current
-    val dateToday by remember { mutableStateOf(LocalDate.now()) }
     val initialDaysIndexItem by remember {
         mutableIntStateOf(
             ChronoUnit.DAYS.between(DatePickerInfo.startDateInPast(), selectedDate).toInt()
@@ -65,7 +63,7 @@ internal fun DateColumnPicker(
     }
 
     LaunchedEffect(listState.firstVisibleItemScrollOffset) {
-        val newDate = dateToday.plusDays(listState.itemForScrollTo(context = context).toLong())
+        val newDate = DatePickerInfo.startDateInPast().plusDays(listState.itemForScrollTo(context = context).toLong())
         if (newDate != selectedDate) {
             onValueChange(newDate)
             selectedDate = newDate
