@@ -1,6 +1,6 @@
-v1.1.6
-New vesion v1.1.6!!
+v1.1.7
+New vesion v1.1.7!!
 
-What's fix:
+What's new:
 
-- Some bugs with new date picker
+- More lines in title and text in ReminderDataString
