@@ -86,8 +86,8 @@ fun Reminder.ReminderDataString(
             Column(
                 modifier = Modifier.weight(1f)
             ) {
-                TextForThisTheme(text = title, fontSize = FontSize.big22)
-                TextForThisTheme(text = text, fontSize = FontSize.medium19)
+                TextForThisTheme(text = title, fontSize = FontSize.big22, maxLines = 10)
+                TextForThisTheme(text = text, fontSize = FontSize.medium19, maxLines = 10)
 
                 TextForThisTheme(
                     text = stringResource(id = this@ReminderDataString.repeatDuration.resourceName),
