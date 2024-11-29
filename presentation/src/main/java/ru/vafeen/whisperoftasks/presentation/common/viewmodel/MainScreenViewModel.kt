@@ -19,7 +19,7 @@ import ru.vafeen.whisperoftasks.presentation.NotificationReminderReceiver
 import java.time.LocalDate
 
 
-class MainScreenViewModel(
+internal class MainScreenViewModel(
     private val databaseRepository: DatabaseRepository,
     private val sharedPreferences: SharedPreferences,
     override val eventCreator: EventCreator,

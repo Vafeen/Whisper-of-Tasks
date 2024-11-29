@@ -9,7 +9,7 @@ import ru.vafeen.whisperoftasks.presentation.utils.copyTextToClipBoard
 import kotlin.system.exitProcess
 
 
-class MainActivityViewModel(
+internal class MainActivityViewModel(
     val networkRepository: NetworkRepository,
 ) : ViewModel() {
     var updateIsShowed: Boolean = false

@@ -12,7 +12,7 @@ import ru.vafeen.whisperoftasks.domain.utils.getSettingsOrCreateIfNull
 import ru.vafeen.whisperoftasks.domain.utils.save
 
 
-class SettingsScreenViewModel(
+internal class SettingsScreenViewModel(
     private val sharedPreferences: SharedPreferences,
 ) : ViewModel(){
     private val _settings =
