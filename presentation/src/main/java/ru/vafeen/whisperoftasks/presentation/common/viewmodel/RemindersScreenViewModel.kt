@@ -19,7 +19,7 @@ import ru.vafeen.whisperoftasks.presentation.NotificationReminderReceiver
 
 internal class RemindersScreenViewModel(
     val databaseRepository: DatabaseRepository,
-    override val eventCreator: EventCreator,
+    private val eventCreator: EventCreator,
     private val sharedPreferences: SharedPreferences,
     context: Context
 ) : ViewModel(), EventCreation {

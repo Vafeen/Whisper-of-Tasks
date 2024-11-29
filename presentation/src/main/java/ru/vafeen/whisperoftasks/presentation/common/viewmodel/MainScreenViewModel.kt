@@ -22,7 +22,7 @@ import java.time.LocalDate
 internal class MainScreenViewModel(
     private val databaseRepository: DatabaseRepository,
     private val sharedPreferences: SharedPreferences,
-    override val eventCreator: EventCreator,
+    private val eventCreator: EventCreator,
     private val downloader: Downloader,
     context: Context,
 ) : ViewModel(), EventCreation {
