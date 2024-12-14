@@ -23,26 +23,9 @@ class App : Application() {
         startKoin {
             androidContext(this@App)
             modules(
-                koinDataDatabaseModule,
-                koinDataNetworkModule,
-                koinDataServicesModule,
 
-                koinDomainDatabaseModule,
-                koinDomainServicesModule,
-                koinDomainNetworkModule,
-
-                koinPresentationViewModelModule,
             )
         }
-
-        val notificationManager =
-            applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(
-            NotificationChannel.Task.createNotificationChannelKClass()
-        )
-        notificationManager.createNotificationChannel(
-            NotificationChannel.ReminderRecovery.createNotificationChannelKClass()
-        )
 
     }
 }

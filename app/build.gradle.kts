@@ -52,9 +52,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":data2"))
-    implementation(project(":domain2"))
-    implementation(project((":presentation")))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     implementation(platform(libs.androidx.compose.bom))
