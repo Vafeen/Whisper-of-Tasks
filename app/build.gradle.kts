@@ -52,6 +52,7 @@ android {
 }
 
 dependencies {
+    implementation(project(":domain"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     implementation(platform(libs.androidx.compose.bom))
