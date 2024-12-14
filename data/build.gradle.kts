@@ -1,6 +1,12 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("androidx.room")
+    id("com.google.devtools.ksp")
+}
+ksp {
+    arg("option_name", "option_value")
+    // other options...
 }
 
 android {
@@ -29,6 +35,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "11"
+    }
+    room {
+        schemaDirectory("$projectDir/schemas")
     }
 }
 
