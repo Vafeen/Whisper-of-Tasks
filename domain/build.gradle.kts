@@ -40,4 +40,22 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    api(libs.androidx.ui.graphics)
+    implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.appcompat)
+    implementation(libs.material)
+    api(libs.androidx.ui.graphics.android)
+//    implementation(libs.androidx.ui.graphics.android)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
+    androidTestImplementation(libs.androidx.espresso.core)
+    //room
+    api(libs.androidx.room.runtime)
+    annotationProcessor(libs.androidx.room.compiler)
+    api(libs.androidx.room.ktx)
+    //koin
+    api(libs.koin.android)
+    //Retrofit
+    api(libs.retrofit)
+    api(libs.converter.gson)
 }
