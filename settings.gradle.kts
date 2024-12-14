@@ -22,3 +22,4 @@ dependencyResolutionManagement {
 rootProject.name = "Whisper of Tasks"
 include(":app")
 include(":domain")
+include(":data")
