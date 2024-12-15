@@ -43,23 +43,24 @@ import androidx.core.content.ContextCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import org.koin.java.KoinJavaComponent.inject
-import ru.vafeen.whisperoftasks.data.R
+import org.koin.compose.getKoin
 import ru.vafeen.whisperoftasks.data.duration.RepeatDuration
-import ru.vafeen.whisperoftasks.data.local_database.DatabaseRepository
-import ru.vafeen.whisperoftasks.data.local_database.entity.Reminder
-import ru.vafeen.whisperoftasks.data.utils.generateID
-import ru.vafeen.whisperoftasks.data.utils.getDateStringWithWeekOfDay
-import ru.vafeen.whisperoftasks.data.utils.getTimeDefaultStr
-import ru.vafeen.whisperoftasks.data.utils.localTimeNowHHMM
-import ru.vafeen.whisperoftasks.data.utils.withDate
-import ru.vafeen.whisperoftasks.data.utils.withTime
-import ru.vafeen.whisperoftasks.domain.noui.EventCreation
+import ru.vafeen.whisperoftasks.domain.models.Reminder
+import ru.vafeen.whisperoftasks.domain.planner.EventCreation
+import ru.vafeen.whisperoftasks.domain.usecase.GetAllAsFlowRemindersUseCase
+import ru.vafeen.whisperoftasks.domain.usecase.InsertAllRemindersUseCase
+import ru.vafeen.whisperoftasks.domain.utils.generateID
+import ru.vafeen.whisperoftasks.domain.utils.getDateStringWithWeekOfDay
+import ru.vafeen.whisperoftasks.domain.utils.getTimeDefaultStr
+import ru.vafeen.whisperoftasks.domain.utils.localTimeNowHHMM
+import ru.vafeen.whisperoftasks.domain.utils.withDate
+import ru.vafeen.whisperoftasks.domain.utils.withTime
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.MyDateTimePicker
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 import ru.vafeen.whisperoftasks.presentation.utils.DatePickerInfo
 import ru.vafeen.whisperoftasks.presentation.utils.suitableColor
+import ru.vafeen.whisperoftasks.resources.R
 import java.time.LocalTime
 
 @Composable
@@ -70,15 +71,14 @@ fun ReminderDialog(
 ) {
     val startDateInPast by remember { mutableStateOf(DatePickerInfo.startDateInPast()) }
     val context = LocalContext.current
-    val databaseRepository: DatabaseRepository by inject(
-        clazz = DatabaseRepository::class.java
-    )
+    val getAllAsFlowRemindersUseCase = getKoin().get<GetAllAsFlowRemindersUseCase>()
+    val insertAllRemindersUseCase = getKoin().get<InsertAllRemindersUseCase>()
     if (newReminder.value.dt.toLocalDate() < startDateInPast) {
         newReminder.value = newReminder.value.copy(
             dt = newReminder.value.dt.withDate(localDate = startDateInPast)
         )
         LaunchedEffect(null) {
-            databaseRepository.insertAllReminders(
+            insertAllRemindersUseCase.invoke(
                 newReminder.value
             )
         }
@@ -215,7 +215,7 @@ fun ReminderDialog(
                 onClick = {
                     cor.launch(Dispatchers.IO) {
                         newReminder.value = newReminder.value.copy(
-                            idOfReminder = databaseRepository.getAllRemindersAsFlow().first()
+                            idOfReminder = getAllAsFlowRemindersUseCase.invoke().first()
                                 .map { it.idOfReminder }.generateID(),
                         )
                         eventCreation.updateEvent(newReminder.value)

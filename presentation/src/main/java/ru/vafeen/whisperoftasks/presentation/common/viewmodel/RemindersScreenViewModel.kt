@@ -9,17 +9,17 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import ru.vafeen.whisperoftasks.data.local_database.DatabaseRepository
-import ru.vafeen.whisperoftasks.data.local_database.entity.Reminder
-import ru.vafeen.whisperoftasks.domain.noui.EventCreation
-import ru.vafeen.whisperoftasks.domain.noui.EventCreator
+import ru.vafeen.whisperoftasks.domain.models.Reminder
+import ru.vafeen.whisperoftasks.domain.planner.EventCreation
+import ru.vafeen.whisperoftasks.domain.planner.EventCreator
+import ru.vafeen.whisperoftasks.domain.usecase.GetAllAsFlowRemindersUseCase
 import ru.vafeen.whisperoftasks.domain.utils.getSettingsOrCreateIfNull
 import ru.vafeen.whisperoftasks.presentation.NotificationReminderReceiver
 
 
-class RemindersScreenViewModel(
-    val databaseRepository: DatabaseRepository,
-    override val eventCreator: EventCreator,
+internal class RemindersScreenViewModel(
+    val getAllAsFlowRemindersUseCase: GetAllAsFlowRemindersUseCase,
+    private val eventCreator: EventCreator,
     private val sharedPreferences: SharedPreferences,
     context: Context
 ) : ViewModel(), EventCreation {

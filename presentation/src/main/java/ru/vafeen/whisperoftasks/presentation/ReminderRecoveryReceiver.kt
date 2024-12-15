@@ -7,22 +7,20 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.koin.java.KoinJavaComponent.getKoin
 import org.koin.java.KoinJavaComponent.inject
-import ru.vafeen.whisperoftasks.data.R
-import ru.vafeen.whisperoftasks.data.local_database.DatabaseRepository
 import ru.vafeen.whisperoftasks.domain.noui.notification.NotificationService
 import ru.vafeen.whisperoftasks.domain.noui.notification.NotificationService.Companion.createNotificationReminderRecovery
-import ru.vafeen.whisperoftasks.domain.noui.planner.Scheduler
+import ru.vafeen.whisperoftasks.domain.planner.Scheduler
+import ru.vafeen.whisperoftasks.domain.usecase.GetAllAsFlowRemindersUseCase
+import ru.vafeen.whisperoftasks.resources.R
 
 class ReminderRecoveryReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED) {
-            val databaseRepository: DatabaseRepository by inject(
-                clazz = DatabaseRepository::class.java
-            )
-            val context: Context by inject(
-                clazz = Context::class.java
-            )
+            val context: Context = getKoin().get()
+            val getAllAsFlowRemindersUseCase: GetAllAsFlowRemindersUseCase = getKoin().get()
+
             val scheduler: Scheduler by inject(
                 clazz = Scheduler::class.java
             )
@@ -30,7 +28,7 @@ class ReminderRecoveryReceiver : BroadcastReceiver() {
                 clazz = NotificationService::class.java
             )
             CoroutineScope(Dispatchers.IO).launch {
-                for (reminder in databaseRepository.getAllRemindersAsFlow().first()) {
+                for (reminder in getAllAsFlowRemindersUseCase.invoke().first()) {
                     scheduler.cancelWork(reminder = reminder, intent = intent)
                     scheduler.planOneTimeWork(reminder = reminder, intent = intent)
                 }
