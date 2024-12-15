@@ -1,8 +1,9 @@
-package ru.vafeen.whisperoftasks.data.local_database
+package ru.vafeen.whisperoftasks.data.local_database.impl
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ru.vafeen.whisperoftasks.data.converters.ReminderConverter
+import ru.vafeen.whisperoftasks.data.local_database.AppDatabase
 import ru.vafeen.whisperoftasks.domain.local_database.ReminderRepository
 import ru.vafeen.whisperoftasks.domain.models.Reminder
 
@@ -26,7 +27,4 @@ internal class ReminderRepositoryImpl(
 
     override suspend fun deleteAllReminders(vararg entity: Reminder) =
         reminderDao.delete(*reminderConverter.convertBAList(entity.toList()).toTypedArray())
-
-    override suspend fun updateAllReminders(vararg entity: Reminder) =
-        reminderDao.update(*reminderConverter.convertBAList(entity.toList()).toTypedArray())
 }

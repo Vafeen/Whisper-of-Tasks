@@ -33,7 +33,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":resources"))
+    api(project(":resources"))
     api(libs.androidx.ui.graphics)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -45,4 +45,8 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
     //koin
     api(libs.koin.android)
+    // Notifications
+    implementation(libs.accompanist.permissions)
+    // Gson
+    implementation(libs.gson)
 }
