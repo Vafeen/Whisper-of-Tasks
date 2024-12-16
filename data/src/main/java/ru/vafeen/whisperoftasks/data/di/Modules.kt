@@ -18,6 +18,7 @@ import ru.vafeen.whisperoftasks.data.network.end_points.DownloadServiceLink
 import ru.vafeen.whisperoftasks.data.network.end_points.GHDServiceLink
 import ru.vafeen.whisperoftasks.data.network.impl.DownloadFileRepositoryImpl
 import ru.vafeen.whisperoftasks.data.network.impl.DownloaderImpl
+import ru.vafeen.whisperoftasks.data.network.impl.InstallerImpl
 import ru.vafeen.whisperoftasks.data.network.impl.ReleaseRepositoryImpl
 import ru.vafeen.whisperoftasks.data.network.service.DownloadService
 import ru.vafeen.whisperoftasks.data.network.service.GitHubDataService
@@ -26,6 +27,7 @@ import ru.vafeen.whisperoftasks.data.planner.impl.SchedulerImpl
 import ru.vafeen.whisperoftasks.domain.local_database.ReminderRepository
 import ru.vafeen.whisperoftasks.domain.network.DownloadFileRepository
 import ru.vafeen.whisperoftasks.domain.network.Downloader
+import ru.vafeen.whisperoftasks.domain.network.Installer
 import ru.vafeen.whisperoftasks.domain.network.ReleaseRepository
 import ru.vafeen.whisperoftasks.domain.planner.EventCreator
 import ru.vafeen.whisperoftasks.domain.planner.Scheduler
@@ -77,5 +79,8 @@ internal val servicesModuleImpl = module {
     }
     singleOf(::SchedulerImpl) {
         bind<Scheduler>()
+    }
+    singleOf(::InstallerImpl){
+        bind<Installer>()
     }
 }
