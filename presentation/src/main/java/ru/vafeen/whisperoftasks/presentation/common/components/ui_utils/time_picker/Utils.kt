@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import ru.vafeen.whisperoftasks.domain.utils.pixelsToDp
+import ru.vafeen.whisperoftasks.data.utils.pixelsToDp
 import kotlin.math.abs
 
 // Количество видимых элементов в столбце.

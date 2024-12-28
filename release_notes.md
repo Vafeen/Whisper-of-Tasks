@@ -1,7 +1,6 @@
-v1.1.9
-New version v1.1.9!!
+v1.1.7
+New vesion v1.1.7!!
 
-What's fix:
+What's new:
 
-- Reminders recovery
-- Database migration
+- More lines in title and text in ReminderDataString

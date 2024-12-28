@@ -17,12 +17,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import ru.vafeen.whisperoftasks.data.R
 import ru.vafeen.whisperoftasks.data.duration.RepeatDuration
-import ru.vafeen.whisperoftasks.domain.models.Reminder
-import ru.vafeen.whisperoftasks.domain.planner.EventCreation
+import ru.vafeen.whisperoftasks.data.local_database.entity.Reminder
+import ru.vafeen.whisperoftasks.domain.noui.EventCreation
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
-import ru.vafeen.whisperoftasks.resources.R
 import java.time.LocalDate
 
 @Composable

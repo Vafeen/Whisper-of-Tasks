@@ -9,18 +9,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import org.koin.compose.getKoin
-import ru.vafeen.whisperoftasks.domain.models.Release
-import ru.vafeen.whisperoftasks.domain.network.result.ResponseResult
-import ru.vafeen.whisperoftasks.domain.usecase.GetLatestReleaseUseCase
-import ru.vafeen.whisperoftasks.domain.utils.getVersionName
-import ru.vafeen.whisperoftasks.presentation.common.components.bottom_sheet.UpdaterBottomSheet
+import ru.vafeen.whisperoftasks.data.network.repository.NetworkRepository
+import ru.vafeen.whisperoftasks.data.utils.getVersionName
+import ru.vafeen.whisperoftasks.network.parcelable.github_service.Release
+import ru.vafeen.whisperoftasks.presentation.ui.common.components.bottom_sheet.UpdaterBottomSheet
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun CheckUpdateAndOpenBottomSheetIfNeed(onDismissRequest: (Boolean) -> Unit, ) {
-    val getLatestReleaseUseCase = getKoin().get<GetLatestReleaseUseCase>()
+fun CheckUpdateAndOpenBottomSheetIfNeed(
+    networkRepository: NetworkRepository,
+    onDismissRequest: (Boolean) -> Unit,
+) {
     val context = LocalContext.current
     val versionName = getVersionName(context = context)
     val bottomSheetState =
@@ -32,14 +32,9 @@ fun CheckUpdateAndOpenBottomSheetIfNeed(onDismissRequest: (Boolean) -> Unit, ) {
         mutableStateOf(null)
     }
     LaunchedEffect(key1 = null) {
-        getLatestReleaseUseCase.invoke().let {
-            if (it is ResponseResult.Success) {
-                release = it.data
-            }
-        }
-
+        release = networkRepository.getLatestRelease()?.body()
         if (release != null && versionName != null &&
-            release?.tagName?.substringAfter("v") != versionName
+            release?.tag_name?.substringAfter("v") != versionName
         )
             isUpdateNeeded = true
     }
