@@ -1,4 +1,4 @@
-package ru.vafeen.whisperoftasks.presentation.ui.common.components.bottom_sheet
+package ru.vafeen.whisperoftasks.presentation.common.components.bottom_sheet
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -17,17 +17,16 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.koin.java.KoinJavaComponent.inject
-import ru.vafeen.whisperoftasks.data.R
-import ru.vafeen.whisperoftasks.data.network.downloader.Downloader
-import ru.vafeen.whisperoftasks.data.network.end_points.RepoInfo
-import ru.vafeen.whisperoftasks.network.parcelable.github_service.Release
+import ru.vafeen.whisperoftasks.domain.models.Release
+import ru.vafeen.whisperoftasks.domain.network.Downloader
+import ru.vafeen.whisperoftasks.domain.utils.RepoInfo
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.updateAvailableColor
+import ru.vafeen.whisperoftasks.resources.R
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -37,7 +36,6 @@ internal fun UpdaterBottomSheet(
     state: SheetState,
     onDismissRequest: (Boolean) -> Unit
 ) {
-    val context = LocalContext.current
     val downloader: Downloader by inject(clazz = Downloader::class.java)
     ModalBottomSheet(
         sheetState = state,
@@ -74,8 +72,7 @@ internal fun UpdaterBottomSheet(
                 modifier = Modifier
                     .clickable {
                         downloader.downloadApk(
-                            context = context,
-                            url = "${RepoInfo.USER_NAME}/${RepoInfo.REPO_NAME}/releases/download/${release.tag_name}/${release.assets[0].name}",
+                            url = "${RepoInfo.USER_NAME}/${RepoInfo.REPO_NAME}/releases/download/${release.tagName}/${release.assets[0]}",
                         )
                         onDismissRequest(true)
                     }

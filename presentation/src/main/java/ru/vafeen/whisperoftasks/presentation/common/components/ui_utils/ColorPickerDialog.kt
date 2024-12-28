@@ -31,7 +31,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import com.raedapps.alwan.rememberAlwanState
 import com.raedapps.alwan.ui.Alwan
-import ru.vafeen.whisperoftasks.data.R
+import ru.vafeen.whisperoftasks.resources.R
 import ru.vafeen.whisperoftasks.presentation.common.components.bottom_bar.BottomBar
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme

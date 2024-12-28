@@ -37,8 +37,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
-import ru.vafeen.whisperoftasks.data.R
-import ru.vafeen.whisperoftasks.data.utils.Link
+import ru.vafeen.whisperoftasks.domain.utils.Link
+import ru.vafeen.whisperoftasks.resources.R
 import ru.vafeen.whisperoftasks.domain.utils.getMainColorForThisTheme
 import ru.vafeen.whisperoftasks.domain.utils.getVersionName
 import ru.vafeen.whisperoftasks.presentation.common.components.bottom_bar.BottomBar

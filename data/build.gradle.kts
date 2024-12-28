@@ -4,7 +4,6 @@ plugins {
     id("androidx.room")
     id("com.google.devtools.ksp")
 }
-
 ksp {
     arg("option_name", "option_value")
     // other options...
@@ -43,12 +42,10 @@ android {
 }
 
 dependencies {
-    api(libs.androidx.ui.graphics)
+    implementation(project(":domain"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    api(libs.androidx.ui.graphics.android)
-//    implementation(libs.androidx.ui.graphics.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -57,8 +54,6 @@ dependencies {
     annotationProcessor(libs.androidx.room.compiler)
     ksp(libs.androidx.room.compiler)
     api(libs.androidx.room.ktx)
-    //koin
-    api(libs.koin.android)
     //Retrofit
     api(libs.retrofit)
     api(libs.converter.gson)

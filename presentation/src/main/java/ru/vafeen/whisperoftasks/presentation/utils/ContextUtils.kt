@@ -5,7 +5,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import ru.vafeen.whisperoftasks.data.R
+import ru.vafeen.whisperoftasks.resources.R
 
 fun Context.copyTextToClipBoard(label: String, text: String) {
     val clipboard =
