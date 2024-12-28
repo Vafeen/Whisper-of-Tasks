@@ -12,8 +12,8 @@ android {
         applicationId = "ru.vafeen.whisperoftasks"
         minSdk = 26
         targetSdk = 35
-        versionCode = 30
-        versionName = "1.1.8"
+        versionCode = 29
+        versionName = "1.1.7"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -52,10 +52,9 @@ android {
 }
 
 dependencies {
-    implementation(project(":domain"))
-    implementation(project(":data"))
-    implementation(project(":resources"))
-    implementation(project(":presentation"))
+    implementation(project((":data")))
+    implementation(project((":domain")))
+    implementation(project((":presentation")))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     implementation(platform(libs.androidx.compose.bom))

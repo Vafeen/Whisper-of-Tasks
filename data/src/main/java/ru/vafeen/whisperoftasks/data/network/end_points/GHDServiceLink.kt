@@ -1,7 +1,5 @@
 package ru.vafeen.whisperoftasks.data.network.end_points
 
-import ru.vafeen.whisperoftasks.domain.utils.RepoInfo
-
 internal object GHDServiceLink {
     const val BASE_LINK = "https://api.github.com/"
 
