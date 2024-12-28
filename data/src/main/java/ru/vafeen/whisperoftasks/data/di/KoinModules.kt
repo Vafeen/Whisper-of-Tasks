@@ -9,6 +9,7 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import ru.vafeen.whisperoftasks.data.local_database.AppDatabase
+import ru.vafeen.whisperoftasks.data.local_database.AppDatabaseMigrationManager
 import ru.vafeen.whisperoftasks.data.local_database.DBInfo
 import ru.vafeen.whisperoftasks.data.local_database.converters.LocalDateTimeConverters
 import ru.vafeen.whisperoftasks.data.network.downloader.Downloader
@@ -25,7 +26,8 @@ val koinDataDatabaseModule = module {
             context = get(),
             klass = AppDatabase::class.java,
             name = DBInfo.NAME
-        ).build()
+        ).addMigrations(*AppDatabaseMigrationManager.migrations)
+            .build()
     }
 }
 val koinDataNetworkModule = module {
