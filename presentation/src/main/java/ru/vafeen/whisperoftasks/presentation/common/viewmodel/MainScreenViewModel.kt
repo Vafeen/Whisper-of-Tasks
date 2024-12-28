@@ -9,20 +9,20 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import ru.vafeen.whisperoftasks.data.local_database.DatabaseRepository
-import ru.vafeen.whisperoftasks.data.local_database.entity.Reminder
-import ru.vafeen.whisperoftasks.data.network.downloader.Downloader
-import ru.vafeen.whisperoftasks.domain.noui.EventCreation
-import ru.vafeen.whisperoftasks.domain.noui.EventCreator
+import ru.vafeen.whisperoftasks.domain.models.Reminder
+import ru.vafeen.whisperoftasks.domain.network.Downloader
+import ru.vafeen.whisperoftasks.domain.planner.EventCreation
+import ru.vafeen.whisperoftasks.domain.planner.EventCreator
+import ru.vafeen.whisperoftasks.domain.usecase.GetAllAsFlowRemindersUseCase
 import ru.vafeen.whisperoftasks.domain.utils.getSettingsOrCreateIfNull
 import ru.vafeen.whisperoftasks.presentation.NotificationReminderReceiver
 import java.time.LocalDate
 
 
-class MainScreenViewModel(
-    private val databaseRepository: DatabaseRepository,
+internal class MainScreenViewModel(
+    private val getAllAsFlowRemindersUseCase: GetAllAsFlowRemindersUseCase,
     private val sharedPreferences: SharedPreferences,
-    override val eventCreator: EventCreator,
+    private val eventCreator: EventCreator,
     private val downloader: Downloader,
     context: Context,
 ) : ViewModel(), EventCreation {
@@ -30,7 +30,7 @@ class MainScreenViewModel(
         MutableStateFlow(sharedPreferences.getSettingsOrCreateIfNull())
     val settings = _settings.asStateFlow()
     val todayDate: LocalDate = LocalDate.now()
-    val remindersFlow = databaseRepository.getAllRemindersAsFlow()
+    val remindersFlow = getAllAsFlowRemindersUseCase.invoke()
     private val intent = Intent(context, NotificationReminderReceiver::class.java)
     val isUpdateInProcessFlow = downloader.isUpdateInProcessFlow
     val percentageFlow = downloader.percentageFlow

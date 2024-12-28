@@ -6,8 +6,11 @@ import retrofit2.http.GET
 import retrofit2.http.Streaming
 import retrofit2.http.Url
 
-interface DownloadService {
+internal interface DownloadService {
     @GET
     @Streaming
     fun downloadFile(@Url fileUrl: String): Call<ResponseBody>
 }
+
+
+

@@ -43,8 +43,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import org.koin.androidx.compose.koinViewModel
-import ru.vafeen.whisperoftasks.data.R
-import ru.vafeen.whisperoftasks.data.local_database.entity.Reminder
+import ru.vafeen.whisperoftasks.domain.models.Reminder
 import ru.vafeen.whisperoftasks.domain.utils.getMainColorForThisTheme
 import ru.vafeen.whisperoftasks.presentation.common.components.bottom_bar.BottomBar
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.DeleteReminders
@@ -56,11 +55,13 @@ import ru.vafeen.whisperoftasks.presentation.common.viewmodel.RemindersScreenVie
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 import ru.vafeen.whisperoftasks.presentation.utils.suitableColor
+import ru.vafeen.whisperoftasks.resources.R
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
 val nullTime: LocalTime = LocalTime.of(0, 0)
+
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun RemindersScreen(navController: NavController) {
@@ -81,7 +82,7 @@ fun RemindersScreen(navController: NavController) {
     val mainColor = settings.getMainColorForThisTheme(isDark = dark) ?: Theme.colors.mainColor
     var fabOffset by remember { mutableStateOf(Offset(0f, 0f)) }
     LaunchedEffect(null) {
-        viewModel.databaseRepository.getAllRemindersAsFlow().collect {
+        viewModel.getAllAsFlowRemindersUseCase.invoke().collect {
             reminders = it
         }
     }
