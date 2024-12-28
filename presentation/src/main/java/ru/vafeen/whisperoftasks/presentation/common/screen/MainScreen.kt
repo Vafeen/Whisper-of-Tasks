@@ -50,9 +50,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.androidx.compose.koinViewModel
+import ru.vafeen.whisperoftasks.data.R
 import ru.vafeen.whisperoftasks.data.duration.RepeatDuration
-import ru.vafeen.whisperoftasks.domain.models.Reminder
-import ru.vafeen.whisperoftasks.domain.utils.getDateStringWithWeekOfDay
+import ru.vafeen.whisperoftasks.data.local_database.entity.Reminder
+import ru.vafeen.whisperoftasks.data.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.domain.utils.getMainColorForThisTheme
 import ru.vafeen.whisperoftasks.presentation.common.components.bottom_bar.BottomBar
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.DeleteReminders
@@ -66,7 +67,6 @@ import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 import ru.vafeen.whisperoftasks.presentation.utils.DatePickerInfo
 import ru.vafeen.whisperoftasks.presentation.utils.suitableColor
-import ru.vafeen.whisperoftasks.resources.R
 import java.time.LocalDate
 import java.time.LocalTime
 

@@ -41,7 +41,7 @@ fun TextForOppositeTheme(
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,
 ) {
-    Text(
+    androidx.compose.material3.Text(
         text = text,
         modifier = modifier,
         color = Theme.colors.singleTheme,

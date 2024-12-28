@@ -39,7 +39,9 @@ class MainActivity : ComponentActivity() {
                 SetNavigationBarColor(color = Theme.colors.singleTheme)
                 RequestNotificationPermission()
                 if (!viewModel.updateIsShowed) {
-                    CheckUpdateAndOpenBottomSheetIfNeed {
+                    CheckUpdateAndOpenBottomSheetIfNeed(
+                        networkRepository = viewModel.networkRepository
+                    ) {
                         viewModel.updateIsShowed = true
                     }
                 }

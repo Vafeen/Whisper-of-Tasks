@@ -1,6 +1,6 @@
-v1.1.8
-New vesion v1.1.8!!
+v1.1.7
+New vesion v1.1.7!!
 
-What's fix:
+What's new:
 
-- Reminders recovery
+- More lines in title and text in ReminderDataString

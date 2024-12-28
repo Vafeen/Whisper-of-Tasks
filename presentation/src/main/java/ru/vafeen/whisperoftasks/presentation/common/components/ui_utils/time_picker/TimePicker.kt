@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import ru.vafeen.whisperoftasks.domain.utils.getTimeDefaultStr
-import ru.vafeen.whisperoftasks.domain.utils.pixelsToDp
+import ru.vafeen.whisperoftasks.data.utils.getTimeDefaultStr
+import ru.vafeen.whisperoftasks.data.utils.pixelsToDp
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme

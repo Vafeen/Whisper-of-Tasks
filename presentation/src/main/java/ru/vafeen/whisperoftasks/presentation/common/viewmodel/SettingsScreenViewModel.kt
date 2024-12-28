@@ -7,12 +7,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import ru.vafeen.whisperoftasks.domain.Settings
+import ru.vafeen.whisperoftasks.data.Settings
 import ru.vafeen.whisperoftasks.domain.utils.getSettingsOrCreateIfNull
 import ru.vafeen.whisperoftasks.domain.utils.save
 
 
-internal class SettingsScreenViewModel(
+class SettingsScreenViewModel(
     private val sharedPreferences: SharedPreferences,
 ) : ViewModel(){
     private val _settings =

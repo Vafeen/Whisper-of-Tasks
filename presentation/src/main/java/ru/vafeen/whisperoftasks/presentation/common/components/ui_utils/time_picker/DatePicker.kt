@@ -1,4 +1,4 @@
-package ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker
+
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,10 +19,17 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
-import ru.vafeen.whisperoftasks.domain.utils.getDateStringWithWeekOfDay
-import ru.vafeen.whisperoftasks.domain.utils.pixelsToDp
+import ru.vafeen.whisperoftasks.data.utils.getDateStringWithWeekOfDay
+import ru.vafeen.whisperoftasks.data.utils.pixelsToDp
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.Border
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.calculateAlpha
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.calculateScaleX
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.calculateScaleY
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.countOfVisibleItemsInPicker
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.itemForScrollTo
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.itemHeight
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.listHeight
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 import ru.vafeen.whisperoftasks.presentation.utils.DatePickerInfo
