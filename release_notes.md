@@ -1,5 +1,5 @@
-v1.1.11
-New vesion v1.1.11!!
+v1.1.12
+New vesion v1.1.12!
 
 What's fix:
 
