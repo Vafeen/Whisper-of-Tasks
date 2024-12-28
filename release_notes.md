@@ -1,6 +1,7 @@
-v1.1.8
-New vesion v1.1.8!!
+v1.1.9
+New version v1.1.9!!
 
 What's fix:
 
 - Reminders recovery
+- Database migration
