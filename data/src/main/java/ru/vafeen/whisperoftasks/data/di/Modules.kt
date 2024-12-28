@@ -12,6 +12,7 @@ import ru.vafeen.whisperoftasks.data.converters.LocalDateTimeConverters
 import ru.vafeen.whisperoftasks.data.converters.ReleaseConverter
 import ru.vafeen.whisperoftasks.data.converters.ReminderConverter
 import ru.vafeen.whisperoftasks.data.local_database.AppDatabase
+import ru.vafeen.whisperoftasks.data.local_database.AppDatabaseMigrationManager
 import ru.vafeen.whisperoftasks.data.local_database.DBInfo
 import ru.vafeen.whisperoftasks.data.local_database.impl.ReminderRepositoryImpl
 import ru.vafeen.whisperoftasks.data.network.end_points.DownloadServiceLink
@@ -36,7 +37,8 @@ internal val databaseModuleImpl = module {
     single<AppDatabase> {
         Room.databaseBuilder(
             context = get(), klass = AppDatabase::class.java, name = DBInfo.NAME
-        ).build()
+        ).addMigrations(*AppDatabaseMigrationManager.migrations)
+            .build()
     }
 }
 internal val networkModuleImpl = module {
@@ -80,7 +82,7 @@ internal val servicesModuleImpl = module {
     singleOf(::SchedulerImpl) {
         bind<Scheduler>()
     }
-    singleOf(::InstallerImpl){
+    singleOf(::InstallerImpl) {
         bind<Installer>()
     }
 }
