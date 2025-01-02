@@ -1,16 +1,17 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
-    namespace = "ru.vafeen.reminder"
-    compileSdk = 34
+    namespace = "ru.vafeen.whisperoftasks"
+    compileSdk = 35
 
     defaultConfig {
-        applicationId = "ru.vafeen.reminder"
+        applicationId = "ru.vafeen.whisperoftasks"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
