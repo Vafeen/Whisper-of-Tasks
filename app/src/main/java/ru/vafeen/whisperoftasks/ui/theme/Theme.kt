@@ -1,6 +1,5 @@
-package ru.vafeen.reminder.ui.theme
+package ru.vafeen.whisperoftasks.ui.theme
 
-import android.app.Activity
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
