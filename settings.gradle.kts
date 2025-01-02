@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Reminder"
+rootProject.name = "Whisper of Tasks"
 include(":app")

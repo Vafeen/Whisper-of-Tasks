@@ -1,4 +1,4 @@
-package ru.vafeen.reminder.ui.theme
+package ru.vafeen.whisperoftasks.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

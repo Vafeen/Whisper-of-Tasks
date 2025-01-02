@@ -1,4 +1,4 @@
-package ru.vafeen.reminder
+package ru.vafeen.whisperoftasks
 
 import org.junit.Test
 
