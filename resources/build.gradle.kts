@@ -58,4 +58,8 @@ dependencies {
     api(libs.androidx.navigation.compose)
     //serializable
     api(libs.kotlinx.serialization.json)
+    //koin
+    api(libs.koin.android)
+    //koin-compose
+    api(libs.koin.androidx.compose)
 }
