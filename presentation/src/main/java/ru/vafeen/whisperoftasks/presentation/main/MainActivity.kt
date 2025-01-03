@@ -1,4 +1,4 @@
-package ru.vafeen.whisperoftasks.presentation
+package ru.vafeen.whisperoftasks.presentation.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
