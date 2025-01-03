@@ -54,4 +54,6 @@ dependencies {
     testApi(libs.junit)
     androidTestApi(libs.androidx.junit)
     androidTestApi(libs.androidx.espresso.core)
+    //navigation
+    api(libs.androidx.navigation.compose)
 }
