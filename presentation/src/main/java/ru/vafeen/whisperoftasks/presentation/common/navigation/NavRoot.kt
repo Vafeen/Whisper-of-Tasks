@@ -12,9 +12,9 @@ import ru.vafeen.whisperoftasks.presentation.settings_screen.SettingsScreen
 @Composable
 fun NavRoot() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screen.MainScreen) {
-        composable<Screen.MainScreen> { MainScreen() }
-        composable<Screen.RemindersScreen> { RemindersScreen() }
-        composable<Screen.SettingsScreen> { SettingsScreen() }
+    NavHost(navController = navController, startDestination = Screen.Main) {
+        composable<Screen.Main> { MainScreen() }
+        composable<Screen.Reminders> { RemindersScreen() }
+        composable<Screen.Settings> { SettingsScreen() }
     }
 }

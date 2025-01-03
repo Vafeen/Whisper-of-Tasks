@@ -4,11 +4,11 @@ import kotlinx.serialization.Serializable
 
 internal sealed class Screen {
     @Serializable
-    data object MainScreen
+    data object Main : Screen()
 
     @Serializable
-    data object RemindersScreen
+    data object Reminders : Screen()
 
     @Serializable
-    data object SettingsScreen
+    data object Settings : Screen()
 }
