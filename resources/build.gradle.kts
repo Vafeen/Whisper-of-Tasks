@@ -59,7 +59,7 @@ dependencies {
     //serializable
     api(libs.kotlinx.serialization.json)
     //koin
-    implementation(libs.koin.android)
+    api(libs.koin.android)
     //koin-compose
-    implementation(libs.koin.androidx.compose)
+    api(libs.koin.androidx.compose)
 }
