@@ -6,6 +6,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.vafeen.whisperoftasks.presentation.main_screen.MainScreen
 import ru.vafeen.whisperoftasks.presentation.reminders_screen.RemindersScreen
+import ru.vafeen.whisperoftasks.presentation.settings_screen.SettingsScreen
 
 
 @Composable
@@ -14,5 +15,6 @@ fun NavRoot() {
     NavHost(navController = navController, startDestination = Screen.MainScreen) {
         composable<Screen.MainScreen> { MainScreen() }
         composable<Screen.RemindersScreen> { RemindersScreen() }
+        composable<Screen.SettingsScreen> { SettingsScreen() }
     }
 }

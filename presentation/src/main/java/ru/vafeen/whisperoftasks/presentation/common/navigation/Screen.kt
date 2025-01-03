@@ -8,4 +8,7 @@ internal sealed class Screen {
 
     @Serializable
     data object RemindersScreen
+
+    @Serializable
+    data object SettingsScreen
 }
