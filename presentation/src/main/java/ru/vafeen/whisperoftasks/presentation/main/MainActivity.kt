@@ -15,7 +15,7 @@ internal class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ReminderTheme {
-                NavRoot()
+                NavRoot(viewModel)
             }
         }
     }
