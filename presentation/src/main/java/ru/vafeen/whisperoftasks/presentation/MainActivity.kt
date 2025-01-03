@@ -1,4 +1,4 @@
-package ru.vafeen.whisperoftasks
+package ru.vafeen.whisperoftasks.presentation
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -11,7 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import ru.vafeen.whisperoftasks.ui.theme.ReminderTheme
+import ru.vafeen.whisperoftasks.presentation.ui.theme.ReminderTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

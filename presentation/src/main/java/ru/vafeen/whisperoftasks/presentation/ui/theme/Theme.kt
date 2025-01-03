@@ -1,4 +1,4 @@
-package ru.vafeen.whisperoftasks.ui.theme
+package ru.vafeen.whisperoftasks.presentation.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
