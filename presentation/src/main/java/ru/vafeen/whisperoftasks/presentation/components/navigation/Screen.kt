@@ -1,4 +1,4 @@
-package ru.vafeen.whisperoftasks.presentation.common.navigation
+package ru.vafeen.whisperoftasks.presentation.components.navigation
 
 import kotlinx.serialization.Serializable
 

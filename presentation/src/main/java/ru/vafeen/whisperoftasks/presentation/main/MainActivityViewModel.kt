@@ -9,8 +9,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import ru.vafeen.whisperoftasks.presentation.common.navigation.BottomBarNavigator
-import ru.vafeen.whisperoftasks.presentation.common.navigation.Screen
+import ru.vafeen.whisperoftasks.presentation.components.navigation.BottomBarNavigator
+import ru.vafeen.whisperoftasks.presentation.components.navigation.Screen
 
 internal class MainActivityViewModel() : ViewModel(), BottomBarNavigator {
     /**
