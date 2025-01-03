@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
@@ -52,4 +53,6 @@ android {
 dependencies {
     implementation(project(":presentation"))
     implementation(project(":data"))
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.junit)
 }

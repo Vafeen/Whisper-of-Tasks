@@ -56,4 +56,6 @@ dependencies {
     androidTestApi(libs.androidx.espresso.core)
     //navigation
     api(libs.androidx.navigation.compose)
+    //serializable
+    api(libs.kotlinx.serialization.json)
 }
