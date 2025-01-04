@@ -10,7 +10,7 @@ import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 interface ReminderRepository {
 
     fun getAllRemindersAsFlow(): Flow<List<Reminder>>
-    fun getReminderByIdOfReminder(idOfReminder: Int): Reminder?
+    suspend fun getReminderByIdOfReminder(idOfReminder: Int): Reminder?
 
 
     /**
