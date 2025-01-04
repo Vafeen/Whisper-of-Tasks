@@ -20,7 +20,7 @@ internal val baseLightPalette = Colors(
     singleTheme = Color.White,
     oppositeTheme = Color.Black,
     buttonColor = Color.White,
-    background = Color.Cyan//Color(0xFFA4A4A7)
+    background = Color(0xFFF4F2F2)
 )
 internal val baseDarkPalette = baseLightPalette.copy(
     mainColor = mainDarkColor,
