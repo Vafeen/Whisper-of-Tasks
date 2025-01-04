@@ -1,4 +1,4 @@
-package ru.vafeen.whisperoftasks.presentation.components
+package ru.vafeen.whisperoftasks.presentation.common.components.ui_utils
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
