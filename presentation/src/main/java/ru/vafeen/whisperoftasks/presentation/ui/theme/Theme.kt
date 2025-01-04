@@ -12,19 +12,22 @@ internal data class Colors(
     val singleTheme: Color,
     val oppositeTheme: Color,
     val buttonColor: Color,
+    val background:Color,
 )
 
 internal val baseLightPalette = Colors(
     mainColor = mainLightColor,
     singleTheme = Color.White,
     oppositeTheme = Color.Black,
-    buttonColor = Color.White
+    buttonColor = Color.White,
+    background = Color(0xFFF4F2F2)
 )
 internal val baseDarkPalette = baseLightPalette.copy(
     mainColor = mainDarkColor,
     singleTheme = Color.Black,
     oppositeTheme = Color.White,
-    buttonColor = Color(0xFF2D2D31)
+    buttonColor = Color(0xFF29292D),
+    background = Color(0xFF2D2D31)
 )
 
 @Composable
@@ -37,15 +40,13 @@ internal fun MainTheme(
     else baseDarkPalette
 
     CompositionLocalProvider(
-        LocalColors provides colors,
-        content = content
+        LocalColors provides colors, content = content
     )
 }
 
 internal object Theme {
     val colors: Colors
-        @ReadOnlyComposable @Composable
-        get() = LocalColors.current
+        @ReadOnlyComposable @Composable get() = LocalColors.current
 }
 
 internal val LocalColors = staticCompositionLocalOf<Colors> {
