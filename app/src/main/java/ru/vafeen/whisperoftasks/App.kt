@@ -3,6 +3,7 @@ package ru.vafeen.whisperoftasks
 import android.app.Application
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
+import ru.vafeen.whisperoftasks.data.di.MainDataModule
 import ru.vafeen.whisperoftasks.presentation.common.di.MainPresentationModule
 
 internal class App : Application() {
@@ -10,7 +11,7 @@ internal class App : Application() {
         super.onCreate()
         startKoin {
             androidContext(this@App)
-            modules(MainPresentationModule)
+            modules(MainPresentationModule, MainDataModule)
         }
     }
 }
