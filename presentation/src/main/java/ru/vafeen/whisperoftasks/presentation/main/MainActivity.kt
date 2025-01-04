@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import ru.vafeen.whisperoftasks.presentation.components.navigation.NavRoot
-import ru.vafeen.whisperoftasks.presentation.ui.theme.ReminderTheme
+import ru.vafeen.whisperoftasks.presentation.ui.theme.MainTheme
 
 internal class MainActivity : ComponentActivity() {
     private val viewModel by viewModels<MainActivityViewModel>()
@@ -14,7 +14,7 @@ internal class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
-            ReminderTheme {
+            MainTheme {
                 NavRoot(viewModel)
             }
         }
