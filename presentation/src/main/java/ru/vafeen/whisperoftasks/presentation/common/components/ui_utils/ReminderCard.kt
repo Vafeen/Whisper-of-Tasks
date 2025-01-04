@@ -15,12 +15,13 @@ import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 
 
 @Composable
-fun Reminder.ReminderCard() {
+fun Reminder.ReminderCard(modifier: Modifier) {
     Card(
         modifier = Modifier.padding(5.dp),
         colors = CardDefaults.cardColors(containerColor = Theme.colors.buttonColor)
     ) {
-        Column(modifier = Modifier.padding(5.dp)) {
+        Column(modifier = modifier
+            .padding(5.dp)) {
             TextForThisTheme(text = title, fontSize = FontSize.medium19, maxLines = 5)
             Spacer(modifier = Modifier.height(5.dp))
             TextForThisTheme(text = text, fontSize = FontSize.small17, maxLines = 5)

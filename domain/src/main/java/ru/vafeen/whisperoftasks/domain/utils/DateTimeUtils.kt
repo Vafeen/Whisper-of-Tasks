@@ -6,6 +6,9 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 
+val nullTime: LocalTime = LocalTime.of(0, 0)
+
+
 private val daysOfWeek = listOf(
     R.string.monday,
     R.string.tuesday,
