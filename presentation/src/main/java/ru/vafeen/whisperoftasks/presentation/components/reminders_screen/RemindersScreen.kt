@@ -5,11 +5,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FabPosition
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import org.koin.androidx.compose.koinViewModel
 import ru.vafeen.whisperoftasks.presentation.components.ReminderCard
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
@@ -20,7 +26,19 @@ fun RemindersScreen() {
     val viewModel: RemindersScreenViewModel = koinViewModel()
     val reminders by viewModel.remindersFlow.collectAsState()
     Scaffold(
-        containerColor = Theme.colors.background, modifier = Modifier.fillMaxSize()
+        containerColor = Theme.colors.background, modifier = Modifier.fillMaxSize(),
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = {},
+                containerColor = Theme.colors.mainColor
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = stringResource(ru.vafeen.whisperoftasks.resources.R.string.add_reminder)
+                )
+            }
+        },
+        floatingActionButtonPosition = FabPosition.End
     ) {
         LazyVerticalGrid(columns = GridCells.Fixed(2)) {
             items(items = reminders) {
