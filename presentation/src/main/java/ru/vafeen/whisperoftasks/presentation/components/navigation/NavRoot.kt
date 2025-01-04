@@ -1,5 +1,8 @@
 package ru.vafeen.whisperoftasks.presentation.components.navigation
 
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -37,7 +40,11 @@ internal fun NavRoot(bottomBarNavigator: BottomBarNavigator) {
                 .padding(innerPadding)
         ) {
             NavHost(
-                navController = bottomBarNavigator.navController!!, startDestination = Screen.Main
+                navController = bottomBarNavigator.navController!!, startDestination = Screen.Main,
+                enterTransition = { fadeIn(animationSpec = tween()) },
+                exitTransition = { fadeOut(animationSpec = tween()) },
+                popEnterTransition = { fadeIn(animationSpec = tween()) },
+                popExitTransition = { fadeOut(animationSpec = tween()) },
             ) {
                 composable<Screen.Main> { MainScreen() }
                 composable<Screen.Reminders> { RemindersScreen() }
