@@ -10,7 +10,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -31,7 +30,7 @@ internal fun NavRoot(bottomBarNavigator: BottomBarNavigator) {
             BottomBar(
                 selectedScreen = selectedScreen,
                 bottomBarNavigator = bottomBarNavigator,
-                containerColor = Color.Blue
+                containerColor = Theme.colors.mainColor
             )
         }
     ) { innerPadding ->
