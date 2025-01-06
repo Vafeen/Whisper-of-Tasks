@@ -2,6 +2,7 @@ package ru.vafeen.whisperoftasks.presentation.common.components.ui_utils
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
@@ -27,6 +28,7 @@ fun Reminder.ReminderCard(
     ) {
         Column(
             modifier = modifier
+                .fillMaxWidth()
                 .padding(5.dp)
         ) {
             TextForThisTheme(text = title, fontSize = FontSize.medium19, maxLines = 5)
