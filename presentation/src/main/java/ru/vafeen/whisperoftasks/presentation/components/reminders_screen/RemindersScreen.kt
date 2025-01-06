@@ -58,11 +58,14 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
     var isAddingReminder by remember {
         mutableStateOf(false)
     }
+    var isEditingReminder by remember {
+        mutableStateOf(false)
+    }
     val lastReminder: MutableState<Reminder?> = remember {
         mutableStateOf(null)
     }
-    if (isAddingReminder) {
-        if (lastReminder.value == null) {
+    if (isAddingReminder || isEditingReminder) {
+        if (isAddingReminder) {
             lastReminder.value = Reminder(
                 title = "",
                 text = "",
@@ -75,6 +78,7 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
             newReminder = lastReminder as MutableState<Reminder>, // safety is above
             onDismissRequest = {
                 isAddingReminder = false
+                isEditingReminder = false
             }
         )
 
@@ -85,7 +89,7 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
             onClick = {
                 if (!isDeletingInProcess) {
                     lastReminder.value = reminder
-                    isAddingReminder = true
+                    isEditingReminder = true
                 } else {
                     viewModel.changeStatusForDeleting(reminder)
                 }
