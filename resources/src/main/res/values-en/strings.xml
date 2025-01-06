@@ -18,13 +18,13 @@
     <string name="in">in</string>
 <!--    <string name="past_events">Past events</string>-->
 <!--    <string name="no_events_today">No tasks today</string>-->
-<!--    <string name="you_havent_added_any_events_yet">You haven\'t added\n any tasks yet</string>-->
+    <string name="you_havent_added_any_events_yet">You haven\'t added\n any tasks yet</string>
     <string name="notification">Notification</string>
     <string name="send">Send</string>
     <string name="add_to_list">Add to list</string>
 <!--    <string name="tasks_by_day">Tasks by day</string>-->
 <!--    <string name="tasks_list">Tasks list</string>-->
-<!--    <string name="hold">Hold</string>-->
+    <string name="hold">Hold</string>
 <!--    <string name="reminder_recovery">Reminder recovery</string>-->
 <!--    <string name="reminders_restored">Reminders have restored</string>-->
 <!--    <string name="interface_color">Interface color</string>-->
@@ -41,4 +41,5 @@
 <!--    <string name="version">version</string>-->
 <!--    <string name="code">Code</string>-->
 <!--    <string name="settings">Settings</string>-->
+    <string name="delete_selected">Delete selected tasks</string>
 </resources>
