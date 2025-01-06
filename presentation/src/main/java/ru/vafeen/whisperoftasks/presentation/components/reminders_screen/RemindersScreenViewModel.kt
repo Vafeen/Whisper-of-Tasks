@@ -10,8 +10,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ru.vafeen.whisperoftasks.domain.database.ReminderRepository
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
+import ru.vafeen.whisperoftasks.domain.planner.usecase.RemoveEventUseCase
 
-internal class RemindersScreenViewModel(private val reminderRepository: ReminderRepository) :
+internal class RemindersScreenViewModel(
+    private val reminderRepository: ReminderRepository,
+    private val removeEventUseCase: RemoveEventUseCase
+) :
     ViewModel() {
     val remindersFlow =
         reminderRepository.getAllRemindersAsFlow().stateIn(
@@ -53,9 +57,10 @@ internal class RemindersScreenViewModel(private val reminderRepository: Reminder
 
 
     fun removeEventsForReminderForDeleting() {
-        remindersForDeleting.values.forEach {
-            // TODO убрать ивент
-            //TODO удалить из бд
+        viewModelScope.launch {
+            remindersForDeleting.values.forEach {
+                removeEventUseCase.invoke(it)
+            }
         }
     }
 }
