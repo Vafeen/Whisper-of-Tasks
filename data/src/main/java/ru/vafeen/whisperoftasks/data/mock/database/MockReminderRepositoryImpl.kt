@@ -51,7 +51,9 @@ internal class MockReminderRepositoryImpl : ReminderRepository {
     }
 
     override suspend fun deleteAllReminders(vararg entity: Reminder) {
-        reminders.removeAll(entity.toSet())
+        entity.forEach {
+            reminders.remove(it)
+        }
         updateFlow()
     }
 
