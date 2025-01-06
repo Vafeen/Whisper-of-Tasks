@@ -46,7 +46,7 @@ internal fun NavRoot(bottomBarNavigator: BottomBarNavigator) {
                 popExitTransition = { fadeOut(animationSpec = tween()) },
             ) {
                 composable<Screen.Main> { MainScreen() }
-                composable<Screen.Reminders> { RemindersScreen() }
+                composable<Screen.Reminders> { RemindersScreen(bottomBarNavigator) }
                 composable<Screen.Settings> { SettingsScreen() }
             }
         }
