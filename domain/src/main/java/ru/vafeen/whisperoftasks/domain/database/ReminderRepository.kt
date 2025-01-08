@@ -25,11 +25,4 @@ interface ReminderRepository {
      */
     suspend fun deleteAllReminders(vararg entity: Reminder)
 
-
-    /**
-     * Updating in database one or more lessons
-     * @param entity [Set of entities to update in database]
-     */
-    suspend fun updateAllReminders(vararg entity: Reminder)
-
 }

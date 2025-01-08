@@ -1,4 +1,4 @@
-package ru.vafeen.whisperoftasks.presentation.components
+package ru.vafeen.whisperoftasks.presentation.common.components.ui_utils
 
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
