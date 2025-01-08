@@ -1,4 +1,4 @@
-package ru.vafeen.whisperoftasks.data.mock.database
+package ru.vafeen.whisperoftasks.tests.mock.database
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
