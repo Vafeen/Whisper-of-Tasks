@@ -1,4 +1,4 @@
-package ru.vafeen.whisperoftasks.data.mock.database
+package ru.vafeen.whisperoftasks.tests.mock.database
 
 import org.koin.core.module.dsl.bind
 import org.koin.core.module.dsl.singleOf
