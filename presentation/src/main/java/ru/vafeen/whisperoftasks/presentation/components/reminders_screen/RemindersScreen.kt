@@ -140,7 +140,7 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
                     items(items = reminders) {
                         it.ReminderCard(
                             modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
-                            isItCandidateForDelete = remindersForDeleting.contains(it.idOfReminder),
+                            isItCandidateForDelete = remindersForDeleting.contains(it),
                         )
                     }
                 }

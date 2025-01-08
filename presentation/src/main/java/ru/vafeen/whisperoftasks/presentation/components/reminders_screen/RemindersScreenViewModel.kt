@@ -24,11 +24,11 @@ internal class RemindersScreenViewModel(
             emptyList()
         )
     private val remindersForDeleting = mutableMapOf<Int, Reminder>()
-    private val _remindersForDeletingFlow = MutableStateFlow(listOf<Int>())
+    private val _remindersForDeletingFlow = MutableStateFlow<Collection<Reminder>>(listOf())
     val remindersForDeletingFlow = _remindersForDeletingFlow.asStateFlow()
     private fun updateRemindersForDeletingFlow() {
         viewModelScope.launch(Dispatchers.IO) {
-            _remindersForDeletingFlow.emit(remindersForDeleting.keys.toList())
+            _remindersForDeletingFlow.emit(remindersForDeleting.values.toList())
         }
     }
 
