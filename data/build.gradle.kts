@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    id("androidx.room")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -30,10 +32,21 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    room {
+        schemaDirectory("$projectDir/schemas")
+    }
 }
 
 dependencies {
     api(project(":domain"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
+    //room
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+    //refresher
+    implementation("com.github.vafeen:Direct-Refresher:1.0.3")
+    //work-manager
+    implementation("androidx.work:work-runtime-ktx:2.7.1")
 }

@@ -49,6 +49,7 @@ import ru.vafeen.whisperoftasks.domain.utils.withDate
 import ru.vafeen.whisperoftasks.domain.utils.withTime
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.DefaultDialog
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.MyDateTimePicker
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 import ru.vafeen.whisperoftasks.presentation.utils.DatePickerInfo
@@ -145,21 +146,21 @@ internal fun ReminderDialog(
                     )
                 )
             }
-//            MyDateTimePicker(
-//                isTimeNeeded = newReminder.value.isNotificationNeeded,
-//                initialDate = newReminder.value.dt.toLocalDate(),
-//                onDateSelected = { date ->
-//                    selectedDateTime = selectedDateTime.withDate(date)
-//                    newReminder.value = newReminder.value.copy(dt = selectedDateTime)
-//                },
-//                initialTime = selectedDateTime.toLocalTime(),//newReminder.value.dt.toLocalTime(),
-//                onTimeSelected = { time ->
-//                    selectedDateTime = selectedDateTime.withTime(time)
-//                    newReminder.value = newReminder.value.copy(
-//                        dt = selectedDateTime
-//                    )
-//                }
-//            )
+            MyDateTimePicker(
+                isTimeNeeded = newReminder.value.isNotificationNeeded,
+                initialDate = newReminder.value.dt.toLocalDate(),
+                onDateSelected = { date ->
+                    selectedDateTime = selectedDateTime.withDate(date)
+                    newReminder.value = newReminder.value.copy(dt = selectedDateTime)
+                },
+                initialTime = selectedDateTime.toLocalTime(),//newReminder.value.dt.toLocalTime(),
+                onTimeSelected = { time ->
+                    selectedDateTime = selectedDateTime.withTime(time)
+                    newReminder.value = newReminder.value.copy(
+                        dt = selectedDateTime
+                    )
+                }
+            )
             Box(modifier = Modifier
                 .padding(vertical = 5.dp)
                 .clickable {
@@ -203,8 +204,7 @@ internal fun ReminderDialog(
                     onDismissRequest()
 //                    cor.launch(Dispatchers.IO) {
 //                        newReminder.value = newReminder.value.copy(
-//                            idOfReminder = databaseRepository.getAllRemindersAsFlow().first()
-//                                .map { it.idOfReminder }.generateID(),
+//
 //                        )
 //                        eventCreation.updateEvent(newReminder.value)
 //                        onDismissRequest()

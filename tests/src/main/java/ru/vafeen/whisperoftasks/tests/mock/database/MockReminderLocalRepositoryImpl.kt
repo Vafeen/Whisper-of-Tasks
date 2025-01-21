@@ -2,14 +2,13 @@ package ru.vafeen.whisperoftasks.tests.mock.database
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.first
-import ru.vafeen.whisperoftasks.domain.database.ReminderRepository
+import ru.vafeen.whisperoftasks.domain.database.repository.ReminderLocalRepository
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-internal class MockReminderRepositoryImpl : ReminderRepository {
+internal class MockReminderLocalRepositoryImpl : ReminderLocalRepository {
     private var reminders = mutableListOf<Reminder>(
         Reminder(
             id = 0,
@@ -196,10 +195,11 @@ internal class MockReminderRepositoryImpl : ReminderRepository {
     private val remindersFlow = MutableStateFlow(reminders.toList())
     override fun getAllRemindersAsFlow(): Flow<List<Reminder>> = remindersFlow
 
-    override suspend fun getReminderByIdOfReminder(idOfReminder: Int): Reminder? =
-        remindersFlow.first().firstOrNull {
-            it.idOfReminder == idOfReminder
-        }
+    override fun getReminderByIdOfReminder(idOfReminder: Int): Reminder? = TODO("sdffsd")
+//        remindersFlow.first().firstOrNull {
+//            it.idOfReminder == idOfReminder
+//        }
+
 
     override suspend fun insertAllReminders(vararg entity: Reminder) {
         val ids = entity.map { it.idOfReminder }
@@ -210,11 +210,19 @@ internal class MockReminderRepositoryImpl : ReminderRepository {
         updateFlow()
     }
 
+    override suspend fun insertAllReminders(entities: List<Reminder>) {
+        TODO("Not yet implemented")
+    }
+
     override suspend fun deleteAllReminders(vararg entity: Reminder) {
         entity.forEach {
             reminders.remove(it)
         }
         updateFlow()
+    }
+
+    override suspend fun deleteAllReminders(entities: List<Reminder>) {
+        TODO("Not yet implemented")
     }
 
 

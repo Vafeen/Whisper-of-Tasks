@@ -25,8 +25,8 @@
 <!--    <string name="tasks_by_day">Tasks by day</string>-->
 <!--    <string name="tasks_list">Tasks list</string>-->
     <string name="hold">Hold</string>
-<!--    <string name="reminder_recovery">Reminder recovery</string>-->
-<!--    <string name="reminders_restored">Reminders have restored</string>-->
+    <string name="reminder_recovery">Reminder recovery</string>
+    <string name="reminders_restored">Reminders have restored</string>
 <!--    <string name="interface_color">Interface color</string>-->
 <!--    <string name="new_interface_color">New color of interface</string>-->
 <!--    <string name="cancel">Cancel</string>-->

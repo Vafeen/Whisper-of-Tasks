@@ -25,8 +25,8 @@
 <!--    <string name="tasks_by_day">Задачи по дням</string>-->
 <!--    <string name="tasks_list">Список задач</string>-->
     <string name="hold">Удерживайте</string>
-<!--    <string name="reminder_recovery">Восстановление будильников</string>-->
-<!--    <string name="reminders_restored">Будильники восстановлены</string>-->
+    <string name="reminder_recovery">Восстановление будильников</string>
+    <string name="reminders_restored">Будильники восстановлены</string>
 <!--    <string name="interface_color">Цвет интерфейса</string>-->
 <!--    <string name="new_interface_color">Новый цвет интерфейса</string>-->
 <!--    <string name="cancel">Отмена</string>-->

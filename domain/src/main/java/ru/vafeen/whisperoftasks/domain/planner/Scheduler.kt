@@ -3,7 +3,9 @@ package ru.vafeen.whisperoftasks.domain.planner
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 
 interface Scheduler {
-    fun planOneTimeWork(reminder: Reminder)
-    fun planRepeatWork(reminder: Reminder)
-    fun cancelWork(reminder: Reminder)
+    fun planWork(vararg reminder: Reminder)
+    fun planWork(reminders: List<Reminder>)
+
+    fun cancelWork(vararg reminder: Reminder)
+    fun cancelWork(reminders: List<Reminder>)
 }

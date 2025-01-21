@@ -1,94 +1,105 @@
 package ru.vafeen.whisperoftasks.data.planner
 
 import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.util.Log
+import ru.vafeen.whisperoftasks.data.converters.DateTimeConverter
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.domain.planner.Scheduler
 import java.time.LocalDateTime
 
-
 internal class SchedulerImpl(
     private val context: Context,
-//    private val localDateTimeConverters: LocalDateTimeConverters,
+    private val dtConverter: DateTimeConverter
 ) : Scheduler {
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    private val SKIP_WEEK_IN_DAYS: Long = 7
-    private val SKIP_1_DAY_IN_DAYS: Long = 1
+    private val intent = Intent(context, ReminderReceiver::class.java)
 
-    private fun Reminder.resultDT(): LocalDateTime? = if (dateOfDone != null) {
-        val time = dt.toLocalTime()
-        when (repeatDuration) {
-            RepeatDuration.EveryDay -> LocalDateTime.of(
-                dateOfDone?.plusDays(SKIP_1_DAY_IN_DAYS),
-                time
+
+    private fun scheduleRepeatingJob(reminder: Reminder) {
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            reminder.idOfReminder,
+            intent.also {
+                it.putExtra(SchedulerExtra.ID_OF_REMINDER, reminder.idOfReminder)
+            },
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        )
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis() + calculateInitialDelay(reminder),
+            reminder.repeatDuration.duration.milliSeconds,
+            pendingIntent
+        )
+    }
+
+    private fun scheduleOneTimeJob(reminder: Reminder) {
+        Log.d("sch", "scheduled do")
+        alarmManager.setExactAndAllowWhileIdle(
+            AlarmManager.RTC_WAKEUP,
+            System.currentTimeMillis() + calculateInitialDelay(reminder),
+            PendingIntent.getBroadcast(
+                context,
+                reminder.idOfReminder,
+                intent.also {
+                    it.putExtra(SchedulerExtra.ID_OF_REMINDER, reminder.idOfReminder)
+                },
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
+        )
+        Log.d("sch", "scheduledafter")
+    }
 
-            RepeatDuration.EveryWeek -> LocalDateTime.of(
-                dateOfDone?.plusDays(SKIP_WEEK_IN_DAYS),
-                time
-            )
-
-            else -> null
+    private fun scheduleJob(reminder: Reminder) {
+        when (reminder.repeatDuration) {
+            RepeatDuration.NoRepeat -> scheduleOneTimeJob(reminder)
+            else -> scheduleRepeatingJob(reminder)
         }
-    } else dt
+    }
 
+    private fun cancelJob(reminder: Reminder) {
+        alarmManager.cancel(
+            PendingIntent.getBroadcast(
+                context,
+                reminder.idOfReminder,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+            )
+        )
+    }
 
-    override fun planOneTimeWork(reminder: Reminder) {}
-//    {
-//        intent.apply {
-//            putExtra(SchedulerExtra.ID_OF_REMINDER, reminder.idOfReminder)
-//        }
-//        val pendingIntent = PendingIntent.getBroadcast(
-//            context,
-//            reminder.idOfReminder,
-//            intent,
-//            PendingIntent.FLAG_IMMUTABLE
-//        )
-//        val resultDt = reminder.resultDT()
-//
-//        if (resultDt != null) {
-//            alarmManager.setExact(
-//                AlarmManager.RTC_WAKEUP,
-//                localDateTimeConverters.localDateTimeToLongMilliSeconds(resultDt),
-//                pendingIntent
-//            )
-//        }
-//    }
+    private fun calculateInitialDelay(reminder: Reminder): Long {
+        val now = dtConverter.convertAB(LocalDateTime.now())
+        val reminderTime = dtConverter.convertAB(reminder.dt)
+        return if (reminderTime > now) reminderTime - now else 0L
+    }
 
-    override fun planRepeatWork(reminder: Reminder) {}
+    override fun planWork(vararg reminder: Reminder) {
+        reminder.forEach {
+            scheduleJob(it)
+        }
+    }
 
-    //    {
-//        intent.apply {
-//            putExtra(SchedulerExtra.ID_OF_REMINDER, reminder.idOfReminder)
-//        }
-//        val pendingIntent = PendingIntent.getBroadcast(
-//            context,
-//            reminder.idOfReminder,
-//            intent,
-//            PendingIntent.FLAG_IMMUTABLE
-//        )
-//        val resultDt = reminder.resultDT()
-//        if (resultDt != null) {
-//            alarmManager.setRepeating(
-//                AlarmManager.RTC_WAKEUP,
-//                localDateTimeConverters.localDateTimeToLongMilliSeconds(resultDt),
-//                reminder.repeatDuration.duration.milliSeconds,
-//                pendingIntent,
-//            )
-//        }
-//    }
-    override fun cancelWork(reminder: Reminder) {}
-//    {
-//        intent.apply {
-//            putExtra(SchedulerExtra.ID_OF_REMINDER, reminder.idOfReminder)
-//        }
-//        val pendingIntent = PendingIntent.getBroadcast(
-//            context,
-//            reminder.idOfReminder,
-//            intent,
-//            PendingIntent.FLAG_IMMUTABLE
-//        )
-//        alarmManager.cancel(pendingIntent)
-//    }
+    override fun planWork(reminders: List<Reminder>) {
+        reminders.forEach {
+            scheduleJob(it)
+        }
+    }
+
+    override fun cancelWork(vararg reminder: Reminder) {
+        reminder.forEach {
+            cancelJob(it)
+        }
+    }
+
+    override fun cancelWork(reminders: List<Reminder>) {
+        reminders.forEach {
+            cancelJob(it)
+        }
+    }
+
 }
