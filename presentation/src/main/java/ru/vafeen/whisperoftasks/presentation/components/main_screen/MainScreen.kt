@@ -203,10 +203,11 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
 
         }
     ) { innerPadding ->
+        val x = innerPadding
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(top = innerPadding.calculateTopPadding())
         ) {
             if (isEditingReminder) {
                 ReminderDialog(
@@ -267,7 +268,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                 state = pagerState,
                 modifier = Modifier
                     .weight(10f)
-                    .padding(top = 10.dp),
+                    .padding(top = 10.dp)
             ) { page ->
                 Column(
                     modifier = Modifier
