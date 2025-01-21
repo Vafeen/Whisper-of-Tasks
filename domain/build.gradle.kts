@@ -36,4 +36,6 @@ dependencies {
     api(project(":resources"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
+    //gson
+    implementation ("com.google.code.gson:gson:2.11.0")
 }

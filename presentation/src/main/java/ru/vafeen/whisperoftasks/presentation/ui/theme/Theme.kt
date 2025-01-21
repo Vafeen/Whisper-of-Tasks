@@ -12,17 +12,17 @@ internal data class Colors(
     val singleTheme: Color,
     val oppositeTheme: Color,
     val buttonColor: Color,
-    val background:Color,
+    val background: Color,
 )
 
-internal val baseLightPalette = Colors(
+private val baseLightPalette = Colors(
     mainColor = mainLightColor,
     singleTheme = Color.White,
     oppositeTheme = Color.Black,
     buttonColor = Color.White,
-    background = Color(0xFFF4F2F2)
+    background = Color.White
 )
-internal val baseDarkPalette = baseLightPalette.copy(
+private val baseDarkPalette = baseLightPalette.copy(
     mainColor = mainDarkColor,
     singleTheme = Color.Black,
     oppositeTheme = Color.White,
@@ -49,6 +49,6 @@ internal object Theme {
         @ReadOnlyComposable @Composable get() = LocalColors.current
 }
 
-internal val LocalColors = staticCompositionLocalOf<Colors> {
+private val LocalColors = staticCompositionLocalOf<Colors> {
     error("Composition error")
 }

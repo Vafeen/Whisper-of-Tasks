@@ -1,44 +1,174 @@
 package ru.vafeen.whisperoftasks.presentation.main
 
-import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
-import androidx.navigation.toRoute
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
+import ru.vafeen.whisperoftasks.domain.domain_models.Release
+import ru.vafeen.whisperoftasks.domain.domain_models.Settings
+import ru.vafeen.whisperoftasks.domain.network.result.DownloadStatus
+import ru.vafeen.whisperoftasks.domain.network.service.Refresher
+import ru.vafeen.whisperoftasks.domain.network.usecase.GetLatestReleaseUseCase
+import ru.vafeen.whisperoftasks.domain.shared_preferences.SettingsManager
+import ru.vafeen.whisperoftasks.domain.utils.Link
+import ru.vafeen.whisperoftasks.domain.utils.RefresherInfo
+import ru.vafeen.whisperoftasks.domain.utils.copyTextToClipBoard
+import ru.vafeen.whisperoftasks.domain.utils.getVersionCode
+import ru.vafeen.whisperoftasks.domain.utils.getVersionName
 import ru.vafeen.whisperoftasks.presentation.components.navigation.BottomBarNavigator
 import ru.vafeen.whisperoftasks.presentation.components.navigation.Screen
+import kotlin.system.exitProcess
 
-internal class MainActivityViewModel() : ViewModel(), BottomBarNavigator {
+/**
+ * ViewModel для управления состоянием главной активности приложения.
+ * Обрабатывает обновления, миграцию данных, навигацию и общие ошибки.
+ *
+ * @property getLatestReleaseUseCase Юзкейс для получения последней версии приложения.
+ * @property rebootingRemindersUseCase Юзкейс для перезапуска напоминаний.
+ * @property context Контекст приложения для работы с ресурсами и управления ошибками.
+ * @property schedulerAPIMigrationManager Менеджер миграции API, который отвечает за перенос с AlarmManager на WorkManager.
+ * @property settingsManager Менеджер для работы с настройками приложения.
+ * @property refresher Сервис для скачивания и обновлений.
+ */
+internal class MainActivityViewModel(
+    private val getLatestReleaseUseCase: GetLatestReleaseUseCase,
+    context: Context,
+    private val settingsManager: SettingsManager,
+    private val refresher: Refresher,
+) : ViewModel(), BottomBarNavigator {
+
     /**
-     * Экран, отображаемый при запуске приложения.
+     * Последняя доступная версия приложения.
+     */
+    var release: Release? = null
+        private set
+
+    /**
+     * Версия приложения.
+     */
+    val versionCode = context.getVersionCode()
+    val versionName = context.getVersionName()
+
+    /**
+     * Проверяет наличие обновлений приложения.
+     *
+     * @return Последняя версия приложения, если она отличается от текущей, или null в противном случае.
+     */
+    suspend fun checkUpdates(): Release? {
+        val localRelease = getLatestReleaseUseCase.invoke()
+        return if (localRelease != null && versionName != null &&
+            localRelease.tagName.substringAfter("v") != versionName
+        ) {
+            Log.d("release", "${localRelease.tagName.substringAfter("v")} != ${versionName}")
+            saveSettingsToSharedPreferences {
+                it.copy(releaseBody = localRelease.body)
+            }
+            release = localRelease
+            release
+        } else null
+    }
+
+    /**
+     * Запускает процесс обновления приложения.
+     */
+    fun update() {
+        release?.let {
+            viewModelScope.launch(Dispatchers.IO) {
+                refresher.refresh(viewModelScope, it.apkUrl, RefresherInfo.APK_FILE_NAME)
+            }
+        }
+    }
+
+    /**
+     * Поток состояния, отслеживающий процесс обновления.
+     * Возвращает true, если обновление находится в процессе, и false в противном случае.
+     */
+    val isUpdateInProcessFlow: SharedFlow<Boolean> =
+        refresher.progressFlow.map {
+            it !is DownloadStatus.Error && it !is DownloadStatus.Success
+        }.shareIn(viewModelScope, SharingStarted.Lazily)
+
+    /**
+     * Поток состояния, отслеживающий процент выполнения обновления.
+     * Возвращает процент выполнения или 0, если обновление не начато или завершено.
+     */
+    val percentageFlow: SharedFlow<Float> =
+        refresher.progressFlow.map {
+            when (it) {
+                is DownloadStatus.InProgress -> it.percentage
+                DownloadStatus.Success -> 100f
+                else -> 0f
+            }
+        }.shareIn(viewModelScope, SharingStarted.Lazily)
+
+    /**
+     * Поток состояния, содержащий текущие настройки приложения.
+     */
+    val settings = settingsManager.settingsFlow
+
+    /**
+     * Функция для сохранения настроек в SharedPreferences.
+     * Принимает функцию, изменяющую текущие настройки.
+     *
+     * @param saving Функция, изменяющая настройки.
+     */
+    fun saveSettingsToSharedPreferences(saving: (Settings) -> Settings) {
+        settingsManager.save(saving)
+    }
+
+
+    /**
+     * Регистрирует обработчик необработанных исключений для приложения.
+     * В случае ошибки копирует информацию об ошибке в буфер обмена и завершает процесс.
+     *
+     * @param context Контекст приложения, используемый для работы с буфером обмена.
+     */
+    private fun registerGeneralExceptionCallback(context: Context) {
+        Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            context.copyTextToClipBoard(
+                label = "Error",
+                text = "Contact us about this problem: ${Link.MAIL}\n\n Exception in ${thread.name} thread\n${throwable.stackTraceToString()}"
+            )
+            Log.e("GeneralException", "Exception in thread ${thread.name}", throwable)
+            exitProcess(0)
+        }
+    }
+
+    init {
+        // Регистрируем обработчик исключений при инициализации ViewModel.
+        registerGeneralExceptionCallback(context = context)
+    }
+
+    /**
+     * Экран, который должен отображаться при запуске приложения.
      */
     val startScreen = Screen.Main
 
     /**
-     * Максимальное количество экранов, которые могут быть в стеке навигации (2 пользовательских + 1 базовый).
-     */
-    val maxCountOfScreens = 3
-
-    /**
-     * Контроллер навигации для управления переходами между экранами.
+     * Контроллер навигации, управляющий переходами между экранами.
      */
     override var navController: NavHostController? = null
 
     /**
-     * Поток состояния, отслеживающий текущий активный экран.
+     * Поток состояния, отслеживающий текущий экран приложения.
      */
     private val _currentScreen: MutableStateFlow<Screen> = MutableStateFlow(startScreen)
     override val currentScreen: StateFlow<Screen> = _currentScreen.asStateFlow()
 
     /**
-     * Обновляет состояние текущего экрана, отслеживая изменения в backStack навигации.
+     * Эмитирует текущий экран на основе стека навигации.
+     * Отслеживает изменения в backStack навигации и обновляет состояние текущего экрана.
      */
     private fun emitCurrentScreen() {
         viewModelScope.launch(Dispatchers.Main) {
@@ -46,15 +176,15 @@ internal class MainActivityViewModel() : ViewModel(), BottomBarNavigator {
                 val destination = backStackEntry.destination
                 when {
                     destination.hasRoute(Screen.Main::class) -> _currentScreen.emit(Screen.Main)
-                    destination.hasRoute(Screen.Reminders::class) -> _currentScreen.emit(Screen.Reminders)
                     destination.hasRoute(Screen.Settings::class) -> _currentScreen.emit(Screen.Settings)
+                    destination.hasRoute(Screen.Reminders::class) -> _currentScreen.emit(Screen.Reminders)
                 }
             }
         }
     }
 
     /**
-     * Обрабатывает действие "Назад", переходя на предыдущий экран.
+     * Обрабатывает действие "Назад". Переходит на предыдущий экран в навигации.
      */
     override fun back() {
         navController?.popBackStack()
@@ -62,22 +192,27 @@ internal class MainActivityViewModel() : ViewModel(), BottomBarNavigator {
     }
 
     /**
-     * Выполняет переход на указанный экран.
+     * Переходит на указанный экран.
      *
-     * @param screen Целевой экран для перехода.
+     * @param screen Целевой экран для навигации.
      */
-    @SuppressLint("RestrictedApi")
     override fun navigateTo(screen: Screen) {
-        if (screen != Screen.Main) {
-            navController?.currentBackStack?.value?.size?.let { currentStackSize ->
-                if (currentStackSize == maxCountOfScreens) {
-                    navController?.popBackStack()
+        val currentDestination = navController?.currentBackStackEntry?.destination
+        when {
+            currentDestination?.hasRoute(Screen.Main::class) == true -> {
+                navController?.navigate(screen)
+            }
+
+            currentDestination?.hasRoute(Screen.Settings::class) == true ||
+                    currentDestination?.hasRoute(Screen.Reminders::class) == true -> {
+                navController?.popBackStack()
+                if (screen != Screen.Main) {
+                    navController?.navigate(screen)
                 }
             }
-            navController?.navigate(screen)
-        } else {
-            navController?.popBackStack()
         }
+
         emitCurrentScreen()
     }
+
 }
