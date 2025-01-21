@@ -1,15 +1,12 @@
 package ru.vafeen.whisperoftasks.data.converters
 
 import androidx.room.TypeConverter
-import androidx.room.TypeConverters
+import ru.vafeen.universityschedule.domain.converter.TwoWayBaseConverter
 import ru.vafeen.whisperoftasks.domain.duration.MyDuration
 
-internal class DurationConverter {
-
+internal class DurationConverter : TwoWayBaseConverter<MyDuration, Long> {
     @TypeConverter
-    fun myDurationToLong(myDuration: MyDuration?): Long? = myDuration?.milliSeconds
-
-    @TypeConverters
-    fun longToMyDuration(milliSeconds: Long?): MyDuration? =
-        milliSeconds?.let { MyDuration(milliSeconds = it) }
+    override fun convertAB(a: MyDuration): Long = a.milliSeconds
+    @TypeConverter
+    override fun convertBA(b: Long): MyDuration = MyDuration(milliSeconds = b)
 }

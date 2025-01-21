@@ -1,19 +1,17 @@
 package ru.vafeen.whisperoftasks.data.converters
 
 import androidx.room.TypeConverter
+import ru.vafeen.universityschedule.domain.converter.TwoWayBaseConverter
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-internal class DateConverter {
+internal class DateConverter : TwoWayBaseConverter<LocalDate, String> {
     private val formatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
     @TypeConverter
-    fun localDateToString(date: LocalDate?): String? {
-        return date?.format(formatter)
-    }
+    override fun convertAB(a: LocalDate): String = a.format(formatter)
 
     @TypeConverter
-    fun stringToLocalDate(dateString: String?): LocalDate? {
-        return dateString?.let { LocalDate.parse(it, formatter) }
-    }
+    override fun convertBA(b: String): LocalDate = LocalDate.parse(b, formatter)
+
 }

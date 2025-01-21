@@ -12,11 +12,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
+import ru.vafeen.whisperoftasks.presentation.utils.suitableColor
 import ru.vafeen.whisperoftasks.resources.R
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -24,12 +25,13 @@ import ru.vafeen.whisperoftasks.resources.R
 fun DeleteReminders(
     onDeleteCallback: () -> Unit,
 ) {
+    val deleteColor = Color.Red
     val textToHold = stringResource(id = R.string.hold)
     val context = LocalContext.current
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Theme.colors.buttonColor)
+            .background(deleteColor)
             .combinedClickable(
                 onClick = {
                     Toast
@@ -47,7 +49,7 @@ fun DeleteReminders(
                 .padding(vertical = 5.dp)
                 .size(30.dp),
             painter = painterResource(R.drawable.delete_forever),
-            tint = Theme.colors.oppositeTheme,
+            tint = deleteColor.suitableColor(),
             contentDescription = stringResource(R.string.delete_selected)
         )
     }
