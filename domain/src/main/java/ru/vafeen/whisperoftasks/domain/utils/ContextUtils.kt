@@ -4,8 +4,6 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 
-fun Context.getVersionName(): String? =
-    packageManager.getPackageInfo(packageName, 0).versionName
 
 fun Context.copyTextToClipBoard(label: String, text: String) {
     val clipboard =

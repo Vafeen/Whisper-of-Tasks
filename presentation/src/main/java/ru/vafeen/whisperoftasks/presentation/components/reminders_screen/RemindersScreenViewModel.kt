@@ -11,12 +11,15 @@ import kotlinx.coroutines.launch
 import ru.vafeen.whisperoftasks.domain.database.usecase.GetAllAsFlowRemindersUseCase
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.planner.usecase.RemoveEventUseCase
+import ru.vafeen.whisperoftasks.domain.planner.usecase.SetEventUseCase
+import ru.vafeen.whisperoftasks.presentation.common.EventCreation
 
 internal class RemindersScreenViewModel(
     private val getAllAsFlowRemindersUseCase: GetAllAsFlowRemindersUseCase,
-    private val removeEventUseCase: RemoveEventUseCase
+    private val removeEventUseCase: RemoveEventUseCase,
+    private val setEventUseCase: SetEventUseCase,
 ) :
-    ViewModel() {
+    ViewModel(), EventCreation {
     val remindersFlow =
         getAllAsFlowRemindersUseCase.invoke().stateIn(
             viewModelScope,
@@ -59,6 +62,18 @@ internal class RemindersScreenViewModel(
     fun removeEventsForReminderForDeleting() {
         viewModelScope.launch {
             removeEventUseCase.invoke(remindersForDeleting.values.toList())
+        }
+    }
+
+    override fun removeEvent(reminder: Reminder) {
+        viewModelScope.launch(Dispatchers.IO) {
+            removeEventUseCase.invoke(reminder)
+        }
+    }
+
+    override fun updateEvent(reminder: Reminder) {
+        viewModelScope.launch(Dispatchers.IO) {
+            setEventUseCase.invoke(reminder)
         }
     }
 }

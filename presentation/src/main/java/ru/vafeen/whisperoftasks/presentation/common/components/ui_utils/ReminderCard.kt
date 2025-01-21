@@ -24,7 +24,8 @@ fun Reminder.ReminderCard(
         modifier = Modifier
             .padding(5.dp)
             .alpha(if (isItCandidateForDelete) 0.5f else 1.0f),
-        colors = CardDefaults.cardColors(containerColor = Theme.colors.buttonColor)
+        colors = CardDefaults.cardColors(containerColor = Theme.colors.buttonColor),
+        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
     ) {
         Column(
             modifier = modifier
