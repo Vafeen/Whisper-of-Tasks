@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.launch
@@ -159,6 +160,8 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
             } else TextForThisTheme(
                 text = stringResource(id = R.string.you_havent_added_any_events_yet),
                 fontSize = FontSize.big22,
+                maxLines = 10,
+                modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             if (isDeletingInProcess) DeleteReminders {
                 cor.launch {
