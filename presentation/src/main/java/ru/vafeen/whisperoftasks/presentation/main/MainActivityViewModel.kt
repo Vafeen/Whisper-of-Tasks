@@ -24,7 +24,6 @@ import ru.vafeen.whisperoftasks.domain.shared_preferences.SettingsManager
 import ru.vafeen.whisperoftasks.domain.utils.Link
 import ru.vafeen.whisperoftasks.domain.utils.RefresherInfo
 import ru.vafeen.whisperoftasks.domain.utils.copyTextToClipBoard
-import ru.vafeen.whisperoftasks.domain.utils.getVersionCode
 import ru.vafeen.whisperoftasks.domain.utils.getVersionName
 import ru.vafeen.whisperoftasks.presentation.components.navigation.BottomBarNavigator
 import ru.vafeen.whisperoftasks.presentation.components.navigation.Screen
@@ -35,11 +34,18 @@ import kotlin.system.exitProcess
  * Обрабатывает обновления, миграцию данных, навигацию и общие ошибки.
  *
  * @property getLatestReleaseUseCase Юзкейс для получения последней версии приложения.
- * @property rebootingRemindersUseCase Юзкейс для перезапуска напоминаний.
  * @property context Контекст приложения для работы с ресурсами и управления ошибками.
- * @property schedulerAPIMigrationManager Менеджер миграции API, который отвечает за перенос с AlarmManager на WorkManager.
  * @property settingsManager Менеджер для работы с настройками приложения.
  * @property refresher Сервис для скачивания и обновлений.
+ * @property release Последняя доступная версия приложения.
+ * @property versionCode Код версии приложения.
+ * @property versionName Имя версии приложения.
+ * @property isUpdateInProcessFlow Поток состояния, отслеживающий процесс обновления.
+ * @property percentageFlow Поток состояния, отслеживающий процент выполнения обновления.
+ * @property settings Поток состояния, содержащий текущие настройки приложения.
+ * @property startScreen Экран, который должен отображаться при запуске приложения.
+ * @property navController Контроллер навигации, управляющий переходами между экранами.
+ * @property currentScreen Поток состояния, отслеживающий текущий экран приложения.
  */
 internal class MainActivityViewModel(
     private val getLatestReleaseUseCase: GetLatestReleaseUseCase,
@@ -48,17 +54,9 @@ internal class MainActivityViewModel(
     private val refresher: Refresher,
 ) : ViewModel(), BottomBarNavigator {
 
-    /**
-     * Последняя доступная версия приложения.
-     */
-    var release: Release? = null
-        private set
+    private var release: Release? = null
 
-    /**
-     * Версия приложения.
-     */
-    val versionCode = context.getVersionCode()
-    val versionName = context.getVersionName()
+    private val versionName = context.getVersionName()
 
     /**
      * Проверяет наличие обновлений приложения.
@@ -123,10 +121,9 @@ internal class MainActivityViewModel(
      *
      * @param saving Функция, изменяющая настройки.
      */
-    fun saveSettingsToSharedPreferences(saving: (Settings) -> Settings) {
+    private fun saveSettingsToSharedPreferences(saving: (Settings) -> Settings) {
         settingsManager.save(saving)
     }
-
 
     /**
      * Регистрирует обработчик необработанных исключений для приложения.
@@ -153,7 +150,7 @@ internal class MainActivityViewModel(
     /**
      * Экран, который должен отображаться при запуске приложения.
      */
-    val startScreen = Screen.Main
+    private val startScreen = Screen.Main
 
     /**
      * Контроллер навигации, управляющий переходами между экранами.
@@ -203,5 +200,4 @@ internal class MainActivityViewModel(
             navController?.navigate(screen)
         emitCurrentScreen()
     }
-
 }
