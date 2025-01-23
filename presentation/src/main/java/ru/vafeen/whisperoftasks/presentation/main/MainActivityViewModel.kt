@@ -198,20 +198,9 @@ internal class MainActivityViewModel(
      */
     override fun navigateTo(screen: Screen) {
         val currentDestination = navController?.currentBackStackEntry?.destination
-        when {
-            currentDestination?.hasRoute(Screen.Main::class) == true -> {
-                navController?.navigate(screen)
-            }
-
-            currentDestination?.hasRoute(Screen.Settings::class) == true ||
-                    currentDestination?.hasRoute(Screen.Reminders::class) == true -> {
-                navController?.popBackStack()
-                if (screen != Screen.Main) {
-                    navController?.navigate(screen)
-                }
-            }
-        }
-
+        if (currentDestination?.hasRoute(Screen.Main::class) == false) navController?.popBackStack()
+        if (currentDestination?.hasRoute(Screen.Main::class) == true || screen != Screen.Main)
+            navController?.navigate(screen)
         emitCurrentScreen()
     }
 
