@@ -31,8 +31,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -91,9 +91,11 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
         remember {
             mutableStateOf(null)
         }
-    var isDeletingInProcess by remember { mutableStateOf(false) }
-    val reminderForRemoving =
-        remember { mutableStateMapOf<Int, Reminder>() }
+    val isDeletingInProcess by remember {
+        derivedStateOf {
+            viewModel.remindersForDeleting.isNotEmpty()
+        }
+    }
 
     fun Modifier.combinedClickableForRemovingReminder(reminder: Reminder): Modifier =
         this.combinedClickable(
@@ -102,34 +104,17 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                     lastReminder.value = reminder
                     isEditingReminder = true
                 } else {
-                    if (reminderForRemoving[reminder.idOfReminder] == null)
-                        reminderForRemoving[reminder.idOfReminder] = reminder
-                    else {
-                        reminderForRemoving.remove(reminder.idOfReminder)
-                        if (reminderForRemoving.isEmpty())
-                            isDeletingInProcess = false
-                    }
+                    viewModel.changeStatusForDeleting(reminder)
                 }
             },
             onLongClick = {
-                isDeletingInProcess = !isDeletingInProcess
-                if (isDeletingInProcess)
-                    reminderForRemoving[reminder.idOfReminder] = reminder
-                else
-                    reminderForRemoving.clear()
+                if (!isDeletingInProcess) {
+                    viewModel.setReminderAsCandidateForDeleting(reminder)
+                } else {
+                    viewModel.clearRemindersForDeleting()
+                }
             }
         )
-
-    fun Reminder.isItCandidateForDelete(): Boolean? =
-        if (isDeletingInProcess) reminderForRemoving[idOfReminder] != null else null
-
-    fun Reminder.changeStatusOfDeleting() {
-        isItCandidateForDelete()?.let {
-            if (it)
-                reminderForRemoving.remove(idOfReminder)
-            else reminderForRemoving.set(idOfReminder, this)
-        }
-    }
 
 
     val reminders by viewModel.remindersFlow.collectAsState(listOf())
@@ -144,8 +129,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
     BackHandler {
         when {
             isDeletingInProcess -> {
-                isDeletingInProcess = false
-                reminderForRemoving.clear()
+                viewModel.clearRemindersForDeleting()
             }
 
             !isDeletingInProcess && pagerState.currentPage == DatePickerInfo.countOfDaysInPast -> {
@@ -219,11 +203,10 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                 state = cardsWithDateState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 10.dp),
+                    .padding(top = 10.dp),
                 horizontalArrangement = Arrangement.SpaceEvenly,
             ) {
                 itemsIndexed(DatePickerInfo.dateList()) { index, day ->
-//                    val day by remember { mutableStateOf(viewModel.todayDate.plusDays(index.toLong())) }
                     Column {
                         Card(
                             modifier = Modifier
@@ -256,7 +239,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                             Card(
                                 modifier = Modifier
                                     .fillParentMaxWidth(1 / 3f)
-                                    .padding(top = 2.dp)
+                                    .padding(vertical = 2.dp)
                                     .padding(horizontal = 18.dp)
                                     .height(2.dp),
                                 colors = CardDefaults.cardColors(containerColor = Theme.colors.oppositeTheme)
@@ -268,13 +251,11 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                 state = pagerState,
                 modifier = Modifier
                     .weight(10f)
-                    .padding(top = 10.dp)
             ) { page ->
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .verticalScroll(rememberScrollState()),
-                    verticalArrangement = Arrangement.spacedBy(20.dp)
+                        .verticalScroll(rememberScrollState())
                 ) {
                     val startDateInPast = DatePickerInfo.startDateInPast()
                     val dateOfThisPage = startDateInPast.plusDays(page.toLong())
@@ -313,9 +294,10 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                 modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
                                 viewModel = viewModel,
                                 dateOfThisPage = dateOfThisPage,
-                                context = context,
-                                isItCandidateForDelete = it::isItCandidateForDelete.invoke(),
-                                changeStatusOfDeleting = it::changeStatusOfDeleting,
+                                isItCandidateForDelete = viewModel.remindersForDeleting.contains(it.idOfReminder),
+                                changeStatusOfDeleting = if (isDeletingInProcess) {
+                                    { viewModel.changeStatusForDeleting(it) }
+                                } else null,
                             )
                         }
                     }
@@ -332,19 +314,18 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                 modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
                                 viewModel = viewModel,
                                 dateOfThisPage = dateOfThisPage,
-                                context = context,
-                                isItCandidateForDelete = it::isItCandidateForDelete.invoke(),
-                                changeStatusOfDeleting = it::changeStatusOfDeleting,
+                                isItCandidateForDelete = viewModel.remindersForDeleting.contains(it.idOfReminder),
+                                changeStatusOfDeleting = if (isDeletingInProcess) {
+                                    { viewModel.changeStatusForDeleting(it) }
+                                } else null,
                             )
                         }
                     }
                 }
             }
             if (isDeletingInProcess) DeleteReminders {
-                isDeletingInProcess = false
-                reminderForRemoving.values.forEach {
-                    viewModel.removeEvent(it)
-                    reminderForRemoving.remove(it.idOfReminder)
+                cor.launch {
+                    viewModel.unsetEventsAndRemoveRemindersForRemoving()
                 }
             }
         }

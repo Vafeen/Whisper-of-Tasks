@@ -13,7 +13,7 @@ import ru.vafeen.whisperoftasks.domain.di.MainDomainModule
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.presentation.common.di.MainPresentationModule
-import java.time.LocalDate
+import ru.vafeen.whisperoftasks.tests.mock.MainMockModule
 import java.time.LocalDateTime
 
 var reminders = mutableListOf<Reminder>(
@@ -23,8 +23,7 @@ var reminders = mutableListOf<Reminder>(
         title = "Завтра встреча",
         text = "Не забудьте о встрече с клиентом.",
         dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.NoRepeat,
-        dateOfDone = LocalDate.now().plusDays(1)
+        repeatDuration = RepeatDuration.NoRepeat
     ),
     Reminder(
         id = 1,
@@ -32,8 +31,7 @@ var reminders = mutableListOf<Reminder>(
         title = "Покупка продуктов",
         text = "Купить молоко, хлеб и яйца.",
         dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.EveryDay,
-        dateOfDone = LocalDate.now().plusDays(2)
+        repeatDuration = RepeatDuration.EveryDay
     ),
     Reminder(
         id = 2,
@@ -41,8 +39,7 @@ var reminders = mutableListOf<Reminder>(
         title = "Запись к врачу",
         text = "Записаться на прием к стоматологу.",
         dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.NoRepeat,
-        dateOfDone = LocalDate.now().plusDays(3)
+        repeatDuration = RepeatDuration.NoRepeat
     ),
     Reminder(
         id = 3,
@@ -50,8 +47,7 @@ var reminders = mutableListOf<Reminder>(
         title = "День рождения друга",
         text = "Не забудьте поздравить друга с днем рождения!",
         dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.NoRepeat,
-        dateOfDone = LocalDate.now().plusDays(4)
+        repeatDuration = RepeatDuration.NoRepeat
     ),
     Reminder(
         id = 4,
@@ -59,8 +55,7 @@ var reminders = mutableListOf<Reminder>(
         title = "Отправить отчет",
         text = "Отправить финансовый отчет до конца недели.",
         dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.EveryWeek,
-        dateOfDone = LocalDate.now().plusDays(5)
+        repeatDuration = RepeatDuration.EveryWeek
     ),
     Reminder(
         id = 5,
@@ -68,8 +63,7 @@ var reminders = mutableListOf<Reminder>(
         title = "Уборка в квартире",
         text = "Провести генеральную уборку в квартире.",
         dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.NoRepeat,
-        dateOfDone = LocalDate.now().plusDays(6)
+        repeatDuration = RepeatDuration.NoRepeat
     ),
     Reminder(
         id = 6,
@@ -77,8 +71,7 @@ var reminders = mutableListOf<Reminder>(
         title = "Визит к родителям",
         text = "На выходных съездить к родителям.",
         dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.NoRepeat,
-        dateOfDone = LocalDate.now().plusDays(7)
+        repeatDuration = RepeatDuration.NoRepeat
     ),
     Reminder(
         id = 7,
@@ -86,8 +79,7 @@ var reminders = mutableListOf<Reminder>(
         title = "Купить билет на концерт",
         text = "Купить билет на концерт любимой группы.",
         dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.NoRepeat,
-        dateOfDone = LocalDate.now().plusDays(8)
+        repeatDuration = RepeatDuration.NoRepeat
     ),
     Reminder(
         id = 8,
@@ -95,8 +87,7 @@ var reminders = mutableListOf<Reminder>(
         title = "Запланировать отпуск",
         text = "Обсудить с коллегами план отпуска.",
         dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.EveryWeek,
-        dateOfDone = LocalDate.now().plusDays(9)
+        repeatDuration = RepeatDuration.EveryWeek
     ),
     Reminder(
         id = 9,
@@ -104,8 +95,7 @@ var reminders = mutableListOf<Reminder>(
         title = "Занятия спортом",
         text = "Не забыть о тренировке в зале.",
         dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.EveryDay,
-        dateOfDone = LocalDate.now().plusDays(10)
+        repeatDuration = RepeatDuration.EveryDay
     ),
     Reminder(
         id = 10,
@@ -113,8 +103,7 @@ var reminders = mutableListOf<Reminder>(
         title = "Чтение книги",
         text = "Прочитать новую главу книги.",
         dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.NoRepeat,
-        dateOfDone = LocalDate.now().plusDays(11)
+        repeatDuration = RepeatDuration.NoRepeat
     ),
     Reminder(
         id = 11,
@@ -122,8 +111,7 @@ var reminders = mutableListOf<Reminder>(
         title = "Проверка почты",
         text = "Проверить электронную почту на наличие важных писем.",
         dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.EveryDay,
-        dateOfDone = LocalDate.now().plusDays(12)
+        repeatDuration = RepeatDuration.EveryDay
     ),
     Reminder(
         id = 12,
@@ -131,71 +119,63 @@ var reminders = mutableListOf<Reminder>(
         title = "Оплата счетов",
         text = "Не забыть оплатить счета за коммунальные услуги.",
         dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.NoRepeat,
-        dateOfDone = LocalDate.now().plusDays(13)
+        repeatDuration = RepeatDuration.NoRepeat
     ),
     Reminder(
-        id = 13,
-        idOfReminder = 14,
-        title = "Сделать фотографии",
-        text = "Сделать фотографии на природе.",
-        dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.NoRepeat,
-        dateOfDone = LocalDate.now().plusDays(14)
+        id=13,
+        idOfReminder=14,
+        title="Сделать фотографии",
+        text="Сделать фотографии на природе.",
+        dt=LocalDateTime.now(),
+        repeatDuration=RepeatDuration.NoRepeat
     ),
     Reminder(
-        id = 14,
-        idOfReminder = 15,
-        title = "Встреча с друзьями",
-        text = "Запланировать встречу с друзьями в выходные.",
-        dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.NoRepeat,
-        dateOfDone = LocalDate.now().plusDays(15)
+        id=14,
+        idOfReminder=15,
+        title="Встреча с друзьями",
+        text="Запланировать встречу с друзьями в выходные.",
+        dt=LocalDateTime.now(),
+        repeatDuration=RepeatDuration.NoRepeat
     ),
     Reminder(
-        id = 15,
-        idOfReminder = 16,
-        title = "Посмотреть фильм",
-        text = "Не забудьте посмотреть новый фильм в кинотеатре.",
-        dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.NoRepeat,
-        dateOfDone = LocalDate.now().plusDays(16)
+        id=15,
+        idOfReminder=16,
+        title="Посмотреть фильм",
+        text="Не забудьте посмотреть новый фильм в кинотеатре.",
+        dt=LocalDateTime.now(),
+        repeatDuration=RepeatDuration.NoRepeat
     ),
     Reminder(
-        id = 16,
-        idOfReminder = 17,
-        title = "Проверка здоровья",
-        text = "Записаться на анализы в клинику.",
-        dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.NoRepeat,
-        dateOfDone = LocalDate.now().plusDays(17)
+        id=16,
+        idOfReminder=17,
+        title="Проверка здоровья",
+        text="Записаться на анализы в клинику.",
+        dt=LocalDateTime.now(),
+        repeatDuration=RepeatDuration.NoRepeat
     ),
     Reminder(
-        id = 17,
-        idOfReminder = 18,
-        title = "Подготовка к экзаменам",
-        text = "Начать подготовку к экзаменам через месяц.",
-        dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.NoRepeat,
-        dateOfDone = LocalDate.now().plusDays(18)
+        id=17,
+        idOfReminder=18,
+        title="Подготовка к экзаменам",
+        text="Начать подготовку к экзаменам через месяц.",
+        dt=LocalDateTime.now(),
+        repeatDuration=RepeatDuration.NoRepeat
     ),
     Reminder(
-        id = 18,
-        idOfReminder = 19,
-        title = "Участие в вебинаре",
-        text = "Зарегистрироваться на вебинар по программированию.",
-        dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.NoRepeat,
-        dateOfDone = LocalDate.now().plusDays(19)
+        id=18,
+        idOfReminder=19,
+        title="Участие в вебинаре",
+        text="Зарегистрироваться на вебинар по программированию.",
+        dt=LocalDateTime.now(),
+        repeatDuration=RepeatDuration.NoRepeat
     ),
     Reminder(
-        id = 19,
-        idOfReminder = 20,
-        title = "Планирование бюджета",
-        text = "Составить бюджет на следующий месяц.",
-        dt = LocalDateTime.now(),
-        repeatDuration = RepeatDuration.EveryWeek,
-        dateOfDone = LocalDate.now().plusDays(20)
+        id=19,
+        idOfReminder=20,
+        title="Планирование бюджета",
+        text="Составить бюджет на следующий месяц.",
+        dt=LocalDateTime.now(),
+        repeatDuration=RepeatDuration.EveryWeek
     )
 )
 
@@ -204,7 +184,7 @@ internal class App : Application(), KoinComponent {
         super.onCreate()
         startKoin {
             androidContext(this@App)
-            modules(MainPresentationModule, MainDataModule, MainDomainModule)
+            modules(MainPresentationModule, MainDataModule, MainDomainModule, MainMockModule)
         }
         CoroutineScope(Dispatchers.IO).launch {
             getKoin().get<ReminderLocalRepository>().insertAllReminders(reminders)

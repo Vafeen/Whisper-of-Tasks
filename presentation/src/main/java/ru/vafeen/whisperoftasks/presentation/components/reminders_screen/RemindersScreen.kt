@@ -22,15 +22,17 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.domain.utils.nullTime
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.DeleteReminders
-import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ReminderCard
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ReminderDataString
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
 import ru.vafeen.whisperoftasks.presentation.components.navigation.BottomBarNavigator
 import ru.vafeen.whisperoftasks.presentation.components.reminder_dialog.ReminderDialog
@@ -45,12 +47,15 @@ import java.time.LocalDateTime
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
+    val cor = rememberCoroutineScope()
+    val dateToday by remember {
+        mutableStateOf(LocalDate.now())
+    }
     val viewModel: RemindersScreenViewModel = koinViewModel()
     val reminders by viewModel.remindersFlow.collectAsState()
-    val remindersForDeleting by viewModel.remindersForDeletingFlow.collectAsState()
     val isDeletingInProcess by remember {
         derivedStateOf {
-            remindersForDeleting.isNotEmpty()
+            viewModel.remindersForDeleting.isNotEmpty()
         }
     }
 
@@ -64,25 +69,7 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
     val lastReminder: MutableState<Reminder?> = remember {
         mutableStateOf(null)
     }
-    if (isAddingReminder || isEditingReminder) {
-        if (isAddingReminder) {
-            lastReminder.value = Reminder(
-                title = "",
-                text = "",
-                dt = LocalDateTime.of(LocalDate.now(), nullTime),
-                idOfReminder = 0,
-                repeatDuration = RepeatDuration.NoRepeat
-            )
-        }
-        ReminderDialog(
-            newReminder = lastReminder as MutableState<Reminder>, // safety is above
-            onDismissRequest = {
-                isAddingReminder = false
-                isEditingReminder = false
-            }
-        )
 
-    }
 
     fun Modifier.combinedClickableForRemovingReminder(reminder: Reminder): Modifier =
         this.combinedClickable(
@@ -132,15 +119,39 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
         floatingActionButtonPosition = FabPosition.End
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+            if (isAddingReminder || isEditingReminder) {
+                if (isAddingReminder) {
+                    lastReminder.value = Reminder(
+                        title = "",
+                        text = "",
+                        dt = LocalDateTime.of(LocalDate.now(), nullTime),
+                        idOfReminder = 0,
+                        repeatDuration = RepeatDuration.NoRepeat
+                    )
+                }
+                ReminderDialog(
+                    newReminder = lastReminder as MutableState<Reminder>, // safety is above
+                    onDismissRequest = {
+                        isAddingReminder = false
+                        isEditingReminder = false
+                    }
+                )
+
+            }
             if (reminders.isNotEmpty()) {
                 LazyVerticalGrid(
                     modifier = Modifier.weight(1f),
                     columns = GridCells.Fixed(2)
                 ) {
                     items(items = reminders) {
-                        it.ReminderCard(
+                        it.ReminderDataString(
                             modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
-                            isItCandidateForDelete = remindersForDeleting.contains(it),
+                            viewModel = viewModel,
+                            dateOfThisPage = dateToday,
+                            isItCandidateForDelete = viewModel.remindersForDeleting.contains(it.idOfReminder),
+                            changeStatusOfDeleting = if (isDeletingInProcess) {
+                                { viewModel.changeStatusForDeleting(it) }
+                            } else null,
                         )
                     }
                 }
@@ -149,8 +160,9 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
                 fontSize = FontSize.big22,
             )
             if (isDeletingInProcess) DeleteReminders {
-                viewModel.removeEventsForReminderForDeleting()
-                viewModel.clearRemindersForDeleting()
+                cor.launch {
+                    viewModel.unsetEventsAndRemoveRemindersForRemoving()
+                }
             }
         }
     }
