@@ -30,6 +30,7 @@ import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
+import ru.vafeen.whisperoftasks.domain.utils.generateID
 import ru.vafeen.whisperoftasks.domain.utils.nullTime
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.DeleteReminders
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ReminderDataString
@@ -125,7 +126,7 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
                         title = "",
                         text = "",
                         dt = LocalDateTime.of(LocalDate.now(), nullTime),
-                        idOfReminder = 0,
+                        idOfReminder = reminders.map { it.idOfReminder }.generateID(),
                         repeatDuration = RepeatDuration.NoRepeat
                     )
                 }
