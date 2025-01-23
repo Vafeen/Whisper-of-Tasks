@@ -2,6 +2,7 @@ package ru.vafeen.whisperoftasks.presentation.common.components.ui_utils
 
 
 import android.widget.Toast
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -41,6 +42,8 @@ internal fun Reminder.ReminderDataString(
     val cor = rememberCoroutineScope()
     val context = LocalContext.current
     Card(
+        border = if (isItCandidateForDelete == true)
+            BorderStroke(width = 2.dp, color = Theme.colors.delete) else null,
         modifier = Modifier
             .fillMaxWidth()
             .padding(10.dp)
