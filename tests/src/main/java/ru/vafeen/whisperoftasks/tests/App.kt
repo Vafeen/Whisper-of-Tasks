@@ -1,17 +1,15 @@
 package ru.vafeen.whisperoftasks.tests
 
 import android.app.Application
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import android.app.NotificationManager
 import org.koin.android.ext.koin.androidContext
-import org.koin.core.component.KoinComponent
 import org.koin.core.context.startKoin
 import ru.vafeen.whisperoftasks.data.di.MainDataModule
-import ru.vafeen.whisperoftasks.domain.database.repository.ReminderLocalRepository
 import ru.vafeen.whisperoftasks.domain.di.MainDomainModule
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
+import ru.vafeen.whisperoftasks.domain.notification.NotificationChannel
+import ru.vafeen.whisperoftasks.domain.notification.createNotificationChannelKClass
 import ru.vafeen.whisperoftasks.presentation.common.di.MainPresentationModule
 import ru.vafeen.whisperoftasks.tests.mock.MainMockModule
 import java.time.LocalDateTime
@@ -179,15 +177,21 @@ var reminders = mutableListOf<Reminder>(
     )
 )
 
-internal class App : Application(), KoinComponent {
+internal class App : Application() {
     override fun onCreate() {
         super.onCreate()
         startKoin {
             androidContext(this@App)
             modules(MainPresentationModule, MainDataModule, MainDomainModule, MainMockModule)
         }
-        CoroutineScope(Dispatchers.IO).launch {
-            getKoin().get<ReminderLocalRepository>().insertAllReminders(reminders)
-        }
+        val notificationManager =
+            applicationContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(
+            NotificationChannel.Task.createNotificationChannelKClass()
+        )
+        notificationManager.createNotificationChannel(
+            NotificationChannel.ReminderRecovery.createNotificationChannelKClass()
+        )
     }
+
 }
