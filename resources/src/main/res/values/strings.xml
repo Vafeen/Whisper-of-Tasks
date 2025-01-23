@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Whisper of Tasks</string>
     <string name="add_reminder">Добавить напоминание</string>
     <string name="update_need">Приложение устарело, пора обновить!</string>
     <string name="view_releases">Обновление по клику на QR ниже</string>
