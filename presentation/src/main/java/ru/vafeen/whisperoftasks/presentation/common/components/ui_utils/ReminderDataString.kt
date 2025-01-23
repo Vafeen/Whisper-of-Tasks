@@ -1,7 +1,6 @@
 package ru.vafeen.whisperoftasks.presentation.common.components.ui_utils
 
 
-import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -13,14 +12,19 @@ import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
-import ru.vafeen.whisperoftasks.presentation.common.EventCreation
+import ru.vafeen.whisperoftasks.presentation.common.ReminderUpdater
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 import ru.vafeen.whisperoftasks.resources.R
@@ -28,17 +32,18 @@ import java.time.LocalDate
 
 @Composable
 internal fun Reminder.ReminderDataString(
-    context: Context,
-    dateOfThisPage: LocalDate,
+    dateOfThisPage: LocalDate? = null,
     modifier: Modifier = Modifier,
-    viewModel: EventCreation,
+    viewModel: ReminderUpdater,
     isItCandidateForDelete: Boolean?,
     changeStatusOfDeleting: (() -> Unit)?,
 ) {
+    val cor = rememberCoroutineScope()
+    val context = LocalContext.current
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 10.dp)
+            .padding(10.dp)
             .alpha(if (isItCandidateForDelete == true) 0.5f else 1.0f),
         colors = CardDefaults.cardColors(containerColor = Theme.colors.buttonColor),
         elevation = CardDefaults.cardElevation(defaultElevation = 10.dp),
@@ -50,24 +55,23 @@ internal fun Reminder.ReminderDataString(
         ) {
             Column {
                 Checkbox(
-                    checked = dateOfDone != null && (dateOfDone!! >= dateOfThisPage ||
+                    enabled = changeStatusOfDeleting == null,
+                    checked = dateOfDone != null && dateOfThisPage != null && (dateOfDone!! >= dateOfThisPage ||
                             this@ReminderDataString.repeatDuration == RepeatDuration.NoRepeat),
-                    onCheckedChange = if (isItCandidateForDelete != null && changeStatusOfDeleting != null) {
-                        {
-                            changeStatusOfDeleting()
-                        }
-                    } else {
-                        {
-                            viewModel.updateEvent(
+                    onCheckedChange = {
+                        cor.launch(Dispatchers.IO) {
+                            viewModel.insertReminder(
                                 copy(
                                     dateOfDone = if (this@ReminderDataString.repeatDuration != RepeatDuration.NoRepeat) {
                                         if (dateOfDone == dateOfThisPage) null else {
                                             if (dateOfDone != null)
-                                                Toast.makeText(
-                                                    context,
-                                                    "Помечено выполненным до сегодня",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
+                                                withContext(Dispatchers.Main) {
+                                                    Toast.makeText(
+                                                        context,
+                                                        "Помечено выполненным до сегодня",
+                                                        Toast.LENGTH_SHORT
+                                                    ).show()
+                                                }
                                             dateOfThisPage
                                         }
                                     } else {

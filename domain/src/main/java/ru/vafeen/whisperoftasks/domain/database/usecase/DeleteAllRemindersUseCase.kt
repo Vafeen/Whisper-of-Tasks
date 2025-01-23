@@ -4,7 +4,10 @@ import ru.vafeen.whisperoftasks.domain.database.repository.ReminderLocalReposito
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 
 
- class DeleteAllRemindersUseCase(private val reminderLocalRepository: ReminderLocalRepository) {
+class DeleteAllRemindersUseCase(private val reminderLocalRepository: ReminderLocalRepository) {
     suspend operator fun invoke(vararg reminder: Reminder) =
         reminderLocalRepository.deleteAllReminders(entity = reminder)
+
+    suspend operator fun invoke(reminders: List<Reminder>) =
+        reminderLocalRepository.deleteAllReminders(reminders)
 }

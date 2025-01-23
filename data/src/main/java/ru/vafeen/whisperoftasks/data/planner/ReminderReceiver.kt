@@ -9,12 +9,11 @@ import androidx.work.WorkManager
 import org.koin.core.component.KoinComponent
 
 class ReminderReceiver : BroadcastReceiver(), KoinComponent {
-
     override fun onReceive(context: Context, intent: Intent) {
         intent.getIntExtra(SchedulerExtra.ID_OF_REMINDER, -1).let { reminderId ->
             if (reminderId != -1) {
                 // Запускаем Worker с данными
-                WorkManager.getInstance(context).enqueue(
+                getKoin().get<WorkManager>().enqueue(
                     OneTimeWorkRequestBuilder<ReminderWorker>()
                         .setInputData(
                             Data.Builder()

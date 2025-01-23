@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Whisper of Tasks</string>
     <string name="add_reminder">Add reminder</string>
     <string name="update_need">The app is out of date, time to update!</string>
     <string name="view_releases">Updating by click on QR below</string>

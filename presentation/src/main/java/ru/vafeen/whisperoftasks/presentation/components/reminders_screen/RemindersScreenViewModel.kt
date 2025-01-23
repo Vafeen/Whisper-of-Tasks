@@ -1,48 +1,42 @@
 package ru.vafeen.whisperoftasks.presentation.components.reminders_screen
 
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.launch
+import ru.vafeen.whisperoftasks.domain.database.usecase.DeleteAllRemindersUseCase
 import ru.vafeen.whisperoftasks.domain.database.usecase.GetAllAsFlowRemindersUseCase
+import ru.vafeen.whisperoftasks.domain.database.usecase.InsertAllRemindersUseCase
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
-import ru.vafeen.whisperoftasks.domain.planner.usecase.RemoveEventUseCase
 import ru.vafeen.whisperoftasks.domain.planner.usecase.SetEventUseCase
-import ru.vafeen.whisperoftasks.presentation.common.EventCreation
+import ru.vafeen.whisperoftasks.domain.planner.usecase.UnsetEventUseCase
+import ru.vafeen.whisperoftasks.presentation.common.ReminderScheduler
+import ru.vafeen.whisperoftasks.presentation.common.ReminderUpdater
 
 internal class RemindersScreenViewModel(
     private val getAllAsFlowRemindersUseCase: GetAllAsFlowRemindersUseCase,
-    private val removeEventUseCase: RemoveEventUseCase,
+    private val deleteAllRemindersUseCase: DeleteAllRemindersUseCase,
+    private val insertAllRemindersUseCase: InsertAllRemindersUseCase,
+    private val unsetEventUseCase: UnsetEventUseCase,
     private val setEventUseCase: SetEventUseCase,
-) :
-    ViewModel(), EventCreation {
+) : ViewModel(), ReminderUpdater, ReminderScheduler {
     val remindersFlow =
         getAllAsFlowRemindersUseCase.invoke().stateIn(
             viewModelScope,
             SharingStarted.Lazily,
             emptyList()
         )
-    private val remindersForDeleting = mutableMapOf<Int, Reminder>()
-    private val _remindersForDeletingFlow = MutableStateFlow<Collection<Reminder>>(listOf())
-    val remindersForDeletingFlow = _remindersForDeletingFlow.asStateFlow()
-    private fun updateRemindersForDeletingFlow() {
-        viewModelScope.launch(Dispatchers.IO) {
-            _remindersForDeletingFlow.emit(remindersForDeleting.values.toList())
-        }
-    }
+
+    val remindersForDeleting = mutableStateMapOf<Int, Reminder>()
+
 
     fun setReminderAsCandidateForDeleting(reminder: Reminder) {
         remindersForDeleting[reminder.idOfReminder] = reminder
-        updateRemindersForDeletingFlow()
     }
 
     private fun unsetReminderAsCandidateForDeleting(reminder: Reminder) {
         remindersForDeleting.remove(reminder.idOfReminder)
-        updateRemindersForDeletingFlow()
     }
 
     private fun isThisReminderIsCandidateForDeleting(reminder: Reminder): Boolean =
@@ -50,7 +44,6 @@ internal class RemindersScreenViewModel(
 
     fun clearRemindersForDeleting() {
         remindersForDeleting.clear()
-        updateRemindersForDeletingFlow()
     }
 
     fun changeStatusForDeleting(reminder: Reminder) =
@@ -59,21 +52,30 @@ internal class RemindersScreenViewModel(
         else unsetReminderAsCandidateForDeleting(reminder)
 
 
-    fun removeEventsForReminderForDeleting() {
-        viewModelScope.launch {
-            removeEventUseCase.invoke(remindersForDeleting.values.toList())
-        }
-    }
+    fun removeEventsForReminderForDeleting() =
+        unsetEventUseCase.invoke(remindersForDeleting.values.toList())
 
-    override fun removeEvent(reminder: Reminder) {
-        viewModelScope.launch(Dispatchers.IO) {
-            removeEventUseCase.invoke(reminder)
-        }
-    }
 
-    override fun updateEvent(reminder: Reminder) {
-        viewModelScope.launch(Dispatchers.IO) {
-            setEventUseCase.invoke(reminder)
+    override suspend fun insertReminder(vararg reminder: Reminder) =
+        insertAllRemindersUseCase.invoke(reminder = reminder)
+
+
+    override suspend fun removeReminder(vararg reminder: Reminder) =
+        deleteAllRemindersUseCase.invoke(reminder = reminder)
+
+
+    override fun setEvent(vararg reminder: Reminder) =
+        reminder.forEach(action = { setEventUseCase.invoke(it) })
+
+
+    override fun unsetEvent(vararg reminder: Reminder) =
+        reminder.forEach(action = { unsetEventUseCase.invoke(it) })
+
+    suspend fun unsetEventsAndRemoveRemindersForRemoving() {
+        remindersForDeleting.values.toList().let {
+            unsetEventUseCase.invoke(it)
+            deleteAllRemindersUseCase.invoke(reminders = it)
         }
+        remindersForDeleting.clear()
     }
 }
