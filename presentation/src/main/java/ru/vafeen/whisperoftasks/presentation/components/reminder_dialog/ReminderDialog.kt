@@ -1,7 +1,6 @@
 package ru.vafeen.whisperoftasks.presentation.components.reminder_dialog
 
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -40,6 +39,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
@@ -57,22 +57,20 @@ import ru.vafeen.whisperoftasks.presentation.utils.suitableColor
 import ru.vafeen.whisperoftasks.resources.R
 
 @Composable
-internal fun ReminderDialog(
-    newReminder: MutableState<Reminder>,
-    onDismissRequest: () -> Unit
-) {
+internal fun ReminderDialog(newReminder: MutableState<Reminder>, onDismissRequest: () -> Unit) {
     val viewModel: ReminderDialogViewModel = koinViewModel()
     val startDateInPast by remember { mutableStateOf(DatePickerInfo.startDateInPast()) }
     val context = LocalContext.current
-
+    val cor = rememberCoroutineScope()
     if (newReminder.value.dt.toLocalDate() < startDateInPast) {
         newReminder.value = newReminder.value.copy(
             dt = newReminder.value.dt.withDate(localDate = startDateInPast)
         )
-        viewModel.updateReminder(newReminder.value)
+        LaunchedEffect(null) {
+            viewModel.insertReminder(newReminder.value)
+        }
     }
-    val lastReminder by remember { mutableStateOf(newReminder.value.toString()) }
-    val cor = rememberCoroutineScope()
+    val lastReminder by remember { mutableStateOf(newReminder.value) }
     val focusRequester1 = remember { FocusRequester() }
     val focusRequester2 = remember { FocusRequester() }
 
@@ -122,22 +120,18 @@ internal fun ReminderDialog(
             Spacer(modifier = Modifier.height(20.dp))
             Row(verticalAlignment = Alignment.CenterVertically) {
                 TextForThisTheme(
-                    text = stringResource(id = R.string.notification),
-                    fontSize = FontSize.medium19
+                    text = stringResource(id = R.string.notification), fontSize = FontSize.medium19
                 )
                 Checkbox(
-                    checked = newReminder.value.isNotificationNeeded,
-                    onCheckedChange = { checked ->
+                    checked = newReminder.value.isNotificationNeeded, onCheckedChange = { checked ->
                         selectedDateTime = selectedDateTime.withTime(
                             if (checked) localTimeNowHHMM().plusMinutes(5)
                             else nullTime
                         )
-                        Log.d("slt", selectedDateTime.toString())
-                        newReminder.value =
-                            newReminder.value.copy(
-                                isNotificationNeeded = !newReminder.value.isNotificationNeeded,
-                                dt = selectedDateTime
-                            )
+                        newReminder.value = newReminder.value.copy(
+                            isNotificationNeeded = !newReminder.value.isNotificationNeeded,
+                            dt = selectedDateTime
+                        )
 
                     }, colors = CheckboxDefaults.colors(
                         checkedColor = Theme.colors.oppositeTheme,
@@ -146,21 +140,19 @@ internal fun ReminderDialog(
                     )
                 )
             }
-            MyDateTimePicker(
-                isTimeNeeded = newReminder.value.isNotificationNeeded,
+            MyDateTimePicker(isTimeNeeded = newReminder.value.isNotificationNeeded,
                 initialDate = newReminder.value.dt.toLocalDate(),
                 onDateSelected = { date ->
                     selectedDateTime = selectedDateTime.withDate(date)
                     newReminder.value = newReminder.value.copy(dt = selectedDateTime)
                 },
-                initialTime = selectedDateTime.toLocalTime(),//newReminder.value.dt.toLocalTime(),
+                initialTime = selectedDateTime.toLocalTime(),
                 onTimeSelected = { time ->
                     selectedDateTime = selectedDateTime.withTime(time)
                     newReminder.value = newReminder.value.copy(
                         dt = selectedDateTime
                     )
-                }
-            )
+                })
             Box(modifier = Modifier
                 .padding(vertical = 5.dp)
                 .clickable {
@@ -176,7 +168,8 @@ internal fun ReminderDialog(
                         border = BorderStroke(
                             width = 2.dp, color = Theme.colors.oppositeTheme
                         )
-                    ), expanded = isChoosingDurationInProcess,
+                    ),
+                    expanded = isChoosingDurationInProcess,
                     onDismissRequest = { isChoosingDurationInProcess = false }) {
                     for (item in RepeatDuration.all) {
                         DropdownMenuItem(text = {
@@ -184,11 +177,10 @@ internal fun ReminderDialog(
                                 text = stringResource(id = item.resourceName),
                                 fontSize = FontSize.medium19
                             )
-                        },
-                            onClick = {
-                                newReminder.value = newReminder.value.copy(repeatDuration = item)
-                                isChoosingDurationInProcess = false
-                            })
+                        }, onClick = {
+                            newReminder.value = newReminder.value.copy(repeatDuration = item)
+                            isChoosingDurationInProcess = false
+                        })
                     }
                 }
             }
@@ -198,17 +190,15 @@ internal fun ReminderDialog(
                 colors = ButtonDefaults.buttonColors(
                     containerColor = Theme.colors.mainColor
                 ),
-                enabled = (lastReminder != newReminder.value.toString()) && newReminder.value.let { it.text.isNotEmpty() || it.title.isNotEmpty() },
+                enabled = (lastReminder != newReminder.value) && newReminder.value.let { it.text.isNotEmpty() || it.title.isNotEmpty() },
                 onClick = {
-                    viewModel.updateEvent(newReminder.value)
-                    onDismissRequest()
-//                    cor.launch(Dispatchers.IO) {
-//                        newReminder.value = newReminder.value.copy(
-//
-//                        )
-//                        eventCreation.updateEvent(newReminder.value)
-//                        onDismissRequest()
-//                    }
+                    cor.launch {
+                        viewModel.updateReminderAndEventDependsOnChangedFields(
+                            lastReminder,
+                            newReminder.value
+                        )
+                        onDismissRequest()
+                    }
                 },
             ) {
                 Text(
