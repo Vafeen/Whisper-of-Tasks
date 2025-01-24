@@ -11,16 +11,19 @@ import ru.vafeen.whisperoftasks.domain.database.usecase.InsertAllRemindersUseCas
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.planner.usecase.SetEventUseCase
 import ru.vafeen.whisperoftasks.domain.planner.usecase.UnsetEventUseCase
+import ru.vafeen.whisperoftasks.domain.shared_preferences.SettingsManager
 import ru.vafeen.whisperoftasks.presentation.common.ReminderScheduler
 import ru.vafeen.whisperoftasks.presentation.common.ReminderUpdater
 
 internal class RemindersScreenViewModel(
+    private val settingsManager: SettingsManager,
     private val getAllAsFlowRemindersUseCase: GetAllAsFlowRemindersUseCase,
     private val deleteAllRemindersUseCase: DeleteAllRemindersUseCase,
     private val insertAllRemindersUseCase: InsertAllRemindersUseCase,
     private val unsetEventUseCase: UnsetEventUseCase,
     private val setEventUseCase: SetEventUseCase,
 ) : ViewModel(), ReminderUpdater, ReminderScheduler {
+    val settings = settingsManager.settingsFlow
     val remindersFlow =
         getAllAsFlowRemindersUseCase.invoke().stateIn(
             viewModelScope,

@@ -51,10 +51,10 @@ import org.koin.androidx.compose.koinViewModel
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.domain.utils.getDateStringWithWeekOfDay
-import ru.vafeen.whisperoftasks.domain.utils.getMainColorForThisTheme
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.DeleteReminders
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ReminderDataString
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.customMainColorOrDefault
 import ru.vafeen.whisperoftasks.presentation.components.navigation.BottomBarNavigator
 import ru.vafeen.whisperoftasks.presentation.components.reminder_dialog.ReminderDialog
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
@@ -70,12 +70,9 @@ import java.time.LocalTime
 internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
     val viewModel: MainScreenViewModel = koinViewModel()
     val context = LocalContext.current
-    val defaultColor = Theme.colors.mainColor
     val dark = isSystemInDarkTheme()
     val settings by viewModel.settings.collectAsState()
-    val mainColor by remember {
-        mutableStateOf(settings.getMainColorForThisTheme(isDark = dark) ?: defaultColor)
-    }
+    val mainColor = settings.customMainColorOrDefault(dark)
 
     val cor = rememberCoroutineScope()
     var localTime by remember {
@@ -291,6 +288,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                     if (remindersForThisDay.isNotEmpty()) {
                         remindersForThisDay.forEach {
                             it.ReminderDataString(
+                                mainColor = mainColor,
                                 modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
                                 viewModel = viewModel,
                                 dateOfThisPage = dateOfThisPage,
@@ -311,6 +309,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                         )
                         lostReminders.forEach {
                             it.ReminderDataString(
+                                mainColor = mainColor,
                                 modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
                                 viewModel = viewModel,
                                 dateOfThisPage = dateOfThisPage,

@@ -22,7 +22,7 @@ import ru.vafeen.whisperoftasks.resources.R
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun DeleteReminders(
+internal fun DeleteReminders(
     onDeleteCallback: () -> Unit,
 ) {
     val textToHold = stringResource(id = R.string.hold)

@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -28,11 +29,13 @@ import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.presentation.common.ReminderUpdater
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
+import ru.vafeen.whisperoftasks.presentation.utils.suitableColor
 import ru.vafeen.whisperoftasks.resources.R
 import java.time.LocalDate
 
 @Composable
 internal fun Reminder.ReminderDataString(
+    mainColor: Color,
     dateOfThisPage: LocalDate? = null,
     modifier: Modifier = Modifier,
     viewModel: ReminderUpdater,
@@ -85,9 +88,9 @@ internal fun Reminder.ReminderDataString(
                         }
                     },
                     colors = CheckboxDefaults.colors(
-                        checkedColor = Theme.colors.oppositeTheme,
-                        uncheckedColor = Theme.colors.oppositeTheme,
-                        checkmarkColor = Theme.colors.singleTheme,
+                        checkedColor = mainColor,
+                        uncheckedColor = mainColor,
+                        checkmarkColor = mainColor.suitableColor(),
                     )
                 )
             }

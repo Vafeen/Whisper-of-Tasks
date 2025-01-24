@@ -5,6 +5,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +51,7 @@ import ru.vafeen.whisperoftasks.domain.utils.withDate
 import ru.vafeen.whisperoftasks.domain.utils.withTime
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.DefaultDialog
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.customMainColorOrDefault
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.time_picker.MyDateTimePicker
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
@@ -59,6 +62,8 @@ import ru.vafeen.whisperoftasks.resources.R
 @Composable
 internal fun ReminderDialog(newReminder: MutableState<Reminder>, onDismissRequest: () -> Unit) {
     val viewModel: ReminderDialogViewModel = koinViewModel()
+    val settings by viewModel.settings.collectAsState()
+    val mainColor = settings.customMainColorOrDefault(isSystemInDarkTheme())
     val startDateInPast by remember { mutableStateOf(DatePickerInfo.startDateInPast()) }
     val context = LocalContext.current
     val cor = rememberCoroutineScope()
@@ -79,9 +84,6 @@ internal fun ReminderDialog(newReminder: MutableState<Reminder>, onDismissReques
     }
     var isChoosingDurationInProcess by remember { mutableStateOf(false) }
 
-    LaunchedEffect(null) {
-        focusRequester1.requestFocus()
-    }
 
     val colors = OutlinedTextFieldDefaults.colors(
         focusedTextColor = Theme.colors.oppositeTheme,
@@ -134,9 +136,9 @@ internal fun ReminderDialog(newReminder: MutableState<Reminder>, onDismissReques
                         )
 
                     }, colors = CheckboxDefaults.colors(
-                        checkedColor = Theme.colors.oppositeTheme,
-                        uncheckedColor = Theme.colors.oppositeTheme,
-                        checkmarkColor = Theme.colors.singleTheme,
+                        checkedColor = mainColor,
+                        uncheckedColor = mainColor,
+                        checkmarkColor = mainColor.suitableColor(),
                     )
                 )
             }
@@ -188,7 +190,7 @@ internal fun ReminderDialog(newReminder: MutableState<Reminder>, onDismissReques
             Button(
                 shape = RoundedCornerShape(5.dp),
                 colors = ButtonDefaults.buttonColors(
-                    containerColor = Theme.colors.mainColor
+                    containerColor = mainColor
                 ),
                 enabled = (lastReminder != newReminder.value) && newReminder.value.let { it.text.isNotEmpty() || it.title.isNotEmpty() },
                 onClick = {
@@ -202,10 +204,13 @@ internal fun ReminderDialog(newReminder: MutableState<Reminder>, onDismissReques
                 },
             ) {
                 Text(
-                    color = Theme.colors.mainColor.suitableColor(),
+                    color = mainColor.suitableColor(),
                     text = viewModel.mainButtonText(context, selectedDateTime, newReminder.value)
                 )
             }
+        }
+        LaunchedEffect(null) {
+            focusRequester1.requestFocus()
         }
     }
 }
