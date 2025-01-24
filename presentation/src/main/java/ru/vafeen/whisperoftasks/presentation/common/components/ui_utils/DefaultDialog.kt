@@ -11,7 +11,7 @@ import androidx.compose.ui.window.Dialog
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 
 @Composable
-fun DefaultDialog(
+internal fun DefaultDialog(
     onDismissRequest: () -> Unit, content: @Composable (ColumnScope.(Dp) -> Unit),
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
