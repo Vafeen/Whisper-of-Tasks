@@ -7,9 +7,11 @@ import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FabPosition
@@ -35,6 +37,7 @@ import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.domain.utils.generateID
 import ru.vafeen.whisperoftasks.domain.utils.nullTime
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.DeleteReminders
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ListGridChangeView
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ReminderDataString
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.customMainColorOrDefault
@@ -65,7 +68,7 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
     }
     val settings by viewModel.settings.collectAsState()
     val dark = isSystemInDarkTheme()
-val mainColor = settings.customMainColorOrDefault(isSystemInDarkTheme())
+    val mainColor = settings.customMainColorOrDefault(isSystemInDarkTheme())
     var isAddingReminder by remember {
         mutableStateOf(false)
     }
@@ -126,6 +129,15 @@ val mainColor = settings.customMainColorOrDefault(isSystemInDarkTheme())
         floatingActionButtonPosition = FabPosition.End
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+            ListGridChangeView(isListChosen = settings.isListChosen, changeToList = {
+                viewModel.saveSettings {
+                    it.copy(isListChosen = true)
+                }
+            }, changeToGrid = {
+                viewModel.saveSettings {
+                    it.copy(isListChosen = false)
+                }
+            })
             if (isAddingReminder || isEditingReminder) {
                 if (isAddingReminder) {
                     lastReminder.value = Reminder(
@@ -146,21 +158,35 @@ val mainColor = settings.customMainColorOrDefault(isSystemInDarkTheme())
 
             }
             if (reminders.isNotEmpty()) {
-                LazyVerticalGrid(
-                    modifier = Modifier.weight(1f),
-                    columns = GridCells.Fixed(2)
-                ) {
-                    items(items = reminders) {
-                        it.ReminderDataString(
-                            mainColor = settings.customMainColorOrDefault(dark),
-                            modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
-                            viewModel = viewModel,
-                            dateOfThisPage = dateToday,
-                            isItCandidateForDelete = viewModel.remindersForDeleting.contains(it.idOfReminder),
-                            changeStatusOfDeleting = if (isDeletingInProcess) {
-                                { viewModel.changeStatusForDeleting(it) }
-                            } else null,
-                        )
+                if (settings.isListChosen) {
+                    LazyColumn {
+                        items(items = reminders) {
+                            it.ReminderDataString(
+                                mainColor = settings.customMainColorOrDefault(dark),
+                                modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
+                                viewModel = viewModel,
+                                dateOfThisPage = dateToday,
+                                isItCandidateForDelete = viewModel.remindersForDeleting.contains(it.idOfReminder),
+                                changeStatusOfDeleting = if (isDeletingInProcess) {
+                                    { viewModel.changeStatusForDeleting(it) }
+                                } else null,
+                            )
+                        }
+                    }
+                } else {
+                    LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+                        items(items = reminders) {
+                            it.ReminderDataString(
+                                mainColor = settings.customMainColorOrDefault(dark),
+                                modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
+                                viewModel = viewModel,
+                                dateOfThisPage = dateToday,
+                                isItCandidateForDelete = viewModel.remindersForDeleting.contains(it.idOfReminder),
+                                changeStatusOfDeleting = if (isDeletingInProcess) {
+                                    { viewModel.changeStatusForDeleting(it) }
+                                } else null,
+                            )
+                        }
                     }
                 }
             } else TextForThisTheme(

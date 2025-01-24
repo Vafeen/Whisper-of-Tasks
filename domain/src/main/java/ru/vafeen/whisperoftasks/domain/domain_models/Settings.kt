@@ -8,7 +8,8 @@ data class Settings(
     val lightThemeColor: Color? = null,
     val darkThemeColor: Color? = null,
     val lastDemonstratedVersion: Int? = null,
-    val releaseBody: String? = null
+    val releaseBody: String? = null,
+    val isListChosen: Boolean = true
 ) {
     fun toJsonString(): String = Gson().toJson(this)
 }

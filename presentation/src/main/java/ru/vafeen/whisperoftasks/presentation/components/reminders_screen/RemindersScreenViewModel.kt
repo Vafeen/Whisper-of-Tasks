@@ -9,6 +9,7 @@ import ru.vafeen.whisperoftasks.domain.database.usecase.DeleteAllRemindersUseCas
 import ru.vafeen.whisperoftasks.domain.database.usecase.GetAllAsFlowRemindersUseCase
 import ru.vafeen.whisperoftasks.domain.database.usecase.InsertAllRemindersUseCase
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
+import ru.vafeen.whisperoftasks.domain.domain_models.Settings
 import ru.vafeen.whisperoftasks.domain.planner.usecase.SetEventUseCase
 import ru.vafeen.whisperoftasks.domain.planner.usecase.UnsetEventUseCase
 import ru.vafeen.whisperoftasks.domain.shared_preferences.SettingsManager
@@ -32,7 +33,9 @@ internal class RemindersScreenViewModel(
         )
 
     val remindersForDeleting = mutableStateMapOf<Int, Reminder>()
-
+    fun saveSettings(saving: (Settings) -> Settings) {
+        settingsManager.save(saving = saving)
+    }
 
     fun setReminderAsCandidateForDeleting(reminder: Reminder) {
         remindersForDeleting[reminder.idOfReminder] = reminder
