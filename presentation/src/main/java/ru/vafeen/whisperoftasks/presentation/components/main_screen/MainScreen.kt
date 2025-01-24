@@ -52,6 +52,7 @@ import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.domain.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.DeleteReminders
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ListGridChangeView
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ReminderDataString
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.customMainColorOrDefault
@@ -196,6 +197,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                     onDismissRequest = { isEditingReminder = false }
                 )
             }
+
             LazyRow(
                 state = cardsWithDateState,
                 modifier = Modifier
@@ -244,6 +246,15 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                     }
                 }
             }
+            ListGridChangeView(isListChosen = settings.isListChosen, changeToList = {
+                viewModel.saveSettings {
+                    it.copy(isListChosen = true)
+                }
+            }, changeToGrid = {
+                viewModel.saveSettings {
+                    it.copy(isListChosen = false)
+                }
+            })
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier

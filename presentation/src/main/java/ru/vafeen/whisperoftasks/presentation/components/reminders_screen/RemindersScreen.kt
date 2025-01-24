@@ -35,6 +35,7 @@ import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.domain.utils.generateID
 import ru.vafeen.whisperoftasks.domain.utils.nullTime
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.DeleteReminders
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ListGridChangeView
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ReminderDataString
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.customMainColorOrDefault
@@ -65,7 +66,7 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
     }
     val settings by viewModel.settings.collectAsState()
     val dark = isSystemInDarkTheme()
-val mainColor = settings.customMainColorOrDefault(isSystemInDarkTheme())
+    val mainColor = settings.customMainColorOrDefault(isSystemInDarkTheme())
     var isAddingReminder by remember {
         mutableStateOf(false)
     }
@@ -126,6 +127,15 @@ val mainColor = settings.customMainColorOrDefault(isSystemInDarkTheme())
         floatingActionButtonPosition = FabPosition.End
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
+            ListGridChangeView(isListChosen = settings.isListChosen, changeToList = {
+                viewModel.saveSettings {
+                    it.copy(isListChosen = true)
+                }
+            }, changeToGrid = {
+                viewModel.saveSettings {
+                    it.copy(isListChosen = false)
+                }
+            })
             if (isAddingReminder || isEditingReminder) {
                 if (isAddingReminder) {
                     lastReminder.value = Reminder(

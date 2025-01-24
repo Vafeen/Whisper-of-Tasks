@@ -40,4 +40,6 @@
     <string name="code">Code</string>
     <string name="settings">Settings</string>
     <string name="delete_selected">Delete selected tasks</string>
+    <string name="view_reminders_as_list">View reminders as list</string>
+    <string name="view_reminders_as_grid">View reminders as grid</string>
 </resources>

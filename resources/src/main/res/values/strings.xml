@@ -41,4 +41,6 @@
     <string name="code">Код</string>
     <string name="settings">Настройки</string>
     <string name="delete_selected">Удалить выбранные задачи</string>
+    <string name="view_reminders_as_list">Расположить задачи списком</string>
+    <string name="view_reminders_as_grid">Расположить задачи сеткой</string>
 </resources>
