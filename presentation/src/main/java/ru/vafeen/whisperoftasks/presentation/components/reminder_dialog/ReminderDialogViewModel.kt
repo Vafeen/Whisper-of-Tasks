@@ -7,6 +7,7 @@ import ru.vafeen.whisperoftasks.domain.database.usecase.InsertAllRemindersUseCas
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.planner.usecase.SetEventUseCase
 import ru.vafeen.whisperoftasks.domain.planner.usecase.UnsetEventUseCase
+import ru.vafeen.whisperoftasks.domain.shared_preferences.SettingsManager
 import ru.vafeen.whisperoftasks.domain.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.domain.utils.getTimeDefaultStr
 import ru.vafeen.whisperoftasks.presentation.common.ReminderScheduler
@@ -19,7 +20,9 @@ internal class ReminderDialogViewModel(
     private val insertAllRemindersUseCase: InsertAllRemindersUseCase,
     private val unsetEventUseCase: UnsetEventUseCase,
     private val setEventUseCase: SetEventUseCase,
+    private val settingsManager: SettingsManager
 ) : ViewModel(), ReminderUpdater, ReminderScheduler {
+    val settings = settingsManager.settingsFlow
     fun mainButtonText(context: Context, selectedDateTime: LocalDateTime, reminder: Reminder) =
         if (reminder.isNotificationNeeded) "${
             context.getString(R.string.send)

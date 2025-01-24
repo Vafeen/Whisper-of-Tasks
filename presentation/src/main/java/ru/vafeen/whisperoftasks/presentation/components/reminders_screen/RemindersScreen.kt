@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -36,10 +37,12 @@ import ru.vafeen.whisperoftasks.domain.utils.nullTime
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.DeleteReminders
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ReminderDataString
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.customMainColorOrDefault
 import ru.vafeen.whisperoftasks.presentation.components.navigation.BottomBarNavigator
 import ru.vafeen.whisperoftasks.presentation.components.reminder_dialog.ReminderDialog
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
+import ru.vafeen.whisperoftasks.presentation.utils.suitableColor
 import ru.vafeen.whisperoftasks.resources.R
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -60,8 +63,9 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
             viewModel.remindersForDeleting.isNotEmpty()
         }
     }
-
-
+    val settings by viewModel.settings.collectAsState()
+    val dark = isSystemInDarkTheme()
+val mainColor = settings.customMainColorOrDefault(isSystemInDarkTheme())
     var isAddingReminder by remember {
         mutableStateOf(false)
     }
@@ -110,11 +114,12 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
         floatingActionButton = {
             FloatingActionButton(
                 onClick = { isAddingReminder = true },
-                containerColor = Theme.colors.mainColor
+                containerColor = mainColor
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(ru.vafeen.whisperoftasks.resources.R.string.add_reminder)
+                    contentDescription = stringResource(ru.vafeen.whisperoftasks.resources.R.string.add_reminder),
+                    tint = mainColor.suitableColor()
                 )
             }
         },
@@ -147,6 +152,7 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
                 ) {
                     items(items = reminders) {
                         it.ReminderDataString(
+                            mainColor = settings.customMainColorOrDefault(dark),
                             modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
                             viewModel = viewModel,
                             dateOfThisPage = dateToday,

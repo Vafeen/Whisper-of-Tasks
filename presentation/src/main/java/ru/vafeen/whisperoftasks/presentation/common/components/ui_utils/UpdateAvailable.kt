@@ -22,7 +22,7 @@ import ru.vafeen.whisperoftasks.presentation.ui.theme.updateAvailableColor
 import ru.vafeen.whisperoftasks.resources.R
 
 @Composable
-fun UpdateAvailable(
+internal fun UpdateAvailable(
     release: Release,
     onClick: () -> Unit
 ) {

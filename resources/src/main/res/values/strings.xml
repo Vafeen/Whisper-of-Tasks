@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name" translatable="false">Whisper if tasks</string>
     <string name="add_reminder">Добавить напоминание</string>
     <string name="update_need">Приложение устарело, пора обновить!</string>
     <string name="view_releases">Обновление по клику на QR ниже</string>
@@ -28,19 +29,16 @@
     <string name="reminders_restored">Будильники восстановлены</string>
     <string name="update_app">Обновить приложение</string>
     <string name="mb">МБ</string>
-<!--    <string name="interface_color">Цвет интерфейса</string>-->
-<!--    <string name="new_interface_color">Новый цвет интерфейса</string>-->
-<!--    <string name="cancel">Отмена</string>-->
-<!--    <string name="apply">Применить</string>-->
-<!--    <string name="contacts">Контакты</string>-->
+    <string name="interface_color">Цвет интерфейса</string>
+    <string name="new_interface_color">Новый цвет интерфейса</string>
+    <string name="cancel">Отмена</string>
+    <string name="apply">Применить</string>
+    <string name="contacts">Контакты</string>
 <!--    <string name="no_apps_to_send">Нет приложений для отправки</string>-->
-<!--    <string name="report_a_bug">Сообщить об ошибке</string>-->
-<!--    <string name="interface_str">Интерфейс</string>-->
-<!--    <string name="cats_on_ui">Котики на UI</string>-->
-<!--    <string name="weekend_cat">Котик выходного дня</string>-->
-<!--    <string name="cat_in_settings">Котик в настройках</string>-->
-<!--    <string name="version">версия</string>-->
-<!--    <string name="code">Код</string>-->
-<!--    <string name="settings">Настройки</string>-->
+    <string name="report_a_bug">Сообщить об ошибке</string>
+    <string name="interface_str">Интерфейс</string>
+    <string name="version">версия</string>
+    <string name="code">Код</string>
+    <string name="settings">Настройки</string>
     <string name="delete_selected">Удалить выбранные задачи</string>
 </resources>

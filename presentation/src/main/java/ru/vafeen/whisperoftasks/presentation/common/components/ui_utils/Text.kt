@@ -13,7 +13,7 @@ import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 
 
 @Composable
-fun TextForThisTheme(
+internal fun TextForThisTheme(
     text: String,
     modifier: Modifier = Modifier,
     fontSize: TextUnit = TextUnit.Unspecified,

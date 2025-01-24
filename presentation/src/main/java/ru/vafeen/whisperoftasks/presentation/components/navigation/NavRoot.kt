@@ -3,6 +3,7 @@ package ru.vafeen.whisperoftasks.presentation.components.navigation
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -22,6 +23,7 @@ import ru.vafeen.whisperoftasks.domain.domain_models.Release
 import ru.vafeen.whisperoftasks.presentation.common.components.bottom_bar.BottomBar
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.UpdateAvailable
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.UpdateProgress
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.customMainColorOrDefault
 import ru.vafeen.whisperoftasks.presentation.components.main_screen.MainScreen
 import ru.vafeen.whisperoftasks.presentation.components.reminders_screen.RemindersScreen
 import ru.vafeen.whisperoftasks.presentation.components.settings_screen.SettingsScreen
@@ -36,7 +38,7 @@ internal fun NavRoot(viewModel: MainActivityViewModel) {
     // Подписка на состояние процесса обновления и процента скачанных данных
     val isUpdateInProcess by viewModel.isUpdateInProcessFlow.collectAsState(false)
     val downloadedPercentage by viewModel.percentageFlow.collectAsState(0f)
-
+    val settings by viewModel.settings.collectAsState()
     var releaseForUpdates: Release? by remember { mutableStateOf(null) }
     // Проверка обновлений и отображение нижнего листа с информацией о версии
     LaunchedEffect(null) {
@@ -50,7 +52,7 @@ internal fun NavRoot(viewModel: MainActivityViewModel) {
             BottomBar(
                 selectedScreen = selectedScreen,
                 bottomBarNavigator = viewModel,
-                containerColor = Theme.colors.mainColor
+                containerColor = settings.customMainColorOrDefault(isSystemInDarkTheme())
             )
         }
     ) { innerPadding ->
@@ -68,7 +70,7 @@ internal fun NavRoot(viewModel: MainActivityViewModel) {
             ) {
                 composable<Screen.Main> { MainScreen(viewModel) }
                 composable<Screen.Reminders> { RemindersScreen(viewModel) }
-                composable<Screen.Settings> { SettingsScreen() }
+                composable<Screen.Settings> { SettingsScreen(viewModel) }
             }
             releaseForUpdates?.let {
                 UpdateAvailable(release = it) {
