@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -18,6 +17,7 @@ import ru.vafeen.whisperoftasks.resources.R
 
 @Composable
 fun ListGridChangeView(
+    modifier: Modifier = Modifier,
     isListChosen: Boolean,
     changeToList: () -> Unit, changeToGrid: () -> Unit
 ) {
@@ -27,7 +27,7 @@ fun ListGridChangeView(
             .padding(2.dp)
     val context = LocalContext.current
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier,
         horizontalArrangement = Arrangement.End
     ) {
         IconButton(onClick = changeToList) {
