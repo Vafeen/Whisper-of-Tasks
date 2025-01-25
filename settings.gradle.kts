@@ -16,8 +16,14 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        maven(url = "https://jitpack.io")
     }
 }
 
-rootProject.name = "Reminder"
+rootProject.name = "Whisper of Tasks"
 include(":app")
+include(":resources")
+include(":domain")
+include(":presentation")
+include(":data")
+include(":tests")
