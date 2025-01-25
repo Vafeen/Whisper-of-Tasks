@@ -1,11 +1,6 @@
-v1.2.0
-New vesion v1.2.0!
-
-What's new:
-
-- New UI
-- New Logic
+v1.2.1
+New vesion v1.2.1!
 
 What's fixed:
 
-- A lot of bugs
+- Remider recovery bug
