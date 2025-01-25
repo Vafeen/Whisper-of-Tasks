@@ -43,4 +43,5 @@
     <string name="delete_selected">Удалить выбранные задачи</string>
     <string name="view_reminders_as_list">Расположить задачи списком</string>
     <string name="view_reminders_as_grid">Расположить задачи сеткой</string>
+    <string name="primary_events">Основные события</string>
 </resources>
