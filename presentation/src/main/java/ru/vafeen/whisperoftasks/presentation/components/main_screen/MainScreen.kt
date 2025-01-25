@@ -3,6 +3,7 @@ package ru.vafeen.whisperoftasks.presentation.components.main_screen
 import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -15,9 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -25,11 +23,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -69,7 +64,7 @@ import ru.vafeen.whisperoftasks.resources.R
 import java.time.LocalDate
 import java.time.LocalTime
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
     val viewModel: MainScreenViewModel = koinViewModel()
@@ -127,6 +122,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
             DatePickerInfo.pageNumber
         }, initialPage = DatePickerInfo.countOfDaysInPast
     )
+
     BackHandler {
         when {
             isDeletingInProcess -> {
@@ -163,38 +159,23 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = Theme.colors.background,
-        topBar = {
-            TopAppBar(colors = TopAppBarColors(
-                containerColor = Theme.colors.singleTheme,
-                scrolledContainerColor = Theme.colors.singleTheme,
-                navigationIconContentColor = Theme.colors.oppositeTheme,
-                titleContentColor = Theme.colors.oppositeTheme,
-                actionIconContentColor = Theme.colors.singleTheme
-            ),
-                modifier = Modifier.fillMaxWidth(),
-                title = {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TextForThisTheme(
-                            text = stringResource(id = R.string.tasks_by_day),
-                            fontSize = FontSize.huge27
-                        )
-                    }
-
-                })
-
-        }
     ) { innerPadding ->
-        val x = innerPadding
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(top = innerPadding.calculateTopPadding())
         ) {
-            if (isEditingReminder) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextForThisTheme(
+                    text = stringResource(id = R.string.tasks_by_day),
+                    fontSize = FontSize.huge27
+                )
+            }
+            if (isEditingReminder && lastReminder.value != null) {
                 ReminderDialog(
                     newReminder = lastReminder as MutableState<Reminder>, // safety is above
                     onDismissRequest = { isEditingReminder = false }
@@ -249,20 +230,22 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                     }
                 }
             }
-            ListGridChangeView(isListChosen = settings.isListChosen, changeToList = {
-                viewModel.saveSettings {
-                    it.copy(isListChosen = true)
-                }
-            }, changeToGrid = {
-                viewModel.saveSettings {
-                    it.copy(isListChosen = false)
-                }
-            })
+            ListGridChangeView(modifier = Modifier.align(Alignment.End),
+                isListChosen = settings.isListChosen, changeToList = {
+                    viewModel.saveSettings {
+                        it.copy(isListChosen = true)
+                    }
+                }, changeToGrid = {
+                    viewModel.saveSettings {
+                        it.copy(isListChosen = false)
+                    }
+                })
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
                     .weight(10f)
             ) { page ->
+
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -271,17 +254,13 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                     val dateOfThisPage = startDateInPast.plusDays(page.toLong())
                     localDate =
                         startDateInPast.plusDays(pagerState.currentPage.toLong())
-                    val remindersForThisDay = reminders.filter {
-                        val d = it.dt.toLocalDate()
-                        d == dateOfThisPage ||
-                                it.repeatDuration == RepeatDuration.EveryDay && d <= dateOfThisPage ||
-                                it.repeatDuration == RepeatDuration.EveryWeek && it.dt.dayOfWeek == dateOfThisPage.dayOfWeek
+                    var primaryReminders by remember {
+                        mutableStateOf(listOf<Reminder>())
                     }
-                    val lostReminders = reminders.filter {
-                        it.repeatDuration == RepeatDuration.NoRepeat &&
-                                dateOfThisPage > it.dt.toLocalDate()
+                    var lostReminders by remember {
+                        mutableStateOf(listOf<Reminder>())
                     }
-                    if (remindersForThisDay.isEmpty() && lostReminders.isEmpty()) {
+                    if (primaryReminders.isEmpty() && lostReminders.isEmpty()) {
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -297,10 +276,37 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                             )
                         }
                     }
-
-                    if (settings.isListChosen) {
-                        LazyColumn {
-                            items(remindersForThisDay) {
+                    LaunchedEffect(reminders) {
+                        launch(Dispatchers.Main) {
+                            primaryReminders = reminders.filter {
+                                val d = it.dt.toLocalDate()
+                                d == dateOfThisPage ||
+                                        it.repeatDuration == RepeatDuration.EveryDay && d <= dateOfThisPage ||
+                                        it.repeatDuration == RepeatDuration.EveryWeek && it.dt.dayOfWeek == dateOfThisPage.dayOfWeek
+                            }
+                        }
+                        launch(Dispatchers.Main) {
+                            lostReminders = reminders.filter {
+                                it.repeatDuration == RepeatDuration.NoRepeat &&
+                                        dateOfThisPage > it.dt.toLocalDate()
+                            }
+                        }
+                    }
+                    LazyColumn {
+                        stickyHeader {
+                            if (primaryReminders.isNotEmpty()) {
+                                TextForThisTheme(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(Theme.colors.singleTheme),
+                                    textAlign = TextAlign.Center,
+                                    text = stringResource(id = R.string.primary_events),
+                                    fontSize = FontSize.medium19
+                                )
+                            }
+                        }
+                        if (settings.isListChosen) {
+                            items(primaryReminders) {
                                 it.ReminderDataString(
                                     mainColor = mainColor,
                                     modifier = Modifier.combinedClickableForRemovingReminder(
@@ -316,16 +322,59 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                     } else null,
                                 )
                             }
-                            item {
-                                if (lostReminders.isNotEmpty()) {
-                                    TextForThisTheme(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        textAlign = TextAlign.Center,
-                                        text = stringResource(id = R.string.past_events),
-                                        fontSize = FontSize.medium19
-                                    )
+                        } else {
+                            items(primaryReminders.chunked(2)) { reminders ->
+                                Row {
+                                    reminders.getOrNull(0)?.let {
+                                        it.ReminderDataString(
+                                            mainModifier = Modifier.weight(1f),
+                                            mainColor = mainColor,
+                                            modifier = Modifier.combinedClickableForRemovingReminder(
+                                                reminder = it
+                                            ),
+                                            viewModel = viewModel,
+                                            dateOfThisPage = dateOfThisPage,
+                                            isItCandidateForDelete = viewModel.remindersForDeleting.contains(
+                                                it.idOfReminder
+                                            ),
+                                            changeStatusOfDeleting = if (isDeletingInProcess) {
+                                                { viewModel.changeStatusForDeleting(it) }
+                                            } else null,
+                                        )
+                                    }
+                                    reminders.getOrNull(1)?.let {
+                                        it.ReminderDataString(
+                                            mainModifier = Modifier.weight(1f),
+                                            mainColor = mainColor,
+                                            modifier = Modifier.combinedClickableForRemovingReminder(
+                                                reminder = it
+                                            ),
+                                            viewModel = viewModel,
+                                            dateOfThisPage = dateOfThisPage,
+                                            isItCandidateForDelete = viewModel.remindersForDeleting.contains(
+                                                it.idOfReminder
+                                            ),
+                                            changeStatusOfDeleting = if (isDeletingInProcess) {
+                                                { viewModel.changeStatusForDeleting(it) }
+                                            } else null,
+                                        )
+                                    }
                                 }
                             }
+                        }
+                        stickyHeader {
+                            if (lostReminders.isNotEmpty()) {
+                                TextForThisTheme(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .background(Theme.colors.singleTheme),
+                                    textAlign = TextAlign.Center,
+                                    text = stringResource(id = R.string.past_events),
+                                    fontSize = FontSize.medium19
+                                )
+                            }
+                        }
+                        if (settings.isListChosen) {
                             items(lostReminders) {
                                 it.ReminderDataString(
                                     mainColor = mainColor,
@@ -342,50 +391,46 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                     } else null,
                                 )
                             }
-                        }
-                    } else {
-                        LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-                            items(remindersForThisDay) {
-                                it.ReminderDataString(
-                                    mainColor = mainColor,
-                                    modifier = Modifier.combinedClickableForRemovingReminder(
-                                        reminder = it
-                                    ),
-                                    viewModel = viewModel,
-                                    dateOfThisPage = dateOfThisPage,
-                                    isItCandidateForDelete = viewModel.remindersForDeleting.contains(
-                                        it.idOfReminder
-                                    ),
-                                    changeStatusOfDeleting = if (isDeletingInProcess) {
-                                        { viewModel.changeStatusForDeleting(it) }
-                                    } else null,
-                                )
-                            }
-                        }
-                        if (lostReminders.isNotEmpty()) {
-                            TextForThisTheme(
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center,
-                                text = stringResource(id = R.string.past_events),
-                                fontSize = FontSize.medium19
-                            )
-                        }
-                        LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-                            items(lostReminders) {
-                                it.ReminderDataString(
-                                    mainColor = mainColor,
-                                    modifier = Modifier.combinedClickableForRemovingReminder(
-                                        reminder = it
-                                    ),
-                                    viewModel = viewModel,
-                                    dateOfThisPage = dateOfThisPage,
-                                    isItCandidateForDelete = viewModel.remindersForDeleting.contains(
-                                        it.idOfReminder
-                                    ),
-                                    changeStatusOfDeleting = if (isDeletingInProcess) {
-                                        { viewModel.changeStatusForDeleting(it) }
-                                    } else null,
-                                )
+                        } else {
+                            items(lostReminders.chunked(2)) { reminders ->
+                                Row {
+                                    reminders.getOrNull(0)?.let {
+                                        it.ReminderDataString(
+                                            mainModifier = Modifier.weight(1f),
+                                            mainColor = mainColor,
+                                            modifier = Modifier
+                                                .combinedClickableForRemovingReminder(
+                                                    reminder = it
+                                                ),
+                                            viewModel = viewModel,
+                                            dateOfThisPage = dateOfThisPage,
+                                            isItCandidateForDelete = viewModel.remindersForDeleting.contains(
+                                                it.idOfReminder
+                                            ),
+                                            changeStatusOfDeleting = if (isDeletingInProcess) {
+                                                { viewModel.changeStatusForDeleting(it) }
+                                            } else null,
+                                        )
+                                    }
+                                    reminders.getOrNull(1)?.let {
+                                        it.ReminderDataString(
+                                            mainModifier = Modifier.weight(1f),
+                                            mainColor = mainColor,
+                                            modifier = Modifier
+                                                .combinedClickableForRemovingReminder(
+                                                    reminder = it
+                                                ),
+                                            viewModel = viewModel,
+                                            dateOfThisPage = dateOfThisPage,
+                                            isItCandidateForDelete = viewModel.remindersForDeleting.contains(
+                                                it.idOfReminder
+                                            ),
+                                            changeStatusOfDeleting = if (isDeletingInProcess) {
+                                                { viewModel.changeStatusForDeleting(it) }
+                                            } else null,
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
