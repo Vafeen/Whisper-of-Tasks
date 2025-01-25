@@ -6,6 +6,7 @@ import androidx.work.WorkerParameters
 import kotlinx.coroutines.flow.first
 import org.koin.core.component.KoinComponent
 import ru.vafeen.whisperoftasks.domain.database.usecase.GetAllAsFlowRemindersUseCase
+import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.domain.notification.usecase.NotificationReminderRecoveryUseCase
 import ru.vafeen.whisperoftasks.domain.planner.Scheduler
 import java.time.LocalDateTime
@@ -26,7 +27,7 @@ internal class ReminderRecoveryWorker(
         val dt = LocalDateTime.now()
         reminders.forEach { reminder ->
             scheduler.cancelWork(reminder)
-            if (reminder.dt >= dt) {
+            if (reminder.dt >= dt || reminder.repeatDuration != RepeatDuration.NoRepeat) {
                 scheduler.planWork(reminder)
             }
         }
