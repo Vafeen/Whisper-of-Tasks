@@ -35,6 +35,7 @@ import java.time.LocalDate
 
 @Composable
 internal fun Reminder.ReminderDataString(
+    mainModifier: Modifier = Modifier,
     mainColor: Color,
     dateOfThisPage: LocalDate? = null,
     modifier: Modifier = Modifier,
@@ -47,8 +48,7 @@ internal fun Reminder.ReminderDataString(
     Card(
         border = if (isItCandidateForDelete == true)
             BorderStroke(width = 2.dp, color = Theme.colors.delete) else null,
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = mainModifier
             .padding(10.dp)
             .alpha(if (isItCandidateForDelete == true) 0.5f else 1.0f),
         colors = CardDefaults.cardColors(containerColor = Theme.colors.buttonColor),
