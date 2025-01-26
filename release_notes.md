@@ -1,5 +1,5 @@
-v1.2.1
-New vesion v1.2.1!
+v1.2.2
+New version v1.2.2!
 
 What's fixed:
 
