@@ -44,5 +44,6 @@
     <string name="view_reminders_as_grid">View reminders as grid</string>
     <string name="primary_events">Primary events</string>
     <string name="import_or_export">Import/Export reminders</string>
+    <string name="general">General</string>
 
 </resources>
