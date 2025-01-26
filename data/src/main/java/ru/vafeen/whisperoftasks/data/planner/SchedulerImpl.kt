@@ -72,11 +72,9 @@ internal class SchedulerImpl(
         )
     }
 
-    private fun calculateInitialDelay(reminder: Reminder): Long {
-        val now = dtConverter.convertAB(LocalDateTime.now())
-        val reminderTime = dtConverter.convertAB(reminder.dt)
-        return if (reminderTime > now) reminderTime - now else 0L
-    }
+    private fun calculateInitialDelay(reminder: Reminder): Long =
+        dtConverter.convertAB(reminder.dt) - dtConverter.convertAB(LocalDateTime.now())
+
 
     override fun planWork(vararg reminder: Reminder) {
         reminder.forEach {
