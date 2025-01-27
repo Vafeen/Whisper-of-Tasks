@@ -28,8 +28,8 @@ private val baseDarkPalette = baseLightPalette.copy(
     mainColor = mainDarkColor,
     singleTheme = Color.Black,
     oppositeTheme = Color.White,
-    buttonColor = Color(0xFF5C5A5C),
-    background = Color(0xFF2D2D31)
+    buttonColor = Color(0xFF2D2D31),
+    background = Color.Black,
 )
 
 @Composable

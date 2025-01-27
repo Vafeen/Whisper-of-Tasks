@@ -1,7 +1,6 @@
 package ru.vafeen.whisperoftasks.presentation.components.settings_screen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -76,6 +75,7 @@ internal fun SettingsScreen(bottomBarNavigator: BottomBarNavigator) {
     BackHandler(onBack = bottomBarNavigator::back)
 
     Scaffold(
+        containerColor = Theme.colors.background,
         modifier = Modifier.fillMaxSize(),
         topBar = {
             TopAppBar(colors = TopAppBarColors(
@@ -101,8 +101,7 @@ internal fun SettingsScreen(bottomBarNavigator: BottomBarNavigator) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
-                .background(Theme.colors.singleTheme)
+                .padding(top = innerPadding.calculateTopPadding())
         ) {
 
             if (colorIsEditable) ColorPickerDialog(context = context,
