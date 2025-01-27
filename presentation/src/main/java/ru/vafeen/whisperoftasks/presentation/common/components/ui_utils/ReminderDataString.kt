@@ -102,7 +102,8 @@ internal fun Reminder.ReminderDataString(
 
                 TextForThisTheme(
                     text = stringResource(id = this@ReminderDataString.repeatDuration.resourceName),
-                    fontSize = FontSize.medium19
+                    fontSize = FontSize.medium19,
+                    maxLines = 10
                 )
                 if (this@ReminderDataString.isNotificationNeeded) {
                     Row {
