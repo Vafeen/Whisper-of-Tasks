@@ -1,6 +1,7 @@
-v1.2.2
-New version v1.2.2!
+v1.2.3
+New version v1.2.3!
 
 What's fixed:
 
-- Remider recovery bug
+- Layout bugs
+- ColorScheme bugs
