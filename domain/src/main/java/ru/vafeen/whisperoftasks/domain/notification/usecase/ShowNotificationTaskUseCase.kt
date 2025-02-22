@@ -8,12 +8,11 @@ class ShowNotificationTaskUseCase(
     private val notificationBuilder: NotificationBuilder,
     private val notificationService: NotificationService
 ) {
-
-    operator fun invoke(reminder: Reminder) {
+    operator fun invoke(title: String, text: String) {
         notificationService.showNotification(
             notificationBuilder.createNotificationReminder(
-                title = reminder.title,
-                text = reminder.text
+                title,
+                text
             )
         )
     }

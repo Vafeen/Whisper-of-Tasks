@@ -64,4 +64,6 @@ dependencies {
     api(libs.koin.androidx.compose)
     //alwan (color-picker)
     api(libs.alwan)
+    //permissions
+    api(libs.accompanist.permissions)
 }

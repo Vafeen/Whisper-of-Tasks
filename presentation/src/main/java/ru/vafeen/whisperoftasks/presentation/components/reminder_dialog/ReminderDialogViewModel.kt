@@ -11,7 +11,6 @@ import ru.vafeen.whisperoftasks.domain.shared_preferences.SettingsManager
 import ru.vafeen.whisperoftasks.domain.utils.getDateStringWithWeekOfDay
 import ru.vafeen.whisperoftasks.domain.utils.getTimeDefaultStr
 import ru.vafeen.whisperoftasks.presentation.common.ReminderScheduler
-import ru.vafeen.whisperoftasks.presentation.common.ReminderUpdater
 import ru.vafeen.whisperoftasks.resources.R
 import java.time.LocalDateTime
 
@@ -21,7 +20,7 @@ internal class ReminderDialogViewModel(
     private val unsetEventUseCase: UnsetEventUseCase,
     private val setEventUseCase: SetEventUseCase,
     private val settingsManager: SettingsManager
-) : ViewModel(), ReminderUpdater, ReminderScheduler {
+) : ViewModel(), ReminderScheduler {
     val settings = settingsManager.settingsFlow
     fun mainButtonText(context: Context, selectedDateTime: LocalDateTime, reminder: Reminder) =
         if (reminder.isNotificationNeeded) "${
@@ -31,20 +30,14 @@ internal class ReminderDialogViewModel(
         } ${selectedDateTime.hour.getTimeDefaultStr()}:${selectedDateTime.minute.getTimeDefaultStr()}"
         else context.getString(R.string.add_to_list)
 
-    override suspend fun insertReminder(vararg reminder: Reminder) =
-        insertAllRemindersUseCase.invoke(reminder = reminder)
-
-
-    override suspend fun removeReminder(vararg reminder: Reminder) =
-        deleteAllRemindersUseCase.invoke(reminder = reminder)
-
-
-    override fun setEvent(vararg reminder: Reminder) {
-        reminder.forEach(action = { setEventUseCase.invoke(it) })
+    override suspend fun setEvent(reminder: Reminder) {
+        insertAllRemindersUseCase.invoke(reminder)
+        setEventUseCase.invoke(listOf(reminder))
     }
 
-    override fun unsetEvent(vararg reminder: Reminder) {
-        reminder.forEach(action = { unsetEventUseCase.invoke(it) })
+    override suspend fun unsetEvent(reminder: Reminder) {
+        deleteAllRemindersUseCase.invoke(reminder)
+        unsetEventUseCase.invoke(listOf(reminder))
     }
 
     suspend fun updateReminderAndEventDependsOnChangedFields(
@@ -56,7 +49,7 @@ internal class ReminderDialogViewModel(
                     lastReminder.isNotificationNeeded != newReminder.isNotificationNeeded ||
                     lastReminder.repeatDuration != newReminder.repeatDuration) && newReminder.isNotificationNeeded
         ) {
-            setEventUseCase.invoke(newReminder)
+            setEventUseCase.invoke(listOf(newReminder))
         }
         insertAllRemindersUseCase.invoke(newReminder)
     }

@@ -14,16 +14,14 @@ import ru.vafeen.whisperoftasks.domain.planner.usecase.SetEventUseCase
 import ru.vafeen.whisperoftasks.domain.planner.usecase.UnsetEventUseCase
 import ru.vafeen.whisperoftasks.domain.shared_preferences.SettingsManager
 import ru.vafeen.whisperoftasks.presentation.common.ReminderScheduler
-import ru.vafeen.whisperoftasks.presentation.common.ReminderUpdater
 
 internal class RemindersScreenViewModel(
     private val settingsManager: SettingsManager,
     private val getAllAsFlowRemindersUseCase: GetAllAsFlowRemindersUseCase,
     private val deleteAllRemindersUseCase: DeleteAllRemindersUseCase,
-    private val insertAllRemindersUseCase: InsertAllRemindersUseCase,
     private val unsetEventUseCase: UnsetEventUseCase,
     private val setEventUseCase: SetEventUseCase,
-) : ViewModel(), ReminderUpdater, ReminderScheduler {
+) : ViewModel(), ReminderScheduler {
     val settings = settingsManager.settingsFlow
     val remindersFlow =
         getAllAsFlowRemindersUseCase.invoke().stateIn(
@@ -62,20 +60,10 @@ internal class RemindersScreenViewModel(
         unsetEventUseCase.invoke(remindersForDeleting.values.toList())
 
 
-    override suspend fun insertReminder(vararg reminder: Reminder) =
-        insertAllRemindersUseCase.invoke(reminder = reminder)
+    override suspend fun setEvent(reminder: Reminder) = setEventUseCase.invoke(reminder)
 
 
-    override suspend fun removeReminder(vararg reminder: Reminder) =
-        deleteAllRemindersUseCase.invoke(reminder = reminder)
-
-
-    override fun setEvent(vararg reminder: Reminder) =
-        reminder.forEach(action = { setEventUseCase.invoke(it) })
-
-
-    override fun unsetEvent(vararg reminder: Reminder) =
-        reminder.forEach(action = { unsetEventUseCase.invoke(it) })
+    override suspend fun unsetEvent(reminder: Reminder) = unsetEventUseCase.invoke(reminder)
 
     suspend fun unsetEventsAndRemoveRemindersForRemoving() {
         remindersForDeleting.values.toList().let {

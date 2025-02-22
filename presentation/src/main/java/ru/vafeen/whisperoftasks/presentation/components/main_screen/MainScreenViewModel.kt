@@ -11,7 +11,6 @@ import ru.vafeen.whisperoftasks.domain.planner.usecase.SetEventUseCase
 import ru.vafeen.whisperoftasks.domain.planner.usecase.UnsetEventUseCase
 import ru.vafeen.whisperoftasks.domain.shared_preferences.SettingsManager
 import ru.vafeen.whisperoftasks.presentation.common.ReminderScheduler
-import ru.vafeen.whisperoftasks.presentation.common.ReminderUpdater
 import java.time.LocalDate
 
 
@@ -22,7 +21,7 @@ internal class MainScreenViewModel(
     private val settingsManager: SettingsManager,
     private val unsetEventUseCase: UnsetEventUseCase,
     private val setEventUseCase: SetEventUseCase,
-) : ViewModel(), ReminderUpdater, ReminderScheduler {
+) : ViewModel(), ReminderScheduler {
     val settings = settingsManager.settingsFlow
     val todayDate: LocalDate = LocalDate.now()
     val remindersFlow = getAllAsFlowRemindersUseCase.invoke()
@@ -52,27 +51,21 @@ internal class MainScreenViewModel(
         remindersForDeleting.clear()
     }
 
-    override suspend fun insertReminder(vararg reminder: Reminder) =
-        insertAllRemindersUseCase.invoke(reminder = reminder)
-
-
-    override suspend fun removeReminder(vararg reminder: Reminder) =
-        deleteAllRemindersUseCase.invoke(reminder = reminder)
-
-
-    override fun setEvent(vararg reminder: Reminder) {
-        reminder.forEach(action = { setEventUseCase.invoke(it) })
-    }
-
-    override fun unsetEvent(vararg reminder: Reminder) {
-        reminder.forEach(action = { unsetEventUseCase.invoke(it) })
-    }
-
     suspend fun unsetEventsAndRemoveRemindersForRemoving() {
         remindersForDeleting.values.toList().let {
             unsetEventUseCase.invoke(it)
             deleteAllRemindersUseCase.invoke(reminders = it)
         }
         remindersForDeleting.clear()
+    }
+
+    override suspend fun setEvent(reminder: Reminder) {
+        insertAllRemindersUseCase.invoke(reminder)
+        setEventUseCase.invoke(reminder)
+    }
+
+    override suspend fun unsetEvent(reminder: Reminder) {
+        deleteAllRemindersUseCase.invoke(reminder)
+        unsetEventUseCase.invoke(reminder)
     }
 }

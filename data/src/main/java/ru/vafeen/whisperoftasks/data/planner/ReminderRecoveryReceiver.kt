@@ -3,13 +3,16 @@ package ru.vafeen.whisperoftasks.data.planner
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import androidx.work.OneTimeWorkRequestBuilder
-import androidx.work.WorkManager
 import org.koin.core.component.KoinComponent
+import ru.vafeen.whisperoftasks.domain.notification.usecase.NotificationReminderRecoveryUseCase
+import ru.vafeen.whisperoftasks.domain.planner.usecase.MakeRecoveryNeededUseCase
 
 class ReminderRecoveryReceiver : BroadcastReceiver(), KoinComponent {
-    private val workManager: WorkManager = getKoin().get()
+    private val notificationReminderRecoveryUseCase: NotificationReminderRecoveryUseCase =
+        getKoin().get()
+    private val makeRecoveryNeededUseCase: MakeRecoveryNeededUseCase = getKoin().get()
     override fun onReceive(context: Context?, intent: Intent?) {
-        workManager.enqueue(OneTimeWorkRequestBuilder<ReminderRecoveryWorker>().build())
+        notificationReminderRecoveryUseCase.invoke()
+        makeRecoveryNeededUseCase.invoke()
     }
 }

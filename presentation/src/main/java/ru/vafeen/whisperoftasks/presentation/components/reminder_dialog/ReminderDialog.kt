@@ -72,7 +72,7 @@ internal fun ReminderDialog(newReminder: MutableState<Reminder>, onDismissReques
             dt = newReminder.value.dt.withDate(localDate = startDateInPast)
         )
         LaunchedEffect(null) {
-            viewModel.insertReminder(newReminder.value)
+            viewModel.setEvent(newReminder.value)
         }
     }
     val lastReminder by remember { mutableStateOf(newReminder.value) }

@@ -1,5 +1,6 @@
 package ru.vafeen.whisperoftasks.presentation.components.navigation
 
+import android.os.Build
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -21,10 +22,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.vafeen.whisperoftasks.domain.domain_models.Release
 import ru.vafeen.whisperoftasks.presentation.common.components.bottom_bar.BottomBar
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.RequestNotificationPermission
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.UpdateAvailable
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.UpdateProgress
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.customMainColorOrDefault
 import ru.vafeen.whisperoftasks.presentation.components.main_screen.MainScreen
+import ru.vafeen.whisperoftasks.presentation.components.reminder_recovery_bottomsheet.ReminderRecoveryBottomSheet
 import ru.vafeen.whisperoftasks.presentation.components.reminders_screen.RemindersScreen
 import ru.vafeen.whisperoftasks.presentation.components.settings_screen.SettingsScreen
 import ru.vafeen.whisperoftasks.presentation.main.MainActivityViewModel
@@ -40,6 +43,16 @@ internal fun NavRoot(viewModel: MainActivityViewModel) {
     val downloadedPercentage by viewModel.percentageFlow.collectAsState(0f)
     val settings by viewModel.settings.collectAsState()
     var releaseForUpdates: Release? by remember { mutableStateOf(null) }
+    var isRecoveryNeededShown by remember { mutableStateOf(false) }
+
+    if (settings.isRecoveryNeeded && !isRecoveryNeededShown) {
+        ReminderRecoveryBottomSheet {
+            isRecoveryNeededShown = true
+        }
+    }
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        RequestNotificationPermission()
+    }
     // Проверка обновлений и отображение нижнего листа с информацией о версии
     LaunchedEffect(null) {
         releaseForUpdates = viewModel.checkUpdates()
