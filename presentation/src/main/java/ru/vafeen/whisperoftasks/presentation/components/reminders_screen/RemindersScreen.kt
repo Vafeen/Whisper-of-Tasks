@@ -157,44 +157,46 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
                 )
 
             }
-            if (reminders.isNotEmpty()) {
-                if (settings.isListChosen) {
-                    LazyColumn {
-                        items(items = reminders) {
-                            it.ReminderDataString(
-                                mainColor = settings.customMainColorOrDefault(dark),
-                                modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
-                                viewModel = viewModel,
-                                dateOfThisPage = dateToday,
-                                isItCandidateForDelete = viewModel.remindersForDeleting.contains(it.idOfReminder),
-                                changeStatusOfDeleting = if (isDeletingInProcess) {
-                                    { viewModel.changeStatusForDeleting(it) }
-                                } else null,
-                            )
+            Column(modifier = Modifier.weight(1f)) {
+                if (reminders.isNotEmpty()) {
+                    if (settings.isListChosen) {
+                        LazyColumn {
+                            items(items = reminders) {
+                                it.ReminderDataString(
+                                    mainColor = settings.customMainColorOrDefault(dark),
+                                    modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
+                                    viewModel = viewModel,
+                                    dateOfThisPage = dateToday,
+                                    isItCandidateForDelete = viewModel.remindersForDeleting.contains(it.idOfReminder),
+                                    changeStatusOfDeleting = if (isDeletingInProcess) {
+                                        { viewModel.changeStatusForDeleting(it) }
+                                    } else null,
+                                )
+                            }
+                        }
+                    } else {
+                        LazyVerticalGrid(columns = GridCells.Fixed(2)) {
+                            items(items = reminders) {
+                                it.ReminderDataString(
+                                    mainColor = settings.customMainColorOrDefault(dark),
+                                    modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
+                                    viewModel = viewModel,
+                                    dateOfThisPage = dateToday,
+                                    isItCandidateForDelete = viewModel.remindersForDeleting.contains(it.idOfReminder),
+                                    changeStatusOfDeleting = if (isDeletingInProcess) {
+                                        { viewModel.changeStatusForDeleting(it) }
+                                    } else null,
+                                )
+                            }
                         }
                     }
-                } else {
-                    LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-                        items(items = reminders) {
-                            it.ReminderDataString(
-                                mainColor = settings.customMainColorOrDefault(dark),
-                                modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
-                                viewModel = viewModel,
-                                dateOfThisPage = dateToday,
-                                isItCandidateForDelete = viewModel.remindersForDeleting.contains(it.idOfReminder),
-                                changeStatusOfDeleting = if (isDeletingInProcess) {
-                                    { viewModel.changeStatusForDeleting(it) }
-                                } else null,
-                            )
-                        }
-                    }
-                }
-            } else TextForThisTheme(
-                text = stringResource(id = R.string.you_havent_added_any_events_yet),
-                fontSize = FontSize.big22,
-                maxLines = 10,
-                modifier = Modifier.align(Alignment.CenterHorizontally)
-            )
+                } else TextForThisTheme(
+                    text = stringResource(id = R.string.you_havent_added_any_events_yet),
+                    fontSize = FontSize.big22,
+                    maxLines = 10,
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            }
             if (isDeletingInProcess) DeleteReminders {
                 cor.launch {
                     viewModel.unsetEventsAndRemoveRemindersForRemoving()
