@@ -69,9 +69,8 @@ import java.time.LocalTime
 internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
     val viewModel: MainScreenViewModel = koinViewModel()
     val context = LocalContext.current
-    val dark = isSystemInDarkTheme()
     val settings by viewModel.settings.collectAsState()
-    val mainColor = settings.customMainColorOrDefault(dark)
+    val mainColor = settings.customMainColorOrDefault()
 
     val cor = rememberCoroutineScope()
     var localTime by remember {

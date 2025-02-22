@@ -44,4 +44,6 @@
     <string name="view_reminders_as_list">Расположить задачи списком</string>
     <string name="view_reminders_as_grid">Расположить задачи сеткой</string>
     <string name="primary_events">Основные события</string>
+    <string name="recovery_reminders">Восстановить события</string>
+    <string name="recovery_reminders_needed">Устройство было перезагружено, требуется обновление событий</string>
 </resources>

@@ -65,7 +65,7 @@ internal fun NavRoot(viewModel: MainActivityViewModel) {
             BottomBar(
                 selectedScreen = selectedScreen,
                 bottomBarNavigator = viewModel,
-                containerColor = settings.customMainColorOrDefault(isSystemInDarkTheme())
+                containerColor = settings.customMainColorOrDefault()
             )
         }
     ) { innerPadding ->

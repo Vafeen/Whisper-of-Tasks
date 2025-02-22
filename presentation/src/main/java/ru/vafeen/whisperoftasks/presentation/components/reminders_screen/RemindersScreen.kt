@@ -67,8 +67,7 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
         }
     }
     val settings by viewModel.settings.collectAsState()
-    val dark = isSystemInDarkTheme()
-    val mainColor = settings.customMainColorOrDefault(isSystemInDarkTheme())
+    val mainColor = settings.customMainColorOrDefault()
     var isAddingReminder by remember {
         mutableStateOf(false)
     }
@@ -163,7 +162,7 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
                         LazyColumn {
                             items(items = reminders) {
                                 it.ReminderDataString(
-                                    mainColor = settings.customMainColorOrDefault(dark),
+                                    mainColor = settings.customMainColorOrDefault(),
                                     modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
                                     viewModel = viewModel,
                                     dateOfThisPage = dateToday,
@@ -178,7 +177,7 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
                         LazyVerticalGrid(columns = GridCells.Fixed(2)) {
                             items(items = reminders) {
                                 it.ReminderDataString(
-                                    mainColor = settings.customMainColorOrDefault(dark),
+                                    mainColor = settings.customMainColorOrDefault(),
                                     modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
                                     viewModel = viewModel,
                                     dateOfThisPage = dateToday,
