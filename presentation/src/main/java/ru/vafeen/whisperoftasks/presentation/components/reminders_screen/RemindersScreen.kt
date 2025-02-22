@@ -4,9 +4,12 @@ import android.annotation.SuppressLint
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,7 +32,11 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
@@ -49,6 +56,7 @@ import ru.vafeen.whisperoftasks.presentation.utils.suitableColor
 import ru.vafeen.whisperoftasks.resources.R
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.math.roundToInt
 
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -98,7 +106,7 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
             }
         )
 
-
+    var fabState by remember { mutableStateOf(IntOffset(0, 0)) }
 
     BackHandler {
         when {
@@ -115,35 +123,54 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
         containerColor = Theme.colors.background, modifier = Modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(
+                modifier = Modifier
+                    .offset {
+                        fabState
+                    }
+                    .pointerInput(Unit) {
+                        detectDragGestures(
+                            onDrag = { change, dragAmount ->
+                                fabState = fabState.copy(
+                                    x = fabState.x + dragAmount.x.roundToInt(),
+                                    y = fabState.y + dragAmount.y.roundToInt()
+                                )
+                            })
+                    },
                 onClick = { isAddingReminder = true },
-                containerColor = mainColor
+                containerColor = mainColor,
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(ru.vafeen.whisperoftasks.resources.R.string.add_reminder),
-                    tint = mainColor.suitableColor()
+                    contentDescription =
+                    stringResource(R.string.add_reminder),
+                    tint =
+                    mainColor.suitableColor(),
                 )
             }
         },
         floatingActionButtonPosition = FabPosition.End
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            ListGridChangeView(isListChosen = settings.isListChosen, changeToList = {
-                viewModel.saveSettings {
-                    it.copy(isListChosen = true)
-                }
-            }, changeToGrid = {
-                viewModel.saveSettings {
-                    it.copy(isListChosen = false)
-                }
-            })
+            ListGridChangeView(
+                isListChosen = settings.isListChosen,
+                changeToList = {
+                    viewModel.saveSettings {
+                        it.copy(isListChosen = true)
+                    }
+                },
+                changeToGrid = {
+                    viewModel.saveSettings {
+                        it.copy(isListChosen = false)
+                    }
+                })
             if (isAddingReminder || isEditingReminder) {
                 if (isAddingReminder) {
                     lastReminder.value = Reminder(
                         title = "",
                         text = "",
                         dt = LocalDateTime.of(LocalDate.now(), nullTime),
-                        idOfReminder = reminders.map { it.idOfReminder }.generateID(),
+                        idOfReminder = reminders.map { it.idOfReminder }
+                            .generateID(),
                         repeatDuration = RepeatDuration.NoRepeat
                     )
                 }
@@ -163,10 +190,14 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
                             items(items = reminders) {
                                 it.ReminderDataString(
                                     mainColor = settings.customMainColorOrDefault(),
-                                    modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
+                                    modifier = Modifier.combinedClickableForRemovingReminder(
+                                        reminder = it
+                                    ),
                                     viewModel = viewModel,
                                     dateOfThisPage = dateToday,
-                                    isItCandidateForDelete = viewModel.remindersForDeleting.contains(it.idOfReminder),
+                                    isItCandidateForDelete = viewModel.remindersForDeleting.contains(
+                                        it.idOfReminder
+                                    ),
                                     changeStatusOfDeleting = if (isDeletingInProcess) {
                                         { viewModel.changeStatusForDeleting(it) }
                                     } else null,
@@ -178,10 +209,14 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
                             items(items = reminders) {
                                 it.ReminderDataString(
                                     mainColor = settings.customMainColorOrDefault(),
-                                    modifier = Modifier.combinedClickableForRemovingReminder(reminder = it),
+                                    modifier = Modifier.combinedClickableForRemovingReminder(
+                                        reminder = it
+                                    ),
                                     viewModel = viewModel,
                                     dateOfThisPage = dateToday,
-                                    isItCandidateForDelete = viewModel.remindersForDeleting.contains(it.idOfReminder),
+                                    isItCandidateForDelete = viewModel.remindersForDeleting.contains(
+                                        it.idOfReminder
+                                    ),
                                     changeStatusOfDeleting = if (isDeletingInProcess) {
                                         { viewModel.changeStatusForDeleting(it) }
                                     } else null,
