@@ -63,7 +63,7 @@ import ru.vafeen.whisperoftasks.resources.R
 internal fun ReminderDialog(newReminder: MutableState<Reminder>, onDismissRequest: () -> Unit) {
     val viewModel: ReminderDialogViewModel = koinViewModel()
     val settings by viewModel.settings.collectAsState()
-    val mainColor = settings.customMainColorOrDefault(isSystemInDarkTheme())
+    val mainColor = settings.customMainColorOrDefault()
     val startDateInPast by remember { mutableStateOf(DatePickerInfo.startDateInPast()) }
     val context = LocalContext.current
     val cor = rememberCoroutineScope()

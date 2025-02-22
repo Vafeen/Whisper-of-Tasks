@@ -33,7 +33,7 @@
     <string name="cancel">Cancel</string>
     <string name="apply">Apply</string>
     <string name="contacts">Contacts</string>
-<!--    <string name="no_apps_to_send">No apps to send</string>-->
+    <!--    <string name="no_apps_to_send">No apps to send</string>-->
     <string name="report_a_bug">Report a bug</string>
     <string name="interface_str">Interface</string>
     <string name="version">version</string>
@@ -43,4 +43,6 @@
     <string name="view_reminders_as_list">View reminders as list</string>
     <string name="view_reminders_as_grid">View reminders as grid</string>
     <string name="primary_events">Primary events</string>
+    <string name="recovery_reminders">Recovery reminders</string>
+    <string name="recovery_reminders_needed">The device has rebooted and requires an event update</string>
 </resources>
