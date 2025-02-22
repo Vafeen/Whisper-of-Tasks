@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
-import ru.vafeen.whisperoftasks.presentation.common.ReminderUpdater
+import ru.vafeen.whisperoftasks.presentation.common.ReminderScheduler
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 import ru.vafeen.whisperoftasks.presentation.utils.suitableColor
@@ -39,7 +39,7 @@ internal fun Reminder.ReminderDataString(
     mainColor: Color,
     dateOfThisPage: LocalDate? = null,
     modifier: Modifier = Modifier,
-    viewModel: ReminderUpdater,
+    viewModel: ReminderScheduler,
     isItCandidateForDelete: Boolean?,
     changeStatusOfDeleting: (() -> Unit)?,
 ) {
@@ -66,7 +66,7 @@ internal fun Reminder.ReminderDataString(
                             this@ReminderDataString.repeatDuration == RepeatDuration.NoRepeat),
                     onCheckedChange = {
                         cor.launch(Dispatchers.IO) {
-                            viewModel.insertReminder(
+                            viewModel.setEvent(
                                 copy(
                                     dateOfDone = if (this@ReminderDataString.repeatDuration != RepeatDuration.NoRepeat) {
                                         if (dateOfDone == dateOfThisPage) null else {

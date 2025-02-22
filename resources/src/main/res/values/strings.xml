@@ -26,7 +26,7 @@
     <string name="tasks_list">Список задач</string>
     <string name="hold">Удерживайте</string>
     <string name="reminder_recovery">Восстановление будильников</string>
-    <string name="reminders_restored">Будильники восстановлены</string>
+    <string name="reminders_restored">Зайдите в приложение для восстановления будильников</string>
     <string name="update_app">Обновить приложение</string>
     <string name="mb">МБ</string>
     <string name="interface_color">Цвет интерфейса</string>

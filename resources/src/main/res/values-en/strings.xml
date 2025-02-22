@@ -25,7 +25,7 @@
     <string name="tasks_list">Tasks list</string>
     <string name="hold">Hold</string>
     <string name="reminder_recovery">Reminder recovery</string>
-    <string name="reminders_restored">Reminders have restored</string>
+    <string name="reminders_restored">Check the app to restore reminders</string>
     <string name="update_app">Update application</string>
     <string name="mb">MB</string>
     <string name="interface_color">Interface color</string>

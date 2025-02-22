@@ -64,14 +64,6 @@ internal fun SettingsScreen(bottomBarNavigator: BottomBarNavigator) {
         mutableStateOf(false)
     }
 
-    val checkBoxColors = CheckboxDefaults.colors(
-        checkedColor = Theme.colors.oppositeTheme,
-        checkmarkColor = Theme.colors.singleTheme,
-        uncheckedColor = Theme.colors.oppositeTheme
-    )
-
-
-
     BackHandler(onBack = bottomBarNavigator::back)
 
     Scaffold(

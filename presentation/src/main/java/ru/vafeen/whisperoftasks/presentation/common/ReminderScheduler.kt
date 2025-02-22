@@ -4,7 +4,7 @@ import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 
 
 internal interface ReminderScheduler {
-    fun setEvent(vararg reminder: Reminder)
+    suspend fun setEvent(reminder: Reminder)
 
-    fun unsetEvent(vararg reminder: Reminder)
+    suspend fun unsetEvent(reminder: Reminder)
 }
