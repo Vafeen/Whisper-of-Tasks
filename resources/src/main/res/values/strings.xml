@@ -40,10 +40,14 @@
     <string name="version">версия</string>
     <string name="code">Код</string>
     <string name="settings">Настройки</string>
-    <string name="delete_selected">Удалить выбранные задачи</string>
+    <string name="delete_selected">Удалить</string>
+    <string name="mv_to_trash_selected">Переместить в корзину</string>
     <string name="view_reminders_as_list">Расположить задачи списком</string>
     <string name="view_reminders_as_grid">Расположить задачи сеткой</string>
     <string name="primary_events">Основные события</string>
     <string name="recovery_reminders">Восстановить события</string>
     <string name="recovery_reminders_needed">Устройство было перезагружено, требуется обновление событий</string>
+    <string name="trash_bin">Корзина</string>
+    <string name="restore_reminders">Восстановить</string>
+    <string name="go_back">Выйти назад</string>
 </resources>

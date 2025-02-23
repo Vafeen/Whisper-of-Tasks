@@ -12,7 +12,7 @@ import ru.vafeen.whisperoftasks.data.local_database.entity.ReminderEntity
 @Database(
     exportSchema = true,
     entities = [ReminderEntity::class],
-    version = 1
+    version = 2
 )
 @TypeConverters(
     DateTimeConverter::class,

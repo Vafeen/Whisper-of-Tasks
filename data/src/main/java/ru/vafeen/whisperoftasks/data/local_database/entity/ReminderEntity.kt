@@ -16,4 +16,5 @@ internal data class ReminderEntity(
     val repeatDuration: RepeatDuration,
     val dateOfDone: LocalDate? = null,
     val isNotificationNeeded: Boolean = false,
+    val isDeleted: Boolean = false,
 )

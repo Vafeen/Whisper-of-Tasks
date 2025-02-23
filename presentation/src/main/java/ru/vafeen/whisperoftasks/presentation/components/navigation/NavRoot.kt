@@ -30,6 +30,7 @@ import ru.vafeen.whisperoftasks.presentation.components.main_screen.MainScreen
 import ru.vafeen.whisperoftasks.presentation.components.reminder_recovery_bottomsheet.ReminderRecoveryBottomSheet
 import ru.vafeen.whisperoftasks.presentation.components.reminders_screen.RemindersScreen
 import ru.vafeen.whisperoftasks.presentation.components.settings_screen.SettingsScreen
+import ru.vafeen.whisperoftasks.presentation.components.trash_bin_screen.TrashBinScreen
 import ru.vafeen.whisperoftasks.presentation.main.MainActivityViewModel
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 
@@ -62,11 +63,13 @@ internal fun NavRoot(viewModel: MainActivityViewModel) {
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
             val selectedScreen by viewModel.currentScreen.collectAsState()
-            BottomBar(
-                selectedScreen = selectedScreen,
-                bottomBarNavigator = viewModel,
-                containerColor = settings.customMainColorOrDefault()
-            )
+            if (selectedScreen != Screen.TrashBin) {
+                BottomBar(
+                    selectedScreen = selectedScreen,
+                    bottomBarNavigator = viewModel,
+                    containerColor = settings.customMainColorOrDefault()
+                )
+            }
         }
     ) { innerPadding ->
         Column(
@@ -84,6 +87,7 @@ internal fun NavRoot(viewModel: MainActivityViewModel) {
                 composable<Screen.Main> { MainScreen(viewModel) }
                 composable<Screen.Reminders> { RemindersScreen(viewModel) }
                 composable<Screen.Settings> { SettingsScreen(viewModel) }
+                composable<Screen.TrashBin> { TrashBinScreen(viewModel) }
             }
             releaseForUpdates?.let {
                 UpdateAvailable(release = it) {
