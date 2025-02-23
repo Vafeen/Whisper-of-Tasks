@@ -13,7 +13,8 @@ internal class ReminderConverter : TwoWayBaseConverter<ReminderEntity, Reminder>
         dt = a.dt,
         repeatDuration = a.repeatDuration,
         dateOfDone = a.dateOfDone,
-        isNotificationNeeded = a.isNotificationNeeded
+        isNotificationNeeded = a.isNotificationNeeded,
+        isDeleted = a.isDeleted,
     )
 
     override fun convertBA(b: Reminder): ReminderEntity = ReminderEntity(
@@ -24,6 +25,7 @@ internal class ReminderConverter : TwoWayBaseConverter<ReminderEntity, Reminder>
         dt = b.dt,
         repeatDuration = b.repeatDuration,
         dateOfDone = b.dateOfDone,
-        isNotificationNeeded = b.isNotificationNeeded
+        isNotificationNeeded = b.isNotificationNeeded,
+        isDeleted = b.isDeleted
     )
 }

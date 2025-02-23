@@ -21,12 +21,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
-import ru.vafeen.whisperoftasks.presentation.common.ReminderScheduler
+import ru.vafeen.whisperoftasks.domain.utils.launchMain
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 import ru.vafeen.whisperoftasks.presentation.utils.suitableColor
@@ -39,9 +36,9 @@ internal fun Reminder.ReminderDataString(
     mainColor: Color,
     dateOfThisPage: LocalDate? = null,
     modifier: Modifier = Modifier,
-    viewModel: ReminderScheduler,
+    setEvent: ((Reminder) -> Unit)? = null,
     isItCandidateForDelete: Boolean?,
-    changeStatusOfDeleting: (() -> Unit)?,
+    changeStatusOfSelecting: (() -> Unit)?,
 ) {
     val cor = rememberCoroutineScope()
     val context = LocalContext.current
@@ -60,18 +57,18 @@ internal fun Reminder.ReminderDataString(
                 .padding(5.dp)
         ) {
             Column {
-                Checkbox(
-                    enabled = changeStatusOfDeleting == null,
-                    checked = dateOfDone != null && dateOfThisPage != null && (dateOfDone!! >= dateOfThisPage ||
-                            this@ReminderDataString.repeatDuration == RepeatDuration.NoRepeat),
-                    onCheckedChange = {
-                        cor.launch(Dispatchers.IO) {
-                            viewModel.setEvent(
+                if (setEvent != null) {
+                    Checkbox(
+                        enabled = changeStatusOfSelecting == null,
+                        checked = dateOfDone != null && dateOfThisPage != null && (dateOfDone!! >= dateOfThisPage ||
+                                this@ReminderDataString.repeatDuration == RepeatDuration.NoRepeat),
+                        onCheckedChange = {
+                            setEvent(
                                 copy(
                                     dateOfDone = if (this@ReminderDataString.repeatDuration != RepeatDuration.NoRepeat) {
                                         if (dateOfDone == dateOfThisPage) null else {
                                             if (dateOfDone != null)
-                                                withContext(Dispatchers.Main) {
+                                                cor.launchMain {
                                                     Toast.makeText(
                                                         context,
                                                         "Помечено выполненным до сегодня",
@@ -85,14 +82,14 @@ internal fun Reminder.ReminderDataString(
                                     }
                                 )
                             )
-                        }
-                    },
-                    colors = CheckboxDefaults.colors(
-                        checkedColor = mainColor,
-                        uncheckedColor = mainColor,
-                        checkmarkColor = mainColor.suitableColor(),
+                        },
+                        colors = CheckboxDefaults.colors(
+                            checkedColor = mainColor,
+                            uncheckedColor = mainColor,
+                            checkmarkColor = mainColor.suitableColor(),
+                        )
                     )
-                )
+                }
             }
             Column(
                 modifier = Modifier.weight(1f)

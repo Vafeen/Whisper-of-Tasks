@@ -1,12 +1,12 @@
 package ru.vafeen.whisperoftasks.presentation.components.main_screen
 
 import android.app.Activity
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -49,7 +49,7 @@ import org.koin.androidx.compose.koinViewModel
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.domain.utils.getDateStringWithWeekOfDay
-import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.DeleteReminders
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TODOWithReminders
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ListGridChangeView
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ReminderDataString
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
@@ -88,7 +88,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
         }
     val isDeletingInProcess by remember {
         derivedStateOf {
-            viewModel.remindersForDeleting.isNotEmpty()
+            viewModel.selectedReminders.isNotEmpty()
         }
     }
 
@@ -104,9 +104,9 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
             },
             onLongClick = {
                 if (!isDeletingInProcess) {
-                    viewModel.setReminderAsCandidateForDeleting(reminder)
+                    viewModel.changeStatusForDeleting(reminder)
                 } else {
-                    viewModel.clearRemindersForDeleting()
+                    viewModel.clearSelectedReminders()
                 }
             }
         )
@@ -125,7 +125,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
     BackHandler {
         when {
             isDeletingInProcess -> {
-                viewModel.clearRemindersForDeleting()
+                viewModel.clearSelectedReminders()
             }
 
             !isDeletingInProcess && pagerState.currentPage == DatePickerInfo.countOfDaysInPast -> {
@@ -305,18 +305,18 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                             }
                         }
                         if (settings.isListChosen) {
-                            items(primaryReminders) {
+                            items(primaryReminders) { it ->
                                 it.ReminderDataString(
                                     mainColor = mainColor,
                                     modifier = Modifier.combinedClickableForRemovingReminder(
                                         reminder = it
                                     ),
-                                    viewModel = viewModel,
+                                    setEvent = viewModel::setEvent,
                                     dateOfThisPage = dateOfThisPage,
-                                    isItCandidateForDelete = viewModel.remindersForDeleting.contains(
+                                    isItCandidateForDelete = viewModel.selectedReminders.contains(
                                         it.idOfReminder
                                     ),
-                                    changeStatusOfDeleting = if (isDeletingInProcess) {
+                                    changeStatusOfSelecting = if (isDeletingInProcess) {
                                         { viewModel.changeStatusForDeleting(it) }
                                     } else null,
                                 )
@@ -331,12 +331,12 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                             modifier = Modifier.combinedClickableForRemovingReminder(
                                                 reminder = it
                                             ),
-                                            viewModel = viewModel,
+                                            setEvent = viewModel::setEvent,
                                             dateOfThisPage = dateOfThisPage,
-                                            isItCandidateForDelete = viewModel.remindersForDeleting.contains(
+                                            isItCandidateForDelete = viewModel.selectedReminders.contains(
                                                 it.idOfReminder
                                             ),
-                                            changeStatusOfDeleting = if (isDeletingInProcess) {
+                                            changeStatusOfSelecting = if (isDeletingInProcess) {
                                                 { viewModel.changeStatusForDeleting(it) }
                                             } else null,
                                         )
@@ -348,12 +348,12 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                             modifier = Modifier.combinedClickableForRemovingReminder(
                                                 reminder = it
                                             ),
-                                            viewModel = viewModel,
+                                            setEvent = viewModel::setEvent,
                                             dateOfThisPage = dateOfThisPage,
-                                            isItCandidateForDelete = viewModel.remindersForDeleting.contains(
+                                            isItCandidateForDelete = viewModel.selectedReminders.contains(
                                                 it.idOfReminder
                                             ),
-                                            changeStatusOfDeleting = if (isDeletingInProcess) {
+                                            changeStatusOfSelecting = if (isDeletingInProcess) {
                                                 { viewModel.changeStatusForDeleting(it) }
                                             } else null,
                                         )
@@ -380,12 +380,12 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                     modifier = Modifier.combinedClickableForRemovingReminder(
                                         reminder = it
                                     ),
-                                    viewModel = viewModel,
+                                    setEvent = viewModel::setEvent,
                                     dateOfThisPage = dateOfThisPage,
-                                    isItCandidateForDelete = viewModel.remindersForDeleting.contains(
+                                    isItCandidateForDelete = viewModel.selectedReminders.contains(
                                         it.idOfReminder
                                     ),
-                                    changeStatusOfDeleting = if (isDeletingInProcess) {
+                                    changeStatusOfSelecting = if (isDeletingInProcess) {
                                         { viewModel.changeStatusForDeleting(it) }
                                     } else null,
                                 )
@@ -401,12 +401,12 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                                 .combinedClickableForRemovingReminder(
                                                     reminder = it
                                                 ),
-                                            viewModel = viewModel,
+                                            setEvent = viewModel::setEvent,
                                             dateOfThisPage = dateOfThisPage,
-                                            isItCandidateForDelete = viewModel.remindersForDeleting.contains(
+                                            isItCandidateForDelete = viewModel.selectedReminders.contains(
                                                 it.idOfReminder
                                             ),
-                                            changeStatusOfDeleting = if (isDeletingInProcess) {
+                                            changeStatusOfSelecting = if (isDeletingInProcess) {
                                                 { viewModel.changeStatusForDeleting(it) }
                                             } else null,
                                         )
@@ -419,12 +419,12 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                                 .combinedClickableForRemovingReminder(
                                                     reminder = it
                                                 ),
-                                            viewModel = viewModel,
+                                            setEvent = viewModel::setEvent,
                                             dateOfThisPage = dateOfThisPage,
-                                            isItCandidateForDelete = viewModel.remindersForDeleting.contains(
+                                            isItCandidateForDelete = viewModel.selectedReminders.contains(
                                                 it.idOfReminder
                                             ),
-                                            changeStatusOfDeleting = if (isDeletingInProcess) {
+                                            changeStatusOfSelecting = if (isDeletingInProcess) {
                                                 { viewModel.changeStatusForDeleting(it) }
                                             } else null,
                                         )
@@ -435,10 +435,11 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                     }
                 }
             }
-            if (isDeletingInProcess) DeleteReminders {
-                cor.launch {
-                    viewModel.unsetEventsAndRemoveRemindersForRemoving()
-                }
+            if (isDeletingInProcess) TODOWithReminders(
+                actionName = R.string.mv_to_trash_selected,
+                actionColor = Theme.colors.delete
+            ) {
+                viewModel.moveToTrashSelectedReminders()
             }
         }
     }

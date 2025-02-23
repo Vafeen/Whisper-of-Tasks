@@ -5,8 +5,6 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
@@ -33,17 +31,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.domain.utils.generateID
 import ru.vafeen.whisperoftasks.domain.utils.nullTime
-import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.DeleteReminders
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TODOWithReminders
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ListGridChangeView
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ReminderDataString
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
@@ -68,10 +64,10 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
         mutableStateOf(LocalDate.now())
     }
     val viewModel: RemindersScreenViewModel = koinViewModel()
-    val reminders by viewModel.remindersFlow.collectAsState()
+    val reminders by viewModel.remindersFlow.collectAsState(listOf())
     val isDeletingInProcess by remember {
         derivedStateOf {
-            viewModel.remindersForDeleting.isNotEmpty()
+            viewModel.selectedReminders.isNotEmpty()
         }
     }
     val settings by viewModel.settings.collectAsState()
@@ -99,9 +95,9 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
             },
             onLongClick = {
                 if (!isDeletingInProcess) {
-                    viewModel.setReminderAsCandidateForDeleting(reminder)
+                    viewModel.changeStatusForDeleting(reminder)
                 } else {
-                    viewModel.clearRemindersForDeleting()
+                    viewModel.clearSelectedReminders()
                 }
             }
         )
@@ -111,7 +107,7 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
     BackHandler {
         when {
             isDeletingInProcess -> {
-                viewModel.clearRemindersForDeleting()
+                viewModel.clearSelectedReminders()
             }
 
             else -> {
@@ -193,12 +189,12 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
                                     modifier = Modifier.combinedClickableForRemovingReminder(
                                         reminder = it
                                     ),
-                                    viewModel = viewModel,
+                                    setEvent = viewModel::setEvent,
                                     dateOfThisPage = dateToday,
-                                    isItCandidateForDelete = viewModel.remindersForDeleting.contains(
+                                    isItCandidateForDelete = viewModel.selectedReminders.contains(
                                         it.idOfReminder
                                     ),
-                                    changeStatusOfDeleting = if (isDeletingInProcess) {
+                                    changeStatusOfSelecting = if (isDeletingInProcess) {
                                         { viewModel.changeStatusForDeleting(it) }
                                     } else null,
                                 )
@@ -212,12 +208,12 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
                                     modifier = Modifier.combinedClickableForRemovingReminder(
                                         reminder = it
                                     ),
-                                    viewModel = viewModel,
+                                    setEvent = viewModel::setEvent,
                                     dateOfThisPage = dateToday,
-                                    isItCandidateForDelete = viewModel.remindersForDeleting.contains(
+                                    isItCandidateForDelete = viewModel.selectedReminders.contains(
                                         it.idOfReminder
                                     ),
-                                    changeStatusOfDeleting = if (isDeletingInProcess) {
+                                    changeStatusOfSelecting = if (isDeletingInProcess) {
                                         { viewModel.changeStatusForDeleting(it) }
                                     } else null,
                                 )
@@ -231,10 +227,11 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
                     modifier = Modifier.align(Alignment.CenterHorizontally)
                 )
             }
-            if (isDeletingInProcess) DeleteReminders {
-                cor.launch {
-                    viewModel.unsetEventsAndRemoveRemindersForRemoving()
-                }
+            if (isDeletingInProcess) TODOWithReminders(
+                actionName = R.string.mv_to_trash_selected,
+                actionColor = Theme.colors.delete
+            ) {
+                viewModel.moveToTrashSelectedReminders()
             }
         }
     }

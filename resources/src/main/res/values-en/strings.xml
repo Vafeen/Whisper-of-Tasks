@@ -39,11 +39,14 @@
     <string name="version">version</string>
     <string name="code">Code</string>
     <string name="settings">Settings</string>
-    <string name="delete_selected">Delete selected tasks</string>
+    <string name="delete_selected">Delete</string>
+    <string name="mv_to_trash_selected">Move to trash</string>
     <string name="view_reminders_as_list">View reminders as list</string>
     <string name="view_reminders_as_grid">View reminders as grid</string>
     <string name="primary_events">Primary events</string>
     <string name="recovery_reminders">Recovery reminders</string>
     <string name="recovery_reminders_needed">The device has rebooted and requires an event update</string>
     <string name="trash_bin">Trash bin</string>
+    <string name="restore_reminders">Restore</string>
+    <string name="go_back">Go back</string>
 </resources>
