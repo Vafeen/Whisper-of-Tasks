@@ -46,4 +46,5 @@
     <string name="primary_events">Основные события</string>
     <string name="recovery_reminders">Восстановить события</string>
     <string name="recovery_reminders_needed">Устройство было перезагружено, требуется обновление событий</string>
+    <string name="trash_bin">Корзина</string>
 </resources>

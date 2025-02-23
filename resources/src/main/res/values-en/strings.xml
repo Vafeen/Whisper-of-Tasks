@@ -45,4 +45,5 @@
     <string name="primary_events">Primary events</string>
     <string name="recovery_reminders">Recovery reminders</string>
     <string name="recovery_reminders_needed">The device has rebooted and requires an event update</string>
+    <string name="trash_bin">Trash bin</string>
 </resources>
