@@ -42,6 +42,7 @@ import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.CardOfSe
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ColorPickerDialog
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
 import ru.vafeen.whisperoftasks.presentation.components.navigation.BottomBarNavigator
+import ru.vafeen.whisperoftasks.presentation.components.navigation.Screen
 import ru.vafeen.whisperoftasks.presentation.ui.theme.FontSize
 import ru.vafeen.whisperoftasks.presentation.ui.theme.Theme
 import ru.vafeen.whisperoftasks.presentation.utils.suitableColor
@@ -63,14 +64,6 @@ internal fun SettingsScreen(bottomBarNavigator: BottomBarNavigator) {
     var colorIsEditable by remember {
         mutableStateOf(false)
     }
-
-    val checkBoxColors = CheckboxDefaults.colors(
-        checkedColor = Theme.colors.oppositeTheme,
-        checkmarkColor = Theme.colors.singleTheme,
-        uncheckedColor = Theme.colors.oppositeTheme
-    )
-
-
 
     BackHandler(onBack = bottomBarNavigator::back)
 
@@ -119,6 +112,13 @@ internal fun SettingsScreen(bottomBarNavigator: BottomBarNavigator) {
                     .padding(horizontal = 20.dp)
                     .verticalScroll(rememberScrollState()),
             ) {
+                CardOfSettings(text = stringResource(R.string.trash_bin), icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.delete_forever),
+                        contentDescription = stringResource(R.string.trash_bin),
+                        tint = it.suitableColor()
+                    )
+                }, onClick = { bottomBarNavigator.navigateTo(Screen.TrashBin) })
                 Box(modifier = Modifier.fillMaxWidth()) {
                     // name of section
                     TextForThisTheme(

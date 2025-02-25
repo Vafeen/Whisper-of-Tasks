@@ -7,11 +7,13 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.NavHostController
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.shareIn
 import kotlinx.coroutines.launch
@@ -25,6 +27,7 @@ import ru.vafeen.whisperoftasks.domain.utils.Link
 import ru.vafeen.whisperoftasks.domain.utils.RefresherInfo
 import ru.vafeen.whisperoftasks.domain.utils.copyTextToClipBoard
 import ru.vafeen.whisperoftasks.domain.utils.getVersionName
+import ru.vafeen.whisperoftasks.domain.utils.launchIO
 import ru.vafeen.whisperoftasks.presentation.components.navigation.BottomBarNavigator
 import ru.vafeen.whisperoftasks.presentation.components.navigation.Screen
 import kotlin.system.exitProcess
@@ -156,36 +159,47 @@ internal class MainActivityViewModel(
      * Контроллер навигации, управляющий переходами между экранами.
      */
     override var navController: NavHostController? = null
+        set(value) {
+            field = value
+            initNavControllerFlow()
+        }
 
     /**
      * Поток состояния, отслеживающий текущий экран приложения.
      */
     private val _currentScreen: MutableStateFlow<Screen> = MutableStateFlow(startScreen)
     override val currentScreen: StateFlow<Screen> = _currentScreen.asStateFlow()
+    private var flow: Job? = null
 
-    /**
-     * Эмитирует текущий экран на основе стека навигации.
-     * Отслеживает изменения в backStack навигации и обновляет состояние текущего экрана.
-     */
-    private fun emitCurrentScreen() {
-        viewModelScope.launch(Dispatchers.Main) {
-            navController?.currentBackStackEntryFlow?.collect { backStackEntry ->
-                val destination = backStackEntry.destination
+    private fun initNavControllerFlow() {
+        flow = viewModelScope.launchIO {
+            navController?.currentBackStackEntryFlow?.collect { entry ->
+                val destination = entry.destination
+                Log.d("destination", "$destination")
                 when {
-                    destination.hasRoute(Screen.Main::class) -> _currentScreen.emit(Screen.Main)
-                    destination.hasRoute(Screen.Settings::class) -> _currentScreen.emit(Screen.Settings)
-                    destination.hasRoute(Screen.Reminders::class) -> _currentScreen.emit(Screen.Reminders)
+                    destination.hasRoute<Screen.Main>() -> _currentScreen.emit(Screen.Main)
+                    destination.hasRoute<Screen.Settings>() -> _currentScreen.emit(Screen.Settings)
+                    destination.hasRoute<Screen.Reminders>() -> _currentScreen.emit(Screen.Reminders)
+                    destination.hasRoute<Screen.TrashBin>() -> _currentScreen.emit(Screen.TrashBin)
                 }
             }
         }
+        addCloseable {
+            cancelNavControllerFlow()
+        }
     }
+
+    private fun cancelNavControllerFlow() {
+        flow?.cancel()
+        flow = null
+    }
+
 
     /**
      * Обрабатывает действие "Назад". Переходит на предыдущий экран в навигации.
      */
     override fun back() {
         navController?.popBackStack()
-        emitCurrentScreen()
     }
 
     /**
@@ -194,10 +208,21 @@ internal class MainActivityViewModel(
      * @param screen Целевой экран для навигации.
      */
     override fun navigateTo(screen: Screen) {
-        val currentDestination = navController?.currentBackStackEntry?.destination
-        if (currentDestination?.hasRoute(Screen.Main::class) == false) navController?.popBackStack()
-        if (currentDestination?.hasRoute(Screen.Main::class) == true || screen != Screen.Main)
-            navController?.navigate(screen)
-        emitCurrentScreen()
+        val navC = navController
+        if (navC != null) {
+            val currentDestination = navC.currentBackStackEntry?.destination
+            when {
+                currentDestination?.hasRoute<Screen.Main>() == false && screen in listOf(
+                    Screen.Settings,
+                    Screen.Reminders
+                ) -> {
+                    navController?.popBackStack()
+                    navController?.navigate(screen)
+                }
+
+                (currentDestination?.hasRoute<Screen.Main>() == false && screen == Screen.Main) -> navC.popBackStack()
+                else -> navC.navigate(screen)
+            }
+        }
     }
 }

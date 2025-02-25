@@ -17,41 +17,28 @@ internal class SchedulerImpl(
 ) : Scheduler {
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
     private val intent = Intent(context, ReminderReceiver::class.java)
-
+    private fun Reminder.createPendingIntentWithExtras() = PendingIntent.getBroadcast(
+        context,
+        idOfReminder,
+        ReminderReceiver.withExtras(intent, this),
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+    )
 
     private fun scheduleRepeatingJob(reminder: Reminder) {
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            reminder.idOfReminder,
-            intent.also {
-                it.putExtra(SchedulerExtra.ID_OF_REMINDER, reminder.idOfReminder)
-            },
-            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-        )
-
         alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP,
             System.currentTimeMillis() + calculateInitialDelay(reminder),
             reminder.repeatDuration.duration.milliSeconds,
-            pendingIntent
+            reminder.createPendingIntentWithExtras()
         )
     }
 
     private fun scheduleOneTimeJob(reminder: Reminder) {
-        Log.d("sch", "scheduled do")
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             System.currentTimeMillis() + calculateInitialDelay(reminder),
-            PendingIntent.getBroadcast(
-                context,
-                reminder.idOfReminder,
-                intent.also {
-                    it.putExtra(SchedulerExtra.ID_OF_REMINDER, reminder.idOfReminder)
-                },
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
+            reminder.createPendingIntentWithExtras()
         )
-        Log.d("sch", "scheduledafter")
     }
 
     private fun scheduleJob(reminder: Reminder) {
