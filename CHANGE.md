@@ -1,5 +1,5 @@
-v1.2.5
-New version v1.2.5!!
+v1.2.6
+New version v1.2.6!!
 
 What's new:
 
