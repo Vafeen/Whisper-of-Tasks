@@ -1,7 +1,12 @@
-v1.2.3
-New version v1.2.3!
+v1.2.4
+New version v1.2.4!
+
+What's new:
+
+- Trash bin for reminders
+- ReminderRecoveryBottomSheet
 
 What's fixed:
 
-- Layout bugs
-- ColorScheme bugs
+- Changed API for planning
+- Return draggable to FAB for adding reminders
