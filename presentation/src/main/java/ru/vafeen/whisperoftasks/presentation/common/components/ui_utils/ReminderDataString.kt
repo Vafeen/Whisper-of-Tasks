@@ -12,6 +12,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -39,6 +40,7 @@ internal fun Reminder.ReminderDataString(
     setEvent: ((Reminder) -> Unit)? = null,
     isItCandidateForDelete: Boolean?,
     changeStatusOfSelecting: (() -> Unit)?,
+    showNotification: ((Reminder) -> Unit)? = null
 ) {
     val cor = rememberCoroutineScope()
     val context = LocalContext.current
@@ -84,12 +86,24 @@ internal fun Reminder.ReminderDataString(
                             )
                         },
                         colors = CheckboxDefaults.colors(
-                            checkedColor = mainColor,
-                            uncheckedColor = mainColor,
-                            checkmarkColor = mainColor.suitableColor(),
+                            checkedColor = Theme.colors.oppositeTheme,
+                            uncheckedColor = Theme.colors.oppositeTheme,
+                            checkmarkColor = Theme.colors.singleTheme,
                         )
                     )
+                    IconButton(
+                        enabled = changeStatusOfSelecting == null,
+                        onClick = {
+                            showNotification?.invoke(this@ReminderDataString)
+                        }) {
+                        Icon(
+                            painter = painterResource(R.drawable.reminder),
+                            contentDescription = stringResource(R.string.notification),
+                            tint = Theme.colors.oppositeTheme
+                        )
+                    }
                 }
+
             }
             Column(
                 modifier = Modifier.weight(1f)

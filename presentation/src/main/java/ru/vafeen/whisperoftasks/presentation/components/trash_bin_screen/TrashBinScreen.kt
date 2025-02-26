@@ -30,6 +30,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import org.koin.androidx.compose.koinViewModel
@@ -105,7 +106,9 @@ internal fun TrashBinScreen(bottomBarNavigator: BottomBarNavigator) {
         containerColor = Theme.colors.background, modifier = Modifier.fillMaxSize(),
         topBar = {
             Row(
-                modifier = Modifier.fillMaxWidth().background(settings.customMainColorOrDefault()),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(settings.customMainColorOrDefault()),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = { bottomBarNavigator.back() }) {
@@ -166,13 +169,15 @@ internal fun TrashBinScreen(bottomBarNavigator: BottomBarNavigator) {
             }
             if (isSelectingProcess) TODOWithReminders(
                 actionName = R.string.restore_reminders,
-                actionColor = Theme.colors.restore
+                actionColor = Theme.colors.restore,
+                actionTextColor = Color.Black,
             ) {
                 viewModel.restoreSelectedReminders()
             }
             if (isSelectingProcess) TODOWithReminders(
                 actionName = R.string.delete_selected,
-                actionColor = Theme.colors.delete
+                actionColor = Theme.colors.delete,
+                actionTextColor = Color.Black,
             ) {
                 viewModel.deleteForeverSelectedReminder()
             }

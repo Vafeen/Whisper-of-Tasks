@@ -37,6 +37,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -319,6 +320,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                     changeStatusOfSelecting = if (isDeletingInProcess) {
                                         { viewModel.changeStatusForDeleting(it) }
                                     } else null,
+                                    showNotification = viewModel::showNotification
                                 )
                             }
                         } else {
@@ -339,6 +341,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                             changeStatusOfSelecting = if (isDeletingInProcess) {
                                                 { viewModel.changeStatusForDeleting(it) }
                                             } else null,
+                                            showNotification = viewModel::showNotification
                                         )
                                     }
                                     reminders.getOrNull(1)?.let {
@@ -356,6 +359,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                             changeStatusOfSelecting = if (isDeletingInProcess) {
                                                 { viewModel.changeStatusForDeleting(it) }
                                             } else null,
+                                            showNotification = viewModel::showNotification
                                         )
                                     }
                                 }
@@ -388,6 +392,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                     changeStatusOfSelecting = if (isDeletingInProcess) {
                                         { viewModel.changeStatusForDeleting(it) }
                                     } else null,
+                                    showNotification = viewModel::showNotification
                                 )
                             }
                         } else {
@@ -409,6 +414,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                             changeStatusOfSelecting = if (isDeletingInProcess) {
                                                 { viewModel.changeStatusForDeleting(it) }
                                             } else null,
+                                            showNotification = viewModel::showNotification
                                         )
                                     }
                                     reminders.getOrNull(1)?.let {
@@ -427,6 +433,7 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                             changeStatusOfSelecting = if (isDeletingInProcess) {
                                                 { viewModel.changeStatusForDeleting(it) }
                                             } else null,
+                                            showNotification = viewModel::showNotification
                                         )
                                     }
                                 }
@@ -437,7 +444,8 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
             }
             if (isDeletingInProcess) TODOWithReminders(
                 actionName = R.string.mv_to_trash_selected,
-                actionColor = Theme.colors.delete
+                actionColor = Theme.colors.delete,
+                actionTextColor = Color.Black,
             ) {
                 viewModel.moveToTrashSelectedReminders()
             }
