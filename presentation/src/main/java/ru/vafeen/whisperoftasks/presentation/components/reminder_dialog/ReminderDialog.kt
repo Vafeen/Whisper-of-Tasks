@@ -5,7 +5,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -195,10 +194,7 @@ internal fun ReminderDialog(newReminder: MutableState<Reminder>, onDismissReques
                 enabled = (lastReminder != newReminder.value) && newReminder.value.let { it.text.isNotEmpty() || it.title.isNotEmpty() },
                 onClick = {
                     cor.launch {
-                        viewModel.updateReminderAndEventDependsOnChangedFields(
-                            lastReminder,
-                            newReminder.value
-                        )
+                        viewModel.updateReminderEvents(newReminder.value)
                         onDismissRequest()
                     }
                 },

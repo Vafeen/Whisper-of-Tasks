@@ -19,9 +19,8 @@ import java.time.LocalDateTime
 
 internal class ReminderDialogViewModel(
     private val insertAllRemindersUseCase: InsertAllRemindersUseCase,
-    private val cancelWorkUseCase: CancelWorkUseCase,
     private val planWorkUseCase: PlanWorkUseCase,
-    private val settingsManager: SettingsManager
+    settingsManager: SettingsManager
 ) : ViewModel(), SelectingRemindersManager {
     val settings = settingsManager.settingsFlow
     override val selectedReminders: SnapshotStateMap<Int, Reminder> = mutableStateMapOf()
@@ -40,17 +39,10 @@ internal class ReminderDialogViewModel(
         }
     }
 
-    suspend fun updateReminderAndEventDependsOnChangedFields(
-        lastReminder: Reminder,
+    suspend fun updateReminderEvents(
         newReminder: Reminder
     ) {
-        if (
-            (lastReminder.dt != newReminder.dt ||
-                    lastReminder.isNotificationNeeded != newReminder.isNotificationNeeded ||
-                    lastReminder.repeatDuration != newReminder.repeatDuration) && newReminder.isNotificationNeeded
-        ) {
-            planWorkUseCase.invoke(listOf(newReminder))
-        }
+        planWorkUseCase.invoke(newReminder)
         insertAllRemindersUseCase.invoke(newReminder)
     }
 }
