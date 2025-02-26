@@ -3,22 +3,22 @@ package ru.vafeen.whisperoftasks.data.planner
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
-import android.content.Intent
 import ru.vafeen.whisperoftasks.data.converters.DateTimeConverter
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.domain.planner.Scheduler
+import java.time.LocalDateTime
 
 internal class SchedulerImpl(
     private val context: Context,
     private val dtConverter: DateTimeConverter
 ) : Scheduler {
     private val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-    private val intent = Intent(context, ReminderReceiver::class.java)
+
     private fun Reminder.createPendingIntentWithExtras() = PendingIntent.getBroadcast(
         context,
         idOfReminder,
-        ReminderReceiver.withExtras(intent, this),
+        ReminderReceiver.intentWithExtras(context, this),
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
@@ -42,9 +42,12 @@ internal class SchedulerImpl(
     }
 
     override fun planWork(reminder: Reminder) {
-        when (reminder.repeatDuration) {
-            RepeatDuration.NoRepeat -> scheduleOneTimeJob(reminder)
-            else -> scheduleRepeatingJob(reminder)
+        cancelWork(reminder)
+        if ((reminder.dt >= LocalDateTime.now() || reminder.repeatDuration != RepeatDuration.NoRepeat) && !reminder.isDeleted) {
+            when (reminder.repeatDuration) {
+                RepeatDuration.NoRepeat -> scheduleOneTimeJob(reminder)
+                else -> scheduleRepeatingJob(reminder)
+            }
         }
     }
 
@@ -53,7 +56,7 @@ internal class SchedulerImpl(
             PendingIntent.getBroadcast(
                 context,
                 reminder.idOfReminder,
-                intent,
+                ReminderReceiver.intentWithExtras(context, reminder),
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )

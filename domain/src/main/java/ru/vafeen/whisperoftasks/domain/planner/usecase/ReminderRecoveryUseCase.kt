@@ -14,14 +14,8 @@ class ReminderRecoveryUseCase(
     private val scheduler: Scheduler
 ) {
     suspend operator fun invoke() {
-        val reminders = getAsFlowRemindersUseCase.invoke().first()
-        val dt = LocalDateTime.now()
-        reminders.forEach { reminder ->
-            scheduler.cancelWork(reminder)
-            if ((reminder.dt >= dt || reminder.repeatDuration != RepeatDuration.NoRepeat) && !reminder.isDeleted) {
-                scheduler.planWork(reminder)
-            }
-        }
+        getAsFlowRemindersUseCase.invoke().first()
+            .forEach { reminder -> scheduler.planWork(reminder) }
         settingsManager.save {
             it.copy(isRecoveryNeeded = false)
         }
