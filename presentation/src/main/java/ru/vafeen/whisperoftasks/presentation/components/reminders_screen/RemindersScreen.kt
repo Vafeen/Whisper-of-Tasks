@@ -145,7 +145,9 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
         },
         floatingActionButtonPosition = FabPosition.End
     ) {
-        Column(modifier = Modifier.fillMaxSize().padding(top = it.calculateTopPadding())) {
+        Column(modifier = Modifier
+            .fillMaxSize()
+            .padding(top = it.calculateTopPadding())) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
@@ -179,19 +181,19 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
             Column(modifier = Modifier.weight(1f)) {
                 if (reminders.isNotEmpty()) {
                     LazyColumn {
-                        items(items = reminders) {
-                            it.ReminderDataString(
+                        items(items = reminders) { reminder ->
+                            reminder.ReminderDataString(
                                 mainColor = settings.customMainColorOrDefault(),
                                 modifier = Modifier.combinedClickableForRemovingReminder(
-                                    reminder = it
+                                    reminder = reminder
                                 ),
                                 setEvent = viewModel::setEvent,
                                 dateOfThisPage = dateToday,
                                 isItCandidateForDelete = viewModel.selectedReminders.contains(
-                                    it.idOfReminder
+                                    reminder.idOfReminder
                                 ),
                                 changeStatusOfSelecting = if (isDeletingInProcess) {
-                                    { viewModel.changeStatusForDeleting(it) }
+                                    { viewModel.changeStatusForDeleting(reminder) }
                                 } else null,
                                 showNotification = viewModel::showNotification
                             )

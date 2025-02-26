@@ -22,7 +22,10 @@ internal class SchedulerImpl(
         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
-    private fun calculateTime(reminder: Reminder): Long = dtConverter.convertAB(reminder.dt)
+    private fun calculateTime(reminder: Reminder): Long =
+        (dtConverter.convertAB(reminder.dt) - dtConverter.convertAB(LocalDateTime.now())).let {
+            if (it < 0) 0 else it
+        }
 
     private fun scheduleRepeatingJob(reminder: Reminder) {
         alarmManager.setRepeating(
