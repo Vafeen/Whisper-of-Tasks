@@ -145,7 +145,7 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
         },
         floatingActionButtonPosition = FabPosition.End
     ) {
-        Column(modifier = Modifier.fillMaxSize().padding(vertical = it.calculateTopPadding())) {
+        Column(modifier = Modifier.fillMaxSize().padding(top = it.calculateTopPadding())) {
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.Center,
