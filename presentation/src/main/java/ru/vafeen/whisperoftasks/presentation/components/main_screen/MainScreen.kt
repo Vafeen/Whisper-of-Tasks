@@ -1,7 +1,6 @@
 package ru.vafeen.whisperoftasks.presentation.components.main_screen
 
 import android.app.Activity
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -50,9 +49,8 @@ import org.koin.androidx.compose.koinViewModel
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.domain.utils.getDateStringWithWeekOfDay
-import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TODOWithReminders
-import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ListGridChangeView
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ReminderDataString
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TODOWithReminders
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.customMainColorOrDefault
 import ru.vafeen.whisperoftasks.presentation.components.navigation.BottomBarNavigator
@@ -230,22 +228,11 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                     }
                 }
             }
-            ListGridChangeView(modifier = Modifier.align(Alignment.End),
-                isListChosen = settings.isListChosen, changeToList = {
-                    viewModel.saveSettings {
-                        it.copy(isListChosen = true)
-                    }
-                }, changeToGrid = {
-                    viewModel.saveSettings {
-                        it.copy(isListChosen = false)
-                    }
-                })
             HorizontalPager(
                 state = pagerState,
                 modifier = Modifier
                     .weight(10f)
             ) { page ->
-
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
@@ -305,65 +292,22 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                 )
                             }
                         }
-                        if (settings.isListChosen) {
-                            items(primaryReminders) { it ->
-                                it.ReminderDataString(
-                                    mainColor = mainColor,
-                                    modifier = Modifier.combinedClickableForRemovingReminder(
-                                        reminder = it
-                                    ),
-                                    setEvent = viewModel::setEvent,
-                                    dateOfThisPage = dateOfThisPage,
-                                    isItCandidateForDelete = viewModel.selectedReminders.contains(
-                                        it.idOfReminder
-                                    ),
-                                    changeStatusOfSelecting = if (isDeletingInProcess) {
-                                        { viewModel.changeStatusForDeleting(it) }
-                                    } else null,
-                                    showNotification = viewModel::showNotification
-                                )
-                            }
-                        } else {
-                            items(primaryReminders.chunked(2)) { reminders ->
-                                Row {
-                                    reminders.getOrNull(0)?.let {
-                                        it.ReminderDataString(
-                                            mainModifier = Modifier.weight(1f),
-                                            mainColor = mainColor,
-                                            modifier = Modifier.combinedClickableForRemovingReminder(
-                                                reminder = it
-                                            ),
-                                            setEvent = viewModel::setEvent,
-                                            dateOfThisPage = dateOfThisPage,
-                                            isItCandidateForDelete = viewModel.selectedReminders.contains(
-                                                it.idOfReminder
-                                            ),
-                                            changeStatusOfSelecting = if (isDeletingInProcess) {
-                                                { viewModel.changeStatusForDeleting(it) }
-                                            } else null,
-                                            showNotification = viewModel::showNotification
-                                        )
-                                    }
-                                    reminders.getOrNull(1)?.let {
-                                        it.ReminderDataString(
-                                            mainModifier = Modifier.weight(1f),
-                                            mainColor = mainColor,
-                                            modifier = Modifier.combinedClickableForRemovingReminder(
-                                                reminder = it
-                                            ),
-                                            setEvent = viewModel::setEvent,
-                                            dateOfThisPage = dateOfThisPage,
-                                            isItCandidateForDelete = viewModel.selectedReminders.contains(
-                                                it.idOfReminder
-                                            ),
-                                            changeStatusOfSelecting = if (isDeletingInProcess) {
-                                                { viewModel.changeStatusForDeleting(it) }
-                                            } else null,
-                                            showNotification = viewModel::showNotification
-                                        )
-                                    }
-                                }
-                            }
+                        items(primaryReminders) { it ->
+                            it.ReminderDataString(
+                                mainColor = mainColor,
+                                modifier = Modifier.combinedClickableForRemovingReminder(
+                                    reminder = it
+                                ),
+                                setEvent = viewModel::setEvent,
+                                dateOfThisPage = dateOfThisPage,
+                                isItCandidateForDelete = viewModel.selectedReminders.contains(
+                                    it.idOfReminder
+                                ),
+                                changeStatusOfSelecting = if (isDeletingInProcess) {
+                                    { viewModel.changeStatusForDeleting(it) }
+                                } else null,
+                                showNotification = viewModel::showNotification
+                            )
                         }
                         stickyHeader {
                             if (lostReminders.isNotEmpty()) {
@@ -377,67 +321,22 @@ internal fun MainScreen(bottomBarNavigator: BottomBarNavigator) {
                                 )
                             }
                         }
-                        if (settings.isListChosen) {
-                            items(lostReminders) {
-                                it.ReminderDataString(
-                                    mainColor = mainColor,
-                                    modifier = Modifier.combinedClickableForRemovingReminder(
-                                        reminder = it
-                                    ),
-                                    setEvent = viewModel::setEvent,
-                                    dateOfThisPage = dateOfThisPage,
-                                    isItCandidateForDelete = viewModel.selectedReminders.contains(
-                                        it.idOfReminder
-                                    ),
-                                    changeStatusOfSelecting = if (isDeletingInProcess) {
-                                        { viewModel.changeStatusForDeleting(it) }
-                                    } else null,
-                                    showNotification = viewModel::showNotification
-                                )
-                            }
-                        } else {
-                            items(lostReminders.chunked(2)) { reminders ->
-                                Row {
-                                    reminders.getOrNull(0)?.let {
-                                        it.ReminderDataString(
-                                            mainModifier = Modifier.weight(1f),
-                                            mainColor = mainColor,
-                                            modifier = Modifier
-                                                .combinedClickableForRemovingReminder(
-                                                    reminder = it
-                                                ),
-                                            setEvent = viewModel::setEvent,
-                                            dateOfThisPage = dateOfThisPage,
-                                            isItCandidateForDelete = viewModel.selectedReminders.contains(
-                                                it.idOfReminder
-                                            ),
-                                            changeStatusOfSelecting = if (isDeletingInProcess) {
-                                                { viewModel.changeStatusForDeleting(it) }
-                                            } else null,
-                                            showNotification = viewModel::showNotification
-                                        )
-                                    }
-                                    reminders.getOrNull(1)?.let {
-                                        it.ReminderDataString(
-                                            mainModifier = Modifier.weight(1f),
-                                            mainColor = mainColor,
-                                            modifier = Modifier
-                                                .combinedClickableForRemovingReminder(
-                                                    reminder = it
-                                                ),
-                                            setEvent = viewModel::setEvent,
-                                            dateOfThisPage = dateOfThisPage,
-                                            isItCandidateForDelete = viewModel.selectedReminders.contains(
-                                                it.idOfReminder
-                                            ),
-                                            changeStatusOfSelecting = if (isDeletingInProcess) {
-                                                { viewModel.changeStatusForDeleting(it) }
-                                            } else null,
-                                            showNotification = viewModel::showNotification
-                                        )
-                                    }
-                                }
-                            }
+                        items(lostReminders) {
+                            it.ReminderDataString(
+                                mainColor = mainColor,
+                                modifier = Modifier.combinedClickableForRemovingReminder(
+                                    reminder = it
+                                ),
+                                setEvent = viewModel::setEvent,
+                                dateOfThisPage = dateOfThisPage,
+                                isItCandidateForDelete = viewModel.selectedReminders.contains(
+                                    it.idOfReminder
+                                ),
+                                changeStatusOfSelecting = if (isDeletingInProcess) {
+                                    { viewModel.changeStatusForDeleting(it) }
+                                } else null,
+                                showNotification = viewModel::showNotification
+                            )
                         }
                     }
                 }
