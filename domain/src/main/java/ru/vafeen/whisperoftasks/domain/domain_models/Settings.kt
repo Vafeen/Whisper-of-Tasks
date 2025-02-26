@@ -9,7 +9,6 @@ data class Settings(
     val darkThemeColor: Color? = null,
     val lastDemonstratedVersion: Int? = null,
     val releaseBody: String? = null,
-    val isListChosen: Boolean = true,
     val isRecoveryNeeded: Boolean = false
 ) {
     fun toJsonString(): String = Gson().toJson(this)

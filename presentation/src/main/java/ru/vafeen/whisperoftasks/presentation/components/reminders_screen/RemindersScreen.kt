@@ -5,13 +5,14 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -34,15 +35,13 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.IntOffset
-import kotlinx.coroutines.launch
 import org.koin.androidx.compose.koinViewModel
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.domain.utils.generateID
 import ru.vafeen.whisperoftasks.domain.utils.nullTime
-import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TODOWithReminders
-import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ListGridChangeView
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.ReminderDataString
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TODOWithReminders
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.TextForThisTheme
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.customMainColorOrDefault
 import ru.vafeen.whisperoftasks.presentation.components.navigation.BottomBarNavigator
@@ -57,7 +56,6 @@ import kotlin.math.roundToInt
 
 
 @OptIn(ExperimentalFoundationApi::class)
-@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
     val cor = rememberCoroutineScope()
@@ -147,19 +145,17 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
         },
         floatingActionButtonPosition = FabPosition.End
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
-            ListGridChangeView(
-                isListChosen = settings.isListChosen,
-                changeToList = {
-                    viewModel.saveSettings {
-                        it.copy(isListChosen = true)
-                    }
-                },
-                changeToGrid = {
-                    viewModel.saveSettings {
-                        it.copy(isListChosen = false)
-                    }
-                })
+        Column(modifier = Modifier.fillMaxSize().padding(vertical = it.calculateTopPadding())) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextForThisTheme(
+                    text = stringResource(id = R.string.tasks_list),
+                    fontSize = FontSize.huge27
+                )
+            }
             if (isAddingReminder || isEditingReminder) {
                 if (isAddingReminder) {
                     lastReminder.value = Reminder(
@@ -182,45 +178,23 @@ internal fun RemindersScreen(bottomBarNavigator: BottomBarNavigator) {
             }
             Column(modifier = Modifier.weight(1f)) {
                 if (reminders.isNotEmpty()) {
-                    if (settings.isListChosen) {
-                        LazyColumn {
-                            items(items = reminders) {
-                                it.ReminderDataString(
-                                    mainColor = settings.customMainColorOrDefault(),
-                                    modifier = Modifier.combinedClickableForRemovingReminder(
-                                        reminder = it
-                                    ),
-                                    setEvent = viewModel::setEvent,
-                                    dateOfThisPage = dateToday,
-                                    isItCandidateForDelete = viewModel.selectedReminders.contains(
-                                        it.idOfReminder
-                                    ),
-                                    changeStatusOfSelecting = if (isDeletingInProcess) {
-                                        { viewModel.changeStatusForDeleting(it) }
-                                    } else null,
-                                    showNotification = viewModel::showNotification
-                                )
-                            }
-                        }
-                    } else {
-                        LazyVerticalGrid(columns = GridCells.Fixed(2)) {
-                            items(items = reminders) {
-                                it.ReminderDataString(
-                                    mainColor = settings.customMainColorOrDefault(),
-                                    modifier = Modifier.combinedClickableForRemovingReminder(
-                                        reminder = it
-                                    ),
-                                    setEvent = viewModel::setEvent,
-                                    dateOfThisPage = dateToday,
-                                    isItCandidateForDelete = viewModel.selectedReminders.contains(
-                                        it.idOfReminder
-                                    ),
-                                    changeStatusOfSelecting = if (isDeletingInProcess) {
-                                        { viewModel.changeStatusForDeleting(it) }
-                                    } else null,
-                                    showNotification = viewModel::showNotification
-                                )
-                            }
+                    LazyColumn {
+                        items(items = reminders) {
+                            it.ReminderDataString(
+                                mainColor = settings.customMainColorOrDefault(),
+                                modifier = Modifier.combinedClickableForRemovingReminder(
+                                    reminder = it
+                                ),
+                                setEvent = viewModel::setEvent,
+                                dateOfThisPage = dateToday,
+                                isItCandidateForDelete = viewModel.selectedReminders.contains(
+                                    it.idOfReminder
+                                ),
+                                changeStatusOfSelecting = if (isDeletingInProcess) {
+                                    { viewModel.changeStatusForDeleting(it) }
+                                } else null,
+                                showNotification = viewModel::showNotification
+                            )
                         }
                     }
                 } else TextForThisTheme(
