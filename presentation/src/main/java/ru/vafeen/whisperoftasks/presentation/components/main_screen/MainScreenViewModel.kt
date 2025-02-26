@@ -10,6 +10,7 @@ import ru.vafeen.whisperoftasks.domain.database.usecase.InsertAllRemindersUseCas
 import ru.vafeen.whisperoftasks.domain.database.usecase.MoveToTrashBinReminderUseCase
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.domain_models.Settings
+import ru.vafeen.whisperoftasks.domain.notification.usecase.ShowNotificationTaskUseCase
 import ru.vafeen.whisperoftasks.domain.planner.usecase.PlanWorkUseCase
 import ru.vafeen.whisperoftasks.domain.planner.usecase.CancelWorkUseCase
 import ru.vafeen.whisperoftasks.domain.shared_preferences.SettingsManager
@@ -25,6 +26,7 @@ internal class MainScreenViewModel(
     private val settingsManager: SettingsManager,
     private val cancelWorkUseCase: CancelWorkUseCase,
     private val planWorkUseCase: PlanWorkUseCase,
+    private val showNotificationTaskUseCase: ShowNotificationTaskUseCase,
 ) : ViewModel(), SelectingRemindersManager {
     val settings = settingsManager.settingsFlow
     val todayDate: LocalDate = LocalDate.now()
@@ -51,4 +53,6 @@ internal class MainScreenViewModel(
             planWorkUseCase.invoke(reminder)
         }
     }
+    fun showNotification(reminder: Reminder) =
+        showNotificationTaskUseCase.invoke(reminder.title, reminder.text)
 }

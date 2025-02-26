@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,6 +30,7 @@ import ru.vafeen.whisperoftasks.resources.R
 internal fun TODOWithReminders(
     @StringRes actionName: Int,
     actionColor: Color,
+    actionTextColor:Color,
     onDeleteCallback: () -> Unit,
 ) {
     val textToHold = stringResource(id = R.string.hold)
@@ -50,13 +52,13 @@ internal fun TODOWithReminders(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        TextForThisTheme(text = stringResource(actionName), fontSize = FontSize.small17)
+        Text(text = stringResource(actionName), fontSize = FontSize.small17, color = actionTextColor)
         Icon(
             modifier = Modifier
                 .padding(vertical = 5.dp)
                 .size(30.dp),
             painter = painterResource(R.drawable.delete_forever),
-            tint = Theme.colors.delete.suitableColor(),
+            tint = actionTextColor,
             contentDescription = stringResource(actionName)
         )
     }

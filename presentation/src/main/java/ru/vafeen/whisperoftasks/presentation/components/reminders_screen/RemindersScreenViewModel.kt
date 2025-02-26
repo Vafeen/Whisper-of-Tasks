@@ -9,6 +9,7 @@ import ru.vafeen.whisperoftasks.domain.database.usecase.GetAllAsFlowRemindersUse
 import ru.vafeen.whisperoftasks.domain.database.usecase.MoveToTrashBinReminderUseCase
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.domain_models.Settings
+import ru.vafeen.whisperoftasks.domain.notification.usecase.ShowNotificationTaskUseCase
 import ru.vafeen.whisperoftasks.domain.planner.usecase.PlanWorkUseCase
 import ru.vafeen.whisperoftasks.domain.planner.usecase.CancelWorkUseCase
 import ru.vafeen.whisperoftasks.domain.shared_preferences.SettingsManager
@@ -22,6 +23,7 @@ internal class RemindersScreenViewModel(
     private val moveToTrashBinReminderUseCase: MoveToTrashBinReminderUseCase,
     private val cancelWorkUseCase: CancelWorkUseCase,
     private val planWorkUseCase: PlanWorkUseCase,
+    private val showNotificationTaskUseCase: ShowNotificationTaskUseCase,
 ) : ViewModel(), ReminderScheduler, SelectingRemindersManager {
     val settings = settingsManager.settingsFlow
     val remindersFlow =
@@ -48,4 +50,7 @@ internal class RemindersScreenViewModel(
             clearSelectedReminders()
         }
     }
+
+    fun showNotification(reminder: Reminder) =
+        showNotificationTaskUseCase.invoke(reminder.title, reminder.text)
 }
