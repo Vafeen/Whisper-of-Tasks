@@ -19,7 +19,7 @@ class ReminderReceiver : BroadcastReceiver(), KoinComponent {
     companion object {
         private const val TITLE_KEY = "TITLE"
         private const val TEXT_KEY = "TEXT"
-        fun withExtras(intent: Intent, reminder: Reminder): Intent = intent.also {
+        fun withExtras(intent: Intent, reminder: Reminder): Intent = Intent(intent).also {
             it.putExtra(TITLE_KEY, reminder.title)
             it.putExtra(TEXT_KEY, reminder.text)
         }
