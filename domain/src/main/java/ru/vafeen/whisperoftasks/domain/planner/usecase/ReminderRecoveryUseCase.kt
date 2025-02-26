@@ -18,7 +18,7 @@ class ReminderRecoveryUseCase(
         val dt = LocalDateTime.now()
         reminders.forEach { reminder ->
             scheduler.cancelWork(reminder)
-            if (reminder.dt >= dt || reminder.repeatDuration != RepeatDuration.NoRepeat) {
+            if ((reminder.dt >= dt || reminder.repeatDuration != RepeatDuration.NoRepeat) && !reminder.isDeleted) {
                 scheduler.planWork(reminder)
             }
         }

@@ -6,7 +6,7 @@ What's new:
 - Trash bin for reminders
 - ReminderRecoveryBottomSheet
 
-What's fixed:
+What's f
 
 - Changed API for planning
 - Return draggable to FAB for adding reminders
