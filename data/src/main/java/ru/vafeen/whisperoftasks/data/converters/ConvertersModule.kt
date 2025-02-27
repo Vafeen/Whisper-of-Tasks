@@ -7,7 +7,6 @@ internal val ConvertersModule = module {
     singleOf(::DateConverter)
     singleOf(::DateTimeConverter)
     singleOf(::DownloadStatusConverter)
-    singleOf(::DurationConverter)
     singleOf(::ReleaseConverter)
     singleOf(::ReminderConverter)
 }

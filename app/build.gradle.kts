@@ -9,7 +9,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "ru.vafeen.whisperoftasks"
+        applicationId = "ru.vafeen.whisperoftasks2"
         minSdk = 26
         targetSdk = 35
         versionCode = 44

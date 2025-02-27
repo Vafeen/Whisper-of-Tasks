@@ -43,6 +43,7 @@ internal class MainScreenViewModel(
             clearSelectedReminders()
         }
     }
+
     fun saveSettings(saving: (Settings) -> Settings) {
         settingsManager.save(saving = saving)
     }
@@ -53,6 +54,10 @@ internal class MainScreenViewModel(
             planWorkUseCase.invoke(reminder)
         }
     }
-    fun showNotification(reminder: Reminder) =
-        showNotificationTaskUseCase.invoke(reminder.title, reminder.text)
+
+    fun showNotification(reminder: Reminder) {
+        viewModelScope.launchIO {
+            showNotificationTaskUseCase.invoke(reminder.idOfReminder)
+        }
+    }
 }

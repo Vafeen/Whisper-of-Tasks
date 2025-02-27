@@ -119,6 +119,17 @@ internal fun SettingsScreen(bottomBarNavigator: BottomBarNavigator) {
                         tint = it.suitableColor()
                     )
                 }, onClick = { bottomBarNavigator.navigateTo(Screen.TrashBin) })
+
+                CardOfSettings(text = stringResource(R.string.reminder_recovery), icon = {
+                    Icon(
+                        painter = painterResource(id = R.drawable.update),
+                        contentDescription = stringResource(R.string.trash_bin),
+                        tint = it.suitableColor()
+                    )
+                }, onClick = {
+                    viewModel.recoveryReminders(context)
+                })
+
                 Box(modifier = Modifier.fillMaxWidth()) {
                     // name of section
                     TextForThisTheme(

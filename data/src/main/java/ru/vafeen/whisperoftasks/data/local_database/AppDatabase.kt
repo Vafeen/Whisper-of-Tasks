@@ -5,7 +5,6 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import ru.vafeen.whisperoftasks.data.converters.DateConverter
 import ru.vafeen.whisperoftasks.data.converters.DateTimeConverter
-import ru.vafeen.whisperoftasks.data.converters.DurationConverter
 import ru.vafeen.whisperoftasks.data.local_database.dao.ReminderDao
 import ru.vafeen.whisperoftasks.data.local_database.entity.ReminderEntity
 
@@ -16,8 +15,7 @@ import ru.vafeen.whisperoftasks.data.local_database.entity.ReminderEntity
 )
 @TypeConverters(
     DateTimeConverter::class,
-    DateConverter::class,
-    DurationConverter::class
+    DateConverter::class
 )
 internal abstract class AppDatabase : RoomDatabase() {
 

@@ -51,6 +51,9 @@ internal class RemindersScreenViewModel(
         }
     }
 
-    fun showNotification(reminder: Reminder) =
-        showNotificationTaskUseCase.invoke(reminder.title, reminder.text)
+    fun showNotification(reminder: Reminder) {
+        viewModelScope.launchIO {
+            showNotificationTaskUseCase.invoke(reminder.idOfReminder)
+        }
+    }
 }

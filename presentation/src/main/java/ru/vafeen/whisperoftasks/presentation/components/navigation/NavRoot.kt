@@ -22,6 +22,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ru.vafeen.whisperoftasks.domain.domain_models.Release
 import ru.vafeen.whisperoftasks.presentation.common.components.bottom_bar.BottomBar
+import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.RequestIgnoreBatteryOptimizationBottomSheet
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.RequestNotificationPermission
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.UpdateAvailable
 import ru.vafeen.whisperoftasks.presentation.common.components.ui_utils.UpdateProgress
@@ -54,6 +55,7 @@ internal fun NavRoot(viewModel: MainActivityViewModel) {
     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
         RequestNotificationPermission()
     }
+    RequestIgnoreBatteryOptimizationBottomSheet()
     // Проверка обновлений и отображение нижнего листа с информацией о версии
     LaunchedEffect(null) {
         releaseForUpdates = viewModel.checkUpdates()
