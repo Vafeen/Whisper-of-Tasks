@@ -53,7 +53,7 @@ internal fun CardOfSettings(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.weight(1f)) {
                     Box(
                         modifier = Modifier
                             .background(color, CircleShape)
@@ -66,6 +66,7 @@ internal fun CardOfSettings(
                         modifier = Modifier.padding(10.dp),
                         fontSize = FontSize.small17,
                         text = text,
+                        maxLines = 2
                     )
                 }
 

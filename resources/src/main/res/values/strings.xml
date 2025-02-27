@@ -50,4 +50,6 @@
     <string name="trash_bin">Корзина</string>
     <string name="restore_reminders">Восстановить</string>
     <string name="go_back">Выйти назад</string>
+    <string name="ignore_battery_optimization_needed">Нужно отключить оптимизацию батареи для корректной работы уведомлений</string>
+    <string name="disable">Отключить</string>
 </resources>

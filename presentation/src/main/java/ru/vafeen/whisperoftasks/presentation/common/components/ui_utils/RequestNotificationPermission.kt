@@ -2,10 +2,15 @@ package ru.vafeen.whisperoftasks.presentation.common.components.ui_utils
 
 
 import android.Manifest
+import android.content.Context
+import android.content.Intent
 import android.os.Build
+import android.os.PowerManager
+import android.provider.Settings
 import androidx.annotation.RequiresApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.isGranted
 import com.google.accompanist.permissions.rememberPermissionState
