@@ -1,7 +1,5 @@
-# v1.2.8-RC2
+New version v1.2.8-RC3!!
 
-New version v1.2.8-RC2!!
+What's new:
 
-What's fix:
-
-- Scheduler
+- NEW EXPERIMENTAL API FOR PLANNING!

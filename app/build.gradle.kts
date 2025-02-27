@@ -9,11 +9,11 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        applicationId = "ru.vafeen.whisperoftasks2"
+        applicationId = "ru.vafeen.whisperoftasks"
         minSdk = 26
         targetSdk = 35
-        versionCode = 44
-        versionName = "1.2.8-RC2"
+        versionCode = 45
+        versionName = "1.2.8-RC3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
