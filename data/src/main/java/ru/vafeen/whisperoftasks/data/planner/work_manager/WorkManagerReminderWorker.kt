@@ -1,4 +1,4 @@
-package ru.vafeen.whisperoftasks.data.planner
+package ru.vafeen.whisperoftasks.data.planner.work_manager
 
 
 import android.content.Context
@@ -6,7 +6,6 @@ import androidx.work.Constraints
 import androidx.work.CoroutineWorker
 import androidx.work.Data
 import androidx.work.NetworkType
-import androidx.work.OneTimeWorkRequest
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequestBuilder
@@ -19,7 +18,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.concurrent.TimeUnit
 
-internal class ReminderWorker(
+internal class WorkManagerReminderWorker(
     context: Context,
     workerParams: WorkerParameters
 ) : CoroutineWorker(context, workerParams), KoinComponent {
@@ -54,7 +53,7 @@ internal class ReminderWorker(
 
 
         fun oneTimeRequestWithData(reminder: Reminder) =
-            OneTimeWorkRequestBuilder<ReminderWorker>()
+            OneTimeWorkRequestBuilder<WorkManagerReminderWorker>()
                 .setInputData(reminder.workerData())
                 .setConstraints(createConstraints())
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
@@ -62,7 +61,7 @@ internal class ReminderWorker(
                 .build()
 
         fun periodicRequestWithData(reminder: Reminder) =
-            PeriodicWorkRequestBuilder<ReminderWorker>(reminder.repeatDuration.duration)
+            PeriodicWorkRequestBuilder<WorkManagerReminderWorker>(reminder.repeatDuration.duration)
                 .setInputData(reminder.workerData())
                 .setConstraints(createConstraints())
                 .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)

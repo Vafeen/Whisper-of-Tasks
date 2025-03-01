@@ -1,4 +1,4 @@
-package ru.vafeen.whisperoftasks.data.planner
+package ru.vafeen.whisperoftasks.data.planner.work_manager
 //
 //import android.content.Context
 //import androidx.work.CoroutineWorker
