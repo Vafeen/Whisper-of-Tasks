@@ -11,6 +11,7 @@ import androidx.work.OutOfQuotaPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkerParameters
 import org.koin.core.component.KoinComponent
+import ru.vafeen.whisperoftasks.domain.database.usecase.GetReminderByIdOfReminderUseCase
 import ru.vafeen.whisperoftasks.domain.domain_models.Reminder
 import ru.vafeen.whisperoftasks.domain.notification.usecase.ShowNotificationTaskUseCase
 import java.time.Instant
@@ -24,16 +25,15 @@ internal class WorkManagerReminderWorker(
 ) : CoroutineWorker(context, workerParams), KoinComponent {
 
     private val showNotificationTaskUseCase: ShowNotificationTaskUseCase = getKoin().get()
-
+    private val getReminderByIdOfReminderUseCase: GetReminderByIdOfReminderUseCase = getKoin().get()
     override suspend fun doWork(): Result {
-        val reminderId = inputData.getInt(ID_OF_REMINDER, -1)
-        return if (reminderId != -1) {
-            try {
-                showNotificationTaskUseCase.invoke(idOfReminder = reminderId)
-                Result.success()
-            } catch (e: Exception) {
-                Result.failure()
+        val idOfReminder = inputData.getInt(ID_OF_REMINDER, -1)
+        val reminder = getReminderByIdOfReminderUseCase.invoke(idOfReminder)
+        return if (reminder != null && idOfReminder != -1) {
+            reminder.let {
+                showNotificationTaskUseCase.invoke(idOfReminder, it.title, it.text)
             }
+            Result.success()
         } else {
             Result.failure()
         }
@@ -64,9 +64,9 @@ internal class WorkManagerReminderWorker(
             PeriodicWorkRequestBuilder<WorkManagerReminderWorker>(reminder.repeatDuration.duration)
                 .setInputData(reminder.workerData())
                 .setConstraints(createConstraints())
-                .setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST)
                 .setInitialDelay(calculateDelayToReminder(reminder.dt), TimeUnit.MILLISECONDS)
                 .build()
+
         /**
          * Создает ограничения для задач WorkManager.
          *

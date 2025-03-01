@@ -25,7 +25,10 @@ internal class NotificationServiceImpl(
      * @param notification Уведомление, которое будет показано пользователю.
      * Уведомление будет отображено с уникальным идентификатором, сгенерированным случайным образом.
      */
-    override fun showNotification(notification: Notification) {
-        notificationManager.notify(Random.nextInt(), notification) // Показываем уведомление с уникальным ID
+    override fun showNotification(idOfNotification: Int, notification: Notification) {
+        notificationManager.notify(
+            idOfNotification,
+            notification
+        ) // Показываем уведомление с уникальным ID
     }
 }
