@@ -9,8 +9,8 @@ interface NotificationService {
 
     /**
      * Показывает указанное уведомление.
-     *
+     * @param idOfNotification Идентификтор уведомления
      * @param notification Уведомление, которое нужно отобразить.
      */
-    fun showNotification(notification: Notification)
+    fun showNotification(idOfNotification: Int, notification: Notification)
 }

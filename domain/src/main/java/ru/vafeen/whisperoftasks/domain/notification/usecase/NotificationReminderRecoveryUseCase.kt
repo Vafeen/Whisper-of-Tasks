@@ -4,6 +4,7 @@ import android.content.Context
 import ru.vafeen.whisperoftasks.domain.notification.NotificationBuilder
 import ru.vafeen.whisperoftasks.domain.notification.NotificationService
 import ru.vafeen.whisperoftasks.resources.R
+import kotlin.random.Random
 
 class NotificationReminderRecoveryUseCase(
     private val context: Context,
@@ -12,6 +13,7 @@ class NotificationReminderRecoveryUseCase(
 ) {
     operator fun invoke() {
         notificationService.showNotification(
+            Random.nextInt(),
             notificationBuilder.createNotificationReminderRecovery(
                 title = context.getString(R.string.reminder_recovery),
                 text = context.getString(R.string.reminders_restored)

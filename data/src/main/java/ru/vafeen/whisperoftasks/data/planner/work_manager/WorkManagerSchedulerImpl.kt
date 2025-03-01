@@ -1,4 +1,4 @@
-package ru.vafeen.whisperoftasks.data.planner
+package ru.vafeen.whisperoftasks.data.planner.work_manager
 
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.ExistingWorkPolicy
@@ -8,7 +8,7 @@ import ru.vafeen.whisperoftasks.domain.duration.RepeatDuration
 import ru.vafeen.whisperoftasks.domain.planner.Scheduler
 import java.time.LocalDateTime
 
-internal class SchedulerImpl(private val workManager: WorkManager) : Scheduler {
+internal class WorkManagerSchedulerImpl(private val workManager: WorkManager) : Scheduler {
     private fun Reminder.workName() = "workRequest$idOfReminder"
     override fun planWork(reminder: Reminder) {
         cancelWork(reminder)
@@ -17,13 +17,13 @@ internal class SchedulerImpl(private val workManager: WorkManager) : Scheduler {
                 RepeatDuration.NoRepeat -> workManager.enqueueUniqueWork(
                     reminder.workName(),
                     ExistingWorkPolicy.REPLACE,
-                    ReminderWorker.oneTimeRequestWithData(reminder)
+                    WorkManagerReminderWorker.oneTimeRequestWithData(reminder)
                 )
 
                 else -> workManager.enqueueUniquePeriodicWork(
                     reminder.workName(),
                     ExistingPeriodicWorkPolicy.REPLACE,
-                    ReminderWorker.periodicRequestWithData(reminder)
+                    WorkManagerReminderWorker.periodicRequestWithData(reminder)
                 )
             }
         }

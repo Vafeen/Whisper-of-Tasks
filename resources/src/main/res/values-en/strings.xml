@@ -51,4 +51,5 @@
     <string name="go_back">Go back</string>
     <string name="ignore_battery_optimization_needed">Battery optimization must be disabled for notifications to work correctly</string>
     <string name="disable">Disable</string>
+    <string name="scheduler_api_choice">Scheduler API</string>
 </resources>

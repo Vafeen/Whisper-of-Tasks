@@ -2,6 +2,7 @@ package ru.vafeen.whisperoftasks.domain.utils
 
 import android.content.Context
 import android.os.Build
+import android.content.pm.PackageManager
 
 /**
  * Получает имя версии приложения.

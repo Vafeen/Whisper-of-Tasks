@@ -11,9 +11,11 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
@@ -33,6 +35,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
+import ru.vafeen.whisperoftasks.domain.planner.Scheduler
 import ru.vafeen.whisperoftasks.domain.utils.Link
 import ru.vafeen.whisperoftasks.domain.utils.getMainColorForThisTheme
 import ru.vafeen.whisperoftasks.domain.utils.getVersionName
@@ -64,6 +67,7 @@ internal fun SettingsScreen(bottomBarNavigator: BottomBarNavigator) {
     var colorIsEditable by remember {
         mutableStateOf(false)
     }
+    var isSchedulerAPIChoiceExpanded by remember { mutableStateOf(false) }
 
     BackHandler(onBack = bottomBarNavigator::back)
 
@@ -120,6 +124,7 @@ internal fun SettingsScreen(bottomBarNavigator: BottomBarNavigator) {
                     )
                 }, onClick = { bottomBarNavigator.navigateTo(Screen.TrashBin) })
 
+                // Восстановление будильников
                 CardOfSettings(text = stringResource(R.string.reminder_recovery), icon = {
                     Icon(
                         painter = painterResource(id = R.drawable.update),
@@ -129,6 +134,48 @@ internal fun SettingsScreen(bottomBarNavigator: BottomBarNavigator) {
                 }, onClick = {
                     viewModel.recoveryReminders(context)
                 })
+
+                // Выбор API scheduler
+                CardOfSettings(
+                    text = stringResource(R.string.scheduler_api_choice),
+                    icon = {
+                        Icon(
+                            painter = painterResource(id = R.drawable.reminder),
+                            contentDescription = stringResource(R.string.scheduler_api_choice),
+                            tint = it.suitableColor()
+                        )
+                    },
+                    onClick = {
+                        isSchedulerAPIChoiceExpanded = !isSchedulerAPIChoiceExpanded
+                    },
+                    additionalContentIsVisible = isSchedulerAPIChoiceExpanded,
+                    additionalContent = {
+                        LazyRow(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = it)
+                        ) {
+                            items(Scheduler.Companion.Choice.all) { choice ->
+                                AssistChip(
+                                    leadingIcon = {
+                                        if (choice.value == settings.schedulerChoice) {
+                                            Icon(
+                                                painter = painterResource(id = R.drawable.done),
+                                                contentDescription = stringResource(R.string.scheduler_api_choice),
+                                                tint = Theme.colors.oppositeTheme
+                                            )
+                                        }
+                                    },
+                                    modifier = Modifier.padding(horizontal = 3.dp),
+                                    onClick = {
+                                        if (choice.value != settings.schedulerChoice)
+                                            viewModel.chooseSchedulerAPIon(choice)
+                                    },
+                                    label = { TextForThisTheme(text = choice.value) }
+                                )
+                            }
+                        }
+                    })
 
                 Box(modifier = Modifier.fillMaxWidth()) {
                     // name of section

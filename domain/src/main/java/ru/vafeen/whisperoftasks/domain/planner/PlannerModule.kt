@@ -6,10 +6,14 @@ import ru.vafeen.whisperoftasks.domain.planner.usecase.MakeRecoveryNeededUseCase
 import ru.vafeen.whisperoftasks.domain.planner.usecase.ReminderRecoveryUseCase
 import ru.vafeen.whisperoftasks.domain.planner.usecase.PlanWorkUseCase
 import ru.vafeen.whisperoftasks.domain.planner.usecase.CancelWorkUseCase
+import ru.vafeen.whisperoftasks.domain.planner.usecase.ChooseSchedulerUseCase
+import ru.vafeen.whisperoftasks.domain.planner.usecase.GetSchedulerDependsOnSettings
 
 internal val PlannerModule = module {
-    singleOf(::MakeRecoveryNeededUseCase)
-    singleOf(::ReminderRecoveryUseCase)
     singleOf(::CancelWorkUseCase)
+    singleOf(::ChooseSchedulerUseCase)
+    singleOf(::GetSchedulerDependsOnSettings)
+    singleOf(::MakeRecoveryNeededUseCase)
     singleOf(::PlanWorkUseCase)
+    singleOf(::ReminderRecoveryUseCase)
 }

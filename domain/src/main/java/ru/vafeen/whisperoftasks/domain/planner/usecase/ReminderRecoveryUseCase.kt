@@ -11,9 +11,10 @@ import java.time.LocalDateTime
 class ReminderRecoveryUseCase(
     private val settingsManager: SettingsManager,
     private val getAsFlowRemindersUseCase: GetAllAsFlowRemindersUseCase,
-    private val scheduler: Scheduler
+    private val getSchedulerDependsOnSettings: GetSchedulerDependsOnSettings,
 ) {
     suspend operator fun invoke() {
+        val scheduler = getSchedulerDependsOnSettings.invoke() ?: return
         getAsFlowRemindersUseCase.invoke().first()
             .forEach { reminder -> scheduler.planWork(reminder) }
         settingsManager.save {
