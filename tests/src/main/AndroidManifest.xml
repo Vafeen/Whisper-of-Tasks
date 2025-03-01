@@ -30,7 +30,7 @@
             android:name=".data.planner.ReminderReceiver"
             android:enabled="true" />
         <receiver
-            android:name=".data.planner.ReminderRecoveryReceiver"
+            android:name=".data.planner.alarm_manager.AlarmManagerReminderRecoveryReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
