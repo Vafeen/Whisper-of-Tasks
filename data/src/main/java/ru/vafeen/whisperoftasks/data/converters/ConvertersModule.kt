@@ -6,7 +6,5 @@ import org.koin.dsl.module
 internal val ConvertersModule = module {
     singleOf(::DateConverter)
     singleOf(::DateTimeConverter)
-    singleOf(::DownloadStatusConverter)
-    singleOf(::ReleaseConverter)
     singleOf(::ReminderConverter)
 }

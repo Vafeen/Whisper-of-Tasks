@@ -4,15 +4,12 @@ import android.content.Context
 import android.vafeen.direct_refresher.DirectRefresher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.map
-import ru.vafeen.whisperoftasks.data.converters.DownloadStatusConverter
+import ru.vafeen.whisperoftasks.data.converters.toDownloadStatus
 import ru.vafeen.whisperoftasks.data.network.end_points.DownloadServiceLink
 import ru.vafeen.whisperoftasks.domain.network.service.Refresher
 import android.vafeen.direct_refresher.refresher.Refresher as LibRefresher
 
-internal class RefresherImpl(
-    context: Context,
-    private val downloadStatusConverter: DownloadStatusConverter
-) : Refresher {
+internal class RefresherImpl(context: Context) : Refresher {
     private val libRefresher: LibRefresher =
         DirectRefresher.provideRefresher(
             context = context,
@@ -23,7 +20,7 @@ internal class RefresherImpl(
             installer = DirectRefresher.provideInstaller(context = context)
         )
     override val progressFlow =
-        libRefresher.progressFlow.map { downloadStatusConverter.convertAB(it) }
+        libRefresher.progressFlow.map { it.toDownloadStatus() }
 
     override suspend fun refresh(
         coroutineScope: CoroutineScope,
